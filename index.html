@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Honey Moon · Fresas con crema en Barranquilla</title>
+  <meta name="description" content="Fresas con crema, waffles, cupcakes y malteadas en Barranquilla. Arma tu pedido y envíalo por WhatsApp.">
+  <meta name="theme-color" content="#3a4e33">
+  <meta property="og:title" content="Honey Moon · Fresas con crema en Barranquilla">
+  <meta property="og:description" content="Fresas frescas, crema de la casa y toppings que enamoran. Pide por WhatsApp.">
+  <meta property="og:image" content="assets/img/og-honeymoon.jpg">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,600..900,100&family=Nunito:wght@400;600;700;800&family=Shrikhand&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+  <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-hm btn-hm-paper z-3" href="#menu">Saltar al menú</a>
+
+  <!-- Aviso de modo prueba (se oculta solo cuando configuras el número real) -->
+  <div class="hm-test-banner d-none" id="testBanner">
+    <i class="bi bi-cone-striped"></i> <strong>Modo prueba:</strong> los pedidos se envían a un WhatsApp de prueba.
+  </div>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar navbar-expand-lg hm-navbar sticky-top py-2" aria-label="Navegación principal">
+    <div class="container">
+      <a class="navbar-brand" href="#inicio">
+        <img src="assets/img/logo.webp" alt="" width="46" height="46">
+        <span>Honey Moon</span>
+      </a>
+
+      <div class="d-flex align-items-center gap-2 order-lg-3">
+        <span class="hm-status d-none d-sm-inline-flex" id="estadoTienda">Horario</span>
+        <button class="btn btn-hm btn-hm-pink hm-cart-btn px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#carrito" aria-controls="carrito">
+          <i class="bi bi-bag-heart-fill"></i><span class="d-none d-md-inline ms-1">Carrito</span>
+          <span class="badge d-none" id="cartCount" aria-live="polite">0</span>
+          <span class="visually-hidden">productos en el carrito</span>
+        </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Abrir menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse order-lg-2" id="navLinks">
+        <ul class="navbar-nav mx-auto gap-lg-1 pt-3 pt-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#menu">Menú</a></li>
+          <li class="nav-item"><a class="nav-link" href="#temporada">Temporada</a></li>
+          <li class="nav-item"><a class="nav-link" href="#como-pedir">Cómo pedir</a></li>
+          <li class="nav-item"><a class="nav-link" href="#info">Horario y domicilios</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <header class="hm-hero" id="inicio">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">
+            <span class="hm-eyebrow"><i class="bi bi-geo-alt-fill text-danger"></i> Domicilios en Barranquilla</span>
+            <h1>Fresas con crema que <span class="hm-highlight">enamoran</span> a cualquiera</h1>
+            <p class="lead mx-auto mx-lg-0">Fresas frescas, nuestra crema de la casa y toppings para consentirte. Arma tu vaso, agrégalo al carrito y envíanos el pedido por WhatsApp.</p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start mt-4">
+              <a href="#menu" class="btn btn-hm btn-hm-red btn-lg"><i class="bi bi-heart-fill me-2"></i>Ver el menú</a>
+              <a href="#" class="btn btn-hm btn-hm-paper btn-lg" data-wa-general><i class="bi bi-whatsapp me-2"></i>Escríbenos</a>
+            </div>
+            <ul class="hm-perks justify-content-center justify-content-lg-start">
+              <li><i class="bi bi-flower1"></i> Fresas frescas cada día</li>
+              <li><i class="bi bi-cup-hot"></i> Crema hecha en casa</li>
+              <li><i class="bi bi-bicycle"></i> Llegamos a tu barrio</li>
+            </ul>
+          </div>
+          <div class="col-lg-6 order-1 order-lg-2">
+            <div class="hm-hero-art">
+              <span class="hm-sticker s1">¡Hecho con amor! <i class="bi bi-heart-fill text-danger"></i></span>
+              <span class="hm-sticker s2">Desde <span data-precio-min></span></span>
+              <i class="bi bi-heart hm-doodle d1" aria-hidden="true"></i>
+              <i class="bi bi-stars hm-doodle d2" aria-hidden="true"></i>
+              <i class="bi bi-star-fill hm-doodle d3" aria-hidden="true"></i>
+              <img class="hm-logo-big" src="assets/img/logo.webp" alt="Logo de Honey Moon: un honguito que carga cajas de cupcakes" width="440" height="440">
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Cinta -->
+    <div class="hm-ribbon" aria-hidden="true">
+      <div class="hm-ribbon-track">
+        <span>Fresas frescas</span><span>Crema de la casa</span><span>Toppings sin límite</span><span>Domicilios en Barranquilla</span><span>Cupcakes</span><span>Malteadas</span>
+        <span>Fresas frescas</span><span>Crema de la casa</span><span>Toppings sin límite</span><span>Domicilios en Barranquilla</span><span>Cupcakes</span><span>Malteadas</span>
+      </div>
+    </div>
+
+    <!-- ================= MENÚ ================= -->
+    <section class="hm-section hm-menu" id="menu" aria-labelledby="menuTitle">
+      <div class="container">
+        <div class="text-center mb-2">
+          <span class="hm-kicker">antojos</span>
+          <h2 class="hm-section-title" id="menuTitle">Nuestro menú</h2>
+          <p class="hm-section-sub">Toca cualquier producto para elegir tamaño y adiciones.</p>
+        </div>
+
+        <div class="hm-cats">
+          <div class="hm-cats-scroll" id="categorias" role="tablist" aria-label="Categorías del menú"></div>
+        </div>
+
+        <div class="row row-cols-2 row-cols-lg-3 row-cols-xl-4 g-3 g-md-4" id="productos" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ================= TEMPORADA ================= -->
+    <section class="hm-section hm-season" id="temporada" aria-labelledby="temporadaTitle">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <img class="hm-season-img" src="assets/img/mascota-temporadas.webp" alt="Meme de la mascota: yo hoy, yo en octubre vestido de vampiro y yo en diciembre con gorro de Papá Noel, siempre con un cupcake" width="981" height="826" loading="lazy">
+          </div>
+          <div class="col-lg-6">
+            <span class="hm-kicker">yo hoy · yo en octubre · yo en diciembre</span>
+            <h2 class="hm-section-title" id="temporadaTitle">Un antojo para cada temporada</h2>
+            <p class="hm-section-sub mb-4">Nuestro honguito se disfraza cada temporada y trae un sabor especial por tiempo limitado.</p>
+            <div class="d-grid gap-3" id="temporadaLista"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CÓMO PEDIR ================= -->
+    <section class="hm-section" id="como-pedir" aria-labelledby="pasosTitle">
+      <div class="container">
+        <div class="text-center mb-5">
+          <span class="hm-kicker">fácil y rápido</span>
+          <h2 class="hm-section-title" id="pasosTitle">¿Cómo pedir?</h2>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="hm-step">
+              <div class="hm-step-num">1</div>
+              <h3>Elige tu antojo</h3>
+              <p>Escoge el tamaño de tu vaso y súmale las adiciones que quieras.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="hm-step">
+              <div class="hm-step-num">2</div>
+              <h3>Revisa tu carrito</h3>
+              <p>Ajusta cantidades, escoge domicilio o recogida y tu método de pago.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="hm-step">
+              <div class="hm-step-num">3</div>
+              <h3>Envía por WhatsApp</h3>
+              <p>Tu pedido llega listo a nuestro chat. Te confirmamos el tiempo de entrega.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INFO ================= -->
+    <section class="hm-section hm-section-line bg-cream-2" id="info" aria-labelledby="infoTitle">
+      <div class="container">
+        <div class="text-center mb-5">
+          <span class="hm-kicker">info útil</span>
+          <h2 class="hm-section-title" id="infoTitle">Horario y domicilios</h2>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="hm-info-card">
+              <h3><i class="bi bi-clock"></i> Horario</h3>
+              <ul class="hm-list" id="horarioLista"></ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="hm-info-card">
+              <h3><i class="bi bi-bicycle"></i> Domicilios</h3>
+              <ul class="hm-list" id="zonasLista"></ul>
+              <p class="small text-cocoa-soft mt-3 mb-0">Valores de referencia. Te confirmamos por WhatsApp según tu barrio.</p>
+            </div>
+          </div>
+          <div class="col-md-12 col-lg-4">
+            <div class="hm-info-card">
+              <h3><i class="bi bi-wallet2"></i> Pagos</h3>
+              <div id="pagosLista" class="mt-3"></div>
+              <p class="small text-cocoa-soft">Si pagas por transferencia, te enviamos los datos por WhatsApp al confirmar tu pedido.</p>
+              <a href="#" class="btn btn-hm btn-hm-wa mt-2" data-wa-general><i class="bi bi-whatsapp me-2"></i>¿Dudas? Escríbenos</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="hm-footer py-5">
+    <div class="container">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-6 d-flex align-items-center gap-3">
+          <img src="assets/img/logo.webp" alt="" width="72" height="72" loading="lazy">
+          <div>
+            <a class="hm-handle" id="igLink" href="#" target="_blank" rel="noopener">@honeymoon</a>
+            <div><small>Fresas con crema · Barranquilla, Atlántico</small></div>
+          </div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <div class="d-flex flex-wrap gap-3 justify-content-md-end mb-2">
+            <a href="#menu">Menú</a>
+            <a href="#temporada">Temporada</a>
+            <a href="#info">Domicilios</a>
+            <a href="#" data-wa-general><i class="bi bi-whatsapp"></i> WhatsApp</a>
+          </div>
+          <small>© <span id="anio"></span> Honey Moon · Hecho con <i class="bi bi-heart-fill text-pink"></i> en Barranquilla</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= FLOTANTES ================= -->
+  <a href="#" class="hm-fab-wa" data-wa-general aria-label="Escríbenos por WhatsApp"><i class="bi bi-whatsapp"></i></a>
+  <button type="button" class="hm-cartbar" data-bs-toggle="offcanvas" data-bs-target="#carrito" aria-controls="carrito">
+    <span><i class="bi bi-bag-heart-fill me-2"></i>Ver carrito (<span data-cart-count>0</span>)</span>
+    <span data-cart-subtotal>$0</span>
+  </button>
+
+  <!-- ================= MODAL PRODUCTO ================= -->
+  <div class="modal fade" id="productoModal" tabindex="-1" aria-labelledby="productoTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+      <form class="modal-content" id="productoForm" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title fs-4" id="productoTitulo">Producto</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="hm-product-media" id="productoMedia"></div>
+              <p class="mt-3 mb-0 text-cocoa-soft" id="productoDesc"></p>
+            </div>
+            <div class="col-md-8">
+              <div id="productoTamanos"></div>
+              <div id="productoAdiciones"></div>
+              <label class="hm-group-title" for="productoNota">Notas <small>Opcional</small></label>
+              <textarea class="form-control" id="productoNota" rows="2" maxlength="140" placeholder="Ej: sin leche condensada, extra crema…"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-between flex-nowrap gap-3">
+          <div class="hm-qty" role="group" aria-label="Cantidad">
+            <button type="button" data-qty="-1" aria-label="Quitar uno"><i class="bi bi-dash-lg"></i></button>
+            <output id="productoCantidad" aria-live="polite">1</output>
+            <button type="button" data-qty="1" aria-label="Agregar uno"><i class="bi bi-plus-lg"></i></button>
+          </div>
+          <button type="submit" class="btn btn-hm btn-hm-red flex-grow-1 flex-sm-grow-0" id="productoAgregar">
+            Agregar · <span id="productoTotal">$0</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= CARRITO (OFFCANVAS) ================= -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="carrito" aria-labelledby="carritoTitulo">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title fs-4" id="carritoTitulo"><i class="bi bi-bag-heart-fill text-danger me-2"></i>Tu pedido</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body" id="carritoItems"></div>
+    <div class="hm-offcanvas-foot p-3" id="carritoFoot">
+      <div class="hm-totals mb-3">
+        <div><span>Subtotal</span><strong data-cart-subtotal>$0</strong></div>
+        <div class="small text-cocoa-soft"><span>Domicilio</span><span>Se calcula al finalizar</span></div>
+      </div>
+      <div class="d-grid gap-2">
+        <button class="btn btn-hm btn-hm-red btn-lg" type="button" id="irCheckout">Finalizar pedido <i class="bi bi-arrow-right ms-1"></i></button>
+        <button class="btn btn-link text-cocoa-soft btn-sm" type="button" id="vaciarCarrito">Vaciar carrito</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL CHECKOUT ================= -->
+  <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable modal-fullscreen-md-down">
+      <form class="modal-content" id="checkoutForm" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title fs-4" id="checkoutTitulo">Datos de entrega</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div id="checkoutPaso">
+            <div class="row g-4">
+              <div class="col-lg-7">
+                <div class="row g-3">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="cNombre">Nombre</label>
+                    <input class="form-control" id="cNombre" name="nombre" autocomplete="name" required maxlength="60">
+                    <div class="invalid-feedback">Cuéntanos tu nombre.</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="cTelefono">Celular</label>
+                    <input class="form-control" id="cTelefono" name="telefono" type="tel" inputmode="numeric" autocomplete="tel-national" required pattern="3[0-9]{9}" placeholder="300 123 4567">
+                    <div class="invalid-feedback">Escribe un celular de 10 dígitos que empiece por 3.</div>
+                  </div>
+
+                  <div class="col-12">
+                    <span class="form-label d-block">¿Cómo lo quieres?</span>
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <input type="radio" class="btn-check" name="entrega" id="eDomicilio" value="domicilio" checked>
+                        <label class="hm-option justify-content-center" for="eDomicilio"><span><i class="bi bi-bicycle me-1"></i> Domicilio</span></label>
+                      </div>
+                      <div class="col-6">
+                        <input type="radio" class="btn-check" name="entrega" id="eRecoger" value="recoger">
+                        <label class="hm-option justify-content-center" for="eRecoger"><span><i class="bi bi-shop me-1"></i> Recoger</span></label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12" data-solo-domicilio>
+                    <label class="form-label" for="cDireccion">Dirección</label>
+                    <input class="form-control" id="cDireccion" name="direccion" autocomplete="street-address" required maxlength="100" placeholder="Ej: Cra 50 # 80 - 20, apto 301">
+                    <div class="invalid-feedback">Necesitamos la dirección para el domicilio.</div>
+                  </div>
+                  <div class="col-sm-6" data-solo-domicilio>
+                    <label class="form-label" for="cBarrio">Barrio</label>
+                    <input class="form-control" id="cBarrio" name="barrio" required maxlength="60" placeholder="Ej: El Prado">
+                    <div class="invalid-feedback">Escribe tu barrio.</div>
+                  </div>
+                  <div class="col-sm-6" data-solo-domicilio>
+                    <label class="form-label" for="cZona">Zona</label>
+                    <select class="form-select" id="cZona" name="zona" required></select>
+                    <div class="invalid-feedback">Elige tu zona.</div>
+                  </div>
+                  <div class="col-12 d-none" data-solo-recoger>
+                    <div class="hm-summary d-flex gap-2 align-items-start">
+                      <i class="bi bi-shop fs-4"></i>
+                      <div><strong>Recoges en:</strong><br><span id="puntoRecogida"></span></div>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <label class="form-label" for="cPago">Método de pago</label>
+                    <select class="form-select" id="cPago" name="pago" required></select>
+                  </div>
+                  <div class="col-sm-6" id="cambioWrap">
+                    <label class="form-label" for="cCambio">¿Con cuánto pagas? <span class="fw-normal text-cocoa-soft">(opcional)</span></label>
+                    <input class="form-control" id="cCambio" name="cambio" inputmode="numeric" placeholder="Ej: 50000">
+                    <div class="invalid-feedback">Debe ser igual o mayor al total.</div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="cNotas">Notas del pedido <span class="fw-normal text-cocoa-soft">(opcional)</span></label>
+                    <textarea class="form-control" id="cNotas" name="notas" rows="2" maxlength="200" placeholder="Ej: timbre dañado, llamar al llegar…"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-5">
+                <div class="hm-summary">
+                  <h3 class="fs-5 mb-2">Resumen</h3>
+                  <div id="checkoutResumen"></div>
+                  <div class="hm-totals mt-2 pt-2 border-top border-2" style="border-color: rgba(60,21,14,.2) !important;">
+                    <div><span>Subtotal</span><span data-cart-subtotal>$0</span></div>
+                    <div><span>Domicilio</span><span id="checkoutDomicilio">$0</span></div>
+                    <div class="hm-grand"><span>Total</span><span id="checkoutTotal">$0</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="checkoutExito" class="hm-success d-none" tabindex="-1">
+            <img src="assets/img/mascota-hoy.webp" alt="">
+            <h3 class="fs-2">¡Pedido listo!</h3>
+            <p class="text-cocoa-soft mx-auto" style="max-width: 28rem;">Abrimos WhatsApp con tu pedido. Solo dale <strong>enviar</strong> en el chat y te confirmamos el tiempo de entrega.</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              <a class="btn btn-hm btn-hm-wa" id="reabrirWa" href="#" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-1"></i> Abrir WhatsApp de nuevo</a>
+              <button class="btn btn-hm btn-hm-paper" type="button" id="nuevoPedido">Hacer otro pedido</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" id="checkoutFoot">
+          <button type="button" class="btn btn-hm btn-hm-paper" id="volverCarrito"><i class="bi bi-arrow-left me-1"></i> Carrito</button>
+          <button type="submit" class="btn btn-hm btn-hm-wa btn-lg flex-grow-1 flex-sm-grow-0"><i class="bi bi-whatsapp me-2"></i>Enviar pedido por WhatsApp</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+    <div class="toast hm-toast align-items-center" id="toast" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="2200">
+      <div class="d-flex">
+        <div class="toast-body"><i class="bi bi-check-circle-fill me-2 text-pink"></i><span id="toastMsg">Agregado</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/menu.js"></script>
+  <script src="assets/js/illustrations.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
