@@ -373,6 +373,21 @@ h1, h2, h3, h4, .hm-display {
 .hm-footer a { color: var(--hm-cream); text-decoration: none; }
 .hm-footer a:hover { color: var(--hm-pink); }
 .hm-footer .hm-handle { font-family: var(--hm-font-brand); color: var(--hm-pink); font-size: 1.6rem; }
+
+/* Redes sociales */
+.hm-social {
+  display: inline-flex; align-items: center; gap: .45rem;
+  border: 2px solid var(--hm-cocoa); border-radius: 999px; padding: .35rem .85rem;
+  background: var(--hm-paper); color: var(--hm-cocoa); font-weight: 800; font-size: .92rem;
+  text-decoration: none; box-shadow: 3px 3px 0 var(--hm-cocoa);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.hm-social i { font-size: 1.05rem; }
+.hm-social:hover { background: var(--hm-pink); color: var(--hm-cocoa); transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--hm-cocoa); }
+.hm-social:focus-visible { outline: 3px solid var(--hm-pink); outline-offset: 3px; }
+.hm-footer .hm-social { background: transparent; color: var(--hm-cream); border-color: var(--hm-pink); box-shadow: none; }
+.hm-footer .hm-social:hover { background: var(--hm-pink); color: var(--hm-cocoa); box-shadow: none; }
+.hm-follow p { color: rgba(248, 240, 217, .9); font-weight: 600; }
 .hm-footer img { width: 72px; height: 72px; border-radius: 50%; border: 2.5px solid var(--hm-pink); }
 .hm-footer small { color: rgba(248, 240, 217, .7); }
 

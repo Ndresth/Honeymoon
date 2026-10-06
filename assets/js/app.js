@@ -776,8 +776,7 @@
     $("#pagosLista").innerHTML = CFG.metodosPago.map((m) => `<span class="hm-pill">${esc(m)}</span>`).join("");
     $$("[data-precio-min]").forEach((el) => (el.textContent = money(Math.min(...MENU.filter(disponible).map(precioDesde)))));
     $("#anio").textContent = new Date().getFullYear();
-    $("#igLink").href = `https://instagram.com/${encodeURIComponent(CFG.instagram)}`;
-    $("#igLink").textContent = `@${CFG.instagram}`;
+    renderRedes();
 
     const saludo = waUrl(`¡Hola ${CFG.negocio}! 🧁 Quiero hacer una consulta.`);
     $$("[data-wa-general]").forEach((a) => {
@@ -795,6 +794,47 @@
     } else {
       arte.closest(".hm-custom").classList.add("d-none");
     }
+  }
+
+  const redes = () => (CFG.redes || []).filter((r) => /^https:\/\//.test(r.url));
+
+  function renderRedes() {
+    const html = redes().map((r) => `
+      <a class="hm-social" href="${esc(r.url)}" target="_blank" rel="noopener" aria-label="${esc(r.nombre)}: @${esc(r.usuario)}">
+        <i class="bi bi-${esc(r.id)}" aria-hidden="true"></i><span>@${esc(r.usuario)}</span>
+      </a>`).join("");
+    $$("[data-redes]").forEach((el) => {
+      el.innerHTML = html;
+      el.closest("[data-redes-wrap]")?.classList.toggle("d-none", !html);
+    });
+  }
+
+  // Datos estructurados (schema.org) para buscadores: negocio, horario y perfiles sociales
+  function renderDatosEstructurados() {
+    const dias = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const hh = (h) => `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}`;
+    const canonical = $('link[rel="canonical"]');
+    const imagen = $('meta[property="og:image"]');
+    const datos = {
+      "@context": "https://schema.org",
+      "@type": "Bakery",
+      name: CFG.negocio,
+      description: $('meta[name="description"]').content,
+      url: canonical ? canonical.href : location.href,
+      image: imagen ? imagen.content : undefined,
+      servesCuisine: "Repostería",
+      priceRange: "$$",
+      address: { "@type": "PostalAddress", addressLocality: CFG.ciudad, addressRegion: "Atlántico", addressCountry: "CO" },
+      sameAs: redes().map((r) => r.url),
+      openingHoursSpecification: Object.entries(CFG.horario).filter(([, r]) => r).map(([d, r]) => ({
+        "@type": "OpeningHoursSpecification", dayOfWeek: dias[d], opens: hh(r[0]), closes: hh(r[1])
+      }))
+    };
+    if (TEL !== NUMERO_PRUEBA) datos.telephone = `+${TEL}`;
+    const s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.textContent = JSON.stringify(datos);
+    document.head.appendChild(s);
   }
 
   let toastInst;
@@ -830,6 +870,7 @@
   renderProductos();
   renderTemporada();
   renderInfo();
+  renderDatosEstructurados();
   renderCarrito();
   estadoTienda();
   setInterval(estadoTienda, 60 * 1000);

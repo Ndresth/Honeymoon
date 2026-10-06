@@ -5,7 +5,11 @@
 window.HM_CONFIG = {
   negocio: "Honey Moon",
   ciudad: "Barranquilla",
-  instagram: "honeymoon", // usuario sin @
+  // Redes sociales: id = nombre del ícono de Bootstrap Icons (bi-instagram, bi-tiktok...)
+  redes: [
+    { id: "instagram", nombre: "Instagram", usuario: "l.hooneymoonn", url: "https://www.instagram.com/l.hooneymoonn/" },
+    { id: "tiktok", nombre: "TikTok", usuario: "l.honeymoon", url: "https://www.tiktok.com/@l.honeymoon" }
+  ],
 
   // WhatsApp DE PRUEBA. Reemplázalo por el real: código de país (57) + número, sin espacios ni "+".
   // Ejemplo: "573001112233"
