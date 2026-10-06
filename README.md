@@ -28,6 +28,10 @@ whatsapp: "573000000000", // número de prueba
 por el número real con código de país y sin `+` ni espacios, por ejemplo `"573001112233"`.
 Mientras el número sea el de prueba, la página muestra una franja de **Modo prueba** arriba; desaparece sola al poner el real.
 
+## Redes sociales
+
+En `assets/js/config.js`, la lista `redes` alimenta los botones del pie de página y de la sección Temporada, y los datos estructurados para buscadores (`sameAs`). Cada red lleva `id` (el nombre del ícono de Bootstrap Icons: `instagram`, `tiktok`, `facebook`…), `usuario` y `url` sin parámetros de rastreo.
+
 ## Editar el menú
 
 En `assets/js/menu.js`:
