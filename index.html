@@ -8,16 +8,21 @@
   <meta name="theme-color" content="#3a4e33">
   <meta property="og:title" content="Honey Moon · Repostería en Barranquilla">
   <meta property="og:description" content="Tortas, cupcakes, brownies, galletas y fresas con crema hechos en casa. Pide por WhatsApp.">
-  <meta property="og:image" content="assets/img/og-honeymoon.jpg">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_CO">
+  <meta property="og:url" content="https://ndresth.github.io/Honeymoon/">
+  <meta property="og:image" content="https://ndresth.github.io/Honeymoon/assets/img/og-honeymoon.jpg">
+  <meta property="og:image:width" content="1042">
+  <meta property="og:image:height" content="1060">
+  <link rel="canonical" href="https://ndresth.github.io/Honeymoon/">
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,600..900,100&family=Nunito:wght@400;600;700;800&family=Shrikhand&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
@@ -39,10 +44,9 @@
 
       <div class="d-flex align-items-center gap-2 order-lg-3">
         <span class="hm-status d-none d-sm-inline-flex" id="estadoTienda">Horario</span>
-        <button class="btn btn-hm btn-hm-pink hm-cart-btn px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#carrito" aria-controls="carrito">
-          <i class="bi bi-bag-heart-fill"></i><span class="d-none d-md-inline ms-1">Carrito</span>
-          <span class="badge d-none" id="cartCount" aria-live="polite">0</span>
-          <span class="visually-hidden">productos en el carrito</span>
+        <button class="btn btn-hm btn-hm-pink hm-cart-btn px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#carrito" aria-controls="carrito" aria-label="Carrito vacío">
+          <i class="bi bi-bag-heart-fill" aria-hidden="true"></i><span class="d-none d-md-inline ms-1" aria-hidden="true">Carrito</span>
+          <span class="badge d-none" id="cartCount" aria-hidden="true">0</span>
         </button>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Abrir menú">
           <span class="navbar-toggler-icon"></span>
@@ -107,15 +111,16 @@
       <div class="container">
         <div class="text-center mb-2">
           <span class="hm-kicker">antojos</span>
-          <h2 class="hm-section-title" id="menuTitle">Nuestro menú</h2>
+          <h2 class="hm-section-title" id="menuTitle" tabindex="-1">Nuestro menú</h2>
           <p class="hm-section-sub">Toca cualquier producto para elegir tamaño y adiciones. Las tortas se piden con <span data-dias-encargo>2</span> días de anticipación.</p>
         </div>
 
         <div class="hm-cats">
-          <div class="hm-cats-scroll" id="categorias" role="tablist" aria-label="Categorías del menú"></div>
+          <div class="hm-cats-scroll" id="categorias" role="group" aria-label="Categorías del menú"></div>
         </div>
 
-        <div class="row row-cols-2 row-cols-lg-3 row-cols-xl-4 g-3 g-md-4" id="productos" aria-live="polite"></div>
+        <p class="visually-hidden" id="menuEstado" role="status"></p>
+        <div class="row row-cols-2 row-cols-lg-3 row-cols-xl-4 g-3 g-md-4" id="productos"></div>
       </div>
     </section>
 
@@ -265,11 +270,11 @@
         </div>
         <div class="modal-body">
           <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-lg-4">
               <div class="hm-product-media" id="productoMedia"></div>
               <p class="mt-3 mb-0 text-cocoa-soft" id="productoDesc"></p>
             </div>
-            <div class="col-md-8">
+            <div class="col-lg-8">
               <div id="productoTamanos"></div>
               <div class="hm-notice d-none mt-3" id="productoEncargo"><i class="bi bi-calendar-heart"></i><span></span></div>
               <div id="productoAdiciones"></div>
@@ -327,16 +332,16 @@
                   <div class="col-sm-6">
                     <label class="form-label" for="cNombre">Nombre</label>
                     <input class="form-control" id="cNombre" name="nombre" autocomplete="name" required maxlength="60">
-                    <div class="invalid-feedback">Cuéntanos tu nombre.</div>
+                    <div class="invalid-feedback" id="errNombre">Cuéntanos tu nombre.</div>
                   </div>
                   <div class="col-sm-6">
                     <label class="form-label" for="cTelefono">Celular</label>
                     <input class="form-control" id="cTelefono" name="telefono" type="tel" inputmode="numeric" autocomplete="tel-national" required pattern="3[0-9]{9}" placeholder="300 123 4567">
-                    <div class="invalid-feedback">Escribe un celular de 10 dígitos que empiece por 3.</div>
+                    <div class="invalid-feedback" id="errTelefono">Escribe un celular de 10 dígitos que empiece por 3.</div>
                   </div>
 
-                  <div class="col-12">
-                    <span class="form-label d-block">¿Cómo lo quieres?</span>
+                  <div class="col-12" role="radiogroup" aria-labelledby="lblEntrega">
+                    <span class="form-label d-block" id="lblEntrega">¿Cómo lo quieres?</span>
                     <div class="row g-2">
                       <div class="col-6">
                         <input type="radio" class="btn-check" name="entrega" id="eDomicilio" value="domicilio" checked>
@@ -352,17 +357,17 @@
                   <div class="col-12" data-solo-domicilio>
                     <label class="form-label" for="cDireccion">Dirección</label>
                     <input class="form-control" id="cDireccion" name="direccion" autocomplete="street-address" required maxlength="100" placeholder="Ej: Cra 50 # 80 - 20, apto 301">
-                    <div class="invalid-feedback">Necesitamos la dirección para el domicilio.</div>
+                    <div class="invalid-feedback" id="errDireccion">Necesitamos la dirección para el domicilio.</div>
                   </div>
                   <div class="col-sm-5" data-solo-domicilio>
                     <label class="form-label" for="cBarrio">Barrio</label>
                     <input class="form-control" id="cBarrio" name="barrio" required maxlength="60" placeholder="Ej: El Prado">
-                    <div class="invalid-feedback">Escribe tu barrio.</div>
+                    <div class="invalid-feedback" id="errBarrio">Escribe tu barrio.</div>
                   </div>
                   <div class="col-sm-7" data-solo-domicilio>
                     <label class="form-label" for="cZona">Zona</label>
                     <select class="form-select" id="cZona" name="zona" required></select>
-                    <div class="invalid-feedback">Elige tu zona.</div>
+                    <div class="invalid-feedback" id="errZona">Elige tu zona.</div>
                   </div>
                   <div class="col-12 d-none" data-solo-recoger>
                     <div class="hm-summary d-flex gap-2 align-items-start">
@@ -373,7 +378,7 @@
 
                   <div class="col-12">
                     <label class="form-label" for="cFecha">Fecha de entrega <span class="fw-normal text-cocoa-soft" id="fechaOpcional">(opcional)</span></label>
-                    <input class="form-control" type="date" id="cFecha" name="fecha">
+                    <input class="form-control" type="date" id="cFecha" name="fecha" aria-describedby="fechaAyuda">
                     <div class="form-text text-cocoa-soft" id="fechaAyuda"></div>
                     <div class="invalid-feedback" id="fechaError">Elige la fecha de entrega.</div>
                   </div>
@@ -385,7 +390,7 @@
                   <div class="col-sm-6" id="cambioWrap">
                     <label class="form-label" for="cCambio">¿Con cuánto pagas? <span class="fw-normal text-cocoa-soft">(opcional)</span></label>
                     <input class="form-control" id="cCambio" name="cambio" inputmode="numeric" placeholder="Ej: 50000">
-                    <div class="invalid-feedback">Debe ser igual o mayor al total.</div>
+                    <div class="invalid-feedback" id="errCambio">Debe ser igual o mayor al total.</div>
                   </div>
                   <div class="col-12">
                     <label class="form-label" for="cNotas">Notas del pedido <span class="fw-normal text-cocoa-soft">(opcional)</span></label>
@@ -418,9 +423,9 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer" id="checkoutFoot">
-          <button type="button" class="btn btn-hm btn-hm-paper" id="volverCarrito"><i class="bi bi-arrow-left me-1"></i> Carrito</button>
-          <button type="submit" class="btn btn-hm btn-hm-wa btn-lg flex-grow-1 flex-sm-grow-0"><i class="bi bi-whatsapp me-2"></i>Enviar pedido por WhatsApp</button>
+        <div class="modal-footer flex-nowrap" id="checkoutFoot">
+          <button type="button" class="btn btn-hm btn-hm-paper" id="volverCarrito" aria-label="Volver al carrito"><i class="bi bi-arrow-left" aria-hidden="true"></i><span class="d-none d-sm-inline ms-1">Carrito</span></button>
+          <button type="submit" class="btn btn-hm btn-hm-wa btn-lg flex-grow-1 flex-sm-grow-0 text-nowrap"><i class="bi bi-whatsapp me-2" aria-hidden="true"></i>Enviar<span class="d-none d-sm-inline"> pedido</span> por WhatsApp</button>
         </div>
       </form>
     </div>
@@ -435,7 +440,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/menu.js"></script>
   <script src="assets/js/illustrations.js"></script>

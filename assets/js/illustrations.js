@@ -325,6 +325,7 @@
 
   let contador = 0;
   window.HM_ILUSTRACION = function (cfg) {
+    cfg = cfg || {};
     const uid = `hm${++contador}`;
     const dibujos = {
       vaso: () => vaso(cfg, uid, false),

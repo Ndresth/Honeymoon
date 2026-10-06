@@ -12,7 +12,10 @@ assets/js/menu.js          Categorías, productos, tamaños y adiciones
 assets/js/illustrations.js Ilustraciones SVG de los productos
 assets/js/app.js           Lógica: menú, carrito, checkout y mensaje de WhatsApp
 assets/img/                Logo, favicon y recortes de la mascota
+assets/vendor/             Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 (copias locales, licencia MIT)
 ```
+
+Bootstrap se sirve desde `assets/vendor/` en vez de un CDN: la página no depende de un tercero para funcionar y no se ejecuta código externo. Solo las fuentes vienen de Google Fonts.
 
 ## Configurar el WhatsApp real
 
