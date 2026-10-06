@@ -41,5 +41,8 @@ window.HM_CONFIG = {
   // Punto de recogida (de prueba).
   puntoRecogida: "Barranquilla · dirección por confirmar",
 
-  metodosPago: ["Efectivo", "Nequi", "Daviplata", "Transferencia Bancolombia"]
+  metodosPago: ["Efectivo", "Nequi", "Daviplata", "Transferencia Bancolombia"],
+
+  // Días de anticipación para productos por encargo (tortas, cheesecake entero...).
+  diasEncargo: 2
 };

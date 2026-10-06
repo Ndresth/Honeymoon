@@ -7,7 +7,8 @@
   const CFG = window.HM_CONFIG;
   const MENU = window.HM_MENU;
   const CATS = window.HM_CATEGORIAS;
-  const ADICIONES = window.HM_ADICIONES;
+  const GRUPOS_ADICIONES = window.HM_ADICIONES;
+  const ADICIONES = Object.values(GRUPOS_ADICIONES).flat();
   const NUMERO_PRUEBA = "573000000000";
   const MAX_CANTIDAD = 20;
 
@@ -43,13 +44,17 @@
   const fondo = (p) => (p.ilustracion && p.ilustracion.fondo) || p.fondo || "var(--hm-pink-soft)";
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
   const disponible = (p) => p.disponible !== false;
+  const getTamano = (p, id) => p.tamanos.find((t) => t.id === id) || p.tamanos[0];
+  const nombreTamano = (t) => t.nombre + (t.detalle ? ` (${t.detalle})` : "");
+  const esEncargo = (p, t) => !!(p.encargo || (t && t.encargo));
+  const textoEncargo = () => `Por encargo · ${CFG.diasEncargo} días antes`;
 
   /* =====================================================
      Carrito
      ===================================================== */
   let carrito = store.get("hm_carrito", []).filter((it) => {
     const p = getProducto(it.id);
-    return p && disponible(p) && p.tamanos.some((t) => t.id === it.tamano) && it.cantidad > 0;
+    return p && disponible(p) && !p.cotizar && p.tamanos.some((t) => t.id === it.tamano) && it.cantidad > 0;
   });
 
   function claveItem(it) {
@@ -58,7 +63,7 @@
 
   function precioUnitario(it) {
     const p = getProducto(it.id);
-    const t = p.tamanos.find((x) => x.id === it.tamano) || p.tamanos[0];
+    const t = getTamano(p, it.tamano);
     return t.precio + it.adiciones.reduce((s, id) => s + ((getAdicion(id) || {}).precio || 0), 0);
   }
 
@@ -84,11 +89,12 @@
 
   function describirItem(it) {
     const p = getProducto(it.id);
-    const partes = [];
-    if (p.tamanos.length > 1) partes.push(p.tamanos.find((t) => t.id === it.tamano).nombre);
+    const t = getTamano(p, it.tamano);
     const adic = it.adiciones.map((id) => getAdicion(id)).filter(Boolean).map((a) => a.nombre);
-    return { p, tamano: partes[0] || "", adic, nota: it.nota.trim() };
+    return { p, tamano: p.tamanos.length > 1 ? nombreTamano(t) : "", adic, nota: it.nota.trim(), encargo: esEncargo(p, t) };
   }
+
+  const carritoTieneEncargo = () => carrito.some((it) => describirItem(it).encargo);
 
   function renderCarrito() {
     const cont = $("#carritoItems");
@@ -126,6 +132,7 @@
             </div>
             ${meta ? `<div class="hm-cart-meta">${esc(meta)}</div>` : ""}
             ${d.nota ? `<div class="hm-cart-meta fst-italic">“${esc(d.nota)}”</div>` : ""}
+            ${d.encargo ? `<div class="hm-cart-meta"><i class="bi bi-calendar-heart me-1"></i>Por encargo</div>` : ""}
             <div class="d-flex justify-content-between align-items-center mt-2">
               <div class="hm-qty hm-qty-sm" role="group" aria-label="Cantidad de ${esc(d.p.nombre)}">
                 <button type="button" data-step="${i}" data-delta="-1" aria-label="Quitar uno"><i class="bi bi-dash-lg"></i></button>
@@ -166,10 +173,18 @@
 
   function tarjeta(p) {
     const ok = disponible(p);
-    const varios = p.tamanos.length > 1;
+    const varios = p.tamanos.length > 1 || p.cotizar;
+    const accion = p.cotizar
+      ? `data-cotizar="${p.id}" aria-label="Cotizar ${esc(p.nombre)} por WhatsApp"`
+      : `data-open="${p.id}" aria-label="Personalizar ${esc(p.nombre)}"`;
+    const encargo = p.encargo ? textoEncargo()
+      : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
+    let boton = `<span class="btn btn-hm btn-hm-red text-nowrap" aria-hidden="true"><i class="bi bi-plus-lg"></i><span class="ms-1">Agregar</span></span>`;
+    if (p.cotizar) boton = `<span class="btn btn-hm btn-hm-wa text-nowrap" aria-hidden="true"><i class="bi bi-whatsapp"></i><span class="ms-1">Cotizar</span></span>`;
+    if (!ok) boton = `<span class="btn btn-hm btn-hm-paper disabled text-nowrap" aria-hidden="true">Próximamente</span>`;
     return `
       <div class="col" data-cat="${p.categoria}">
-        <article class="hm-card${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" data-open="${p.id}" aria-label="Personalizar ${esc(p.nombre)}"` : `aria-disabled="true"`}>
+        <article class="hm-card${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" ${accion}` : `aria-disabled="true"`}>
           <div class="hm-card-media" style="background:${fondo(p)}">
             ${media(p)}
             ${p.etiqueta ? `<span class="hm-tag${ok ? "" : " is-soon"}">${esc(p.etiqueta)}</span>` : ""}
@@ -177,11 +192,10 @@
           <div class="hm-card-body">
             <h3 class="hm-card-title">${esc(p.nombre)}</h3>
             <p class="hm-card-desc">${esc(p.descripcion)}</p>
+            ${encargo ? `<p class="hm-card-note"><i class="bi bi-calendar-heart"></i>${esc(encargo)}</p>` : ""}
             <div class="hm-card-foot">
               <div class="hm-price">${varios ? "<small>Desde</small>" : ""}${money(precioDesde(p))}</div>
-              ${ok
-                ? `<span class="btn btn-hm btn-hm-red text-nowrap" aria-hidden="true"><i class="bi bi-plus-lg"></i><span class="ms-1">Agregar</span></span>`
-                : `<span class="btn btn-hm btn-hm-paper disabled text-nowrap" aria-hidden="true">Próximamente</span>`}
+              ${boton}
             </div>
           </div>
         </article>
@@ -197,8 +211,16 @@
   }
 
   function renderProductos() {
-    const lista = categoriaActiva === "todos" ? MENU : MENU.filter((p) => p.categoria === categoriaActiva);
-    $("#productos").innerHTML = lista.map(tarjeta).join("");
+    if (categoriaActiva !== "todos") {
+      $("#productos").innerHTML = MENU.filter((p) => p.categoria === categoriaActiva).map(tarjeta).join("");
+      return;
+    }
+    // En "Todo" se agrupa por categoría con su título
+    $("#productos").innerHTML = CATS.filter((c) => c.id !== "todos").map((c) => {
+      const lista = MENU.filter((p) => p.categoria === c.id);
+      if (!lista.length) return "";
+      return `<div class="col-12 hm-cat-heading"><h3><i class="bi ${c.icono}"></i>${esc(c.nombre)}</h3></div>` + lista.map(tarjeta).join("");
+    }).join("");
   }
 
   $("#categorias").addEventListener("click", (e) => {
@@ -258,17 +280,20 @@
         ${p.tamanos.map((t, i) => `
           <div class="col-${p.tamanos.length === 2 ? 6 : 4}">
             <input type="radio" class="btn-check" name="tamano" id="t-${t.id}" value="${t.id}" ${i === 0 ? "checked" : ""}>
-            <label class="hm-option flex-column text-center gap-0" for="t-${t.id}">
-              <span>${esc(t.nombre)}</span><span class="hm-option-price">${money(t.precio)}</span>
+            <label class="hm-option flex-column text-center gap-0 h-100" for="t-${t.id}">
+              <span>${esc(t.nombre)}</span>
+              ${t.detalle ? `<small class="hm-option-detail">${esc(t.detalle)}</small>` : ""}
+              <span class="hm-option-price">${money(t.precio)}</span>
             </label>
           </div>`).join("")}
       </div>` : `<input type="hidden" name="tamano" value="${p.tamanos[0].id}">
-      <div class="hm-group-title">${esc(p.tamanos[0].nombre)} <small>${money(p.tamanos[0].precio)}</small></div>`;
+      <div class="hm-group-title">${esc(nombreTamano(p.tamanos[0]))} <small>${money(p.tamanos[0].precio)}</small></div>`;
 
-    $("#productoAdiciones").innerHTML = p.adiciones ? `
+    const grupo = p.adiciones ? GRUPOS_ADICIONES[p.adiciones] || [] : [];
+    $("#productoAdiciones").innerHTML = grupo.length ? `
       <div class="hm-group-title" id="lblAdic">Adiciones <small>Opcional</small></div>
       <div class="row g-2" role="group" aria-labelledby="lblAdic">
-        ${ADICIONES.map((a) => `
+        ${grupo.map((a) => `
           <div class="col-sm-6">
             <input type="checkbox" class="btn-check" name="adicion" id="a-${a.id}" value="${a.id}">
             <label class="hm-option" for="a-${a.id}">
@@ -279,6 +304,7 @@
       </div>` : "";
 
     $("#productoNota").value = "";
+    $("#productoNota").placeholder = p.notaPlaceholder || "Ej: sin leche condensada, extra crema…";
     actualizarTotalProducto();
     productoModal.show();
   }
@@ -300,6 +326,10 @@
     $('[data-qty="-1"]', form).disabled = cantidad <= 1;
     $('[data-qty="1"]', form).disabled = cantidad >= MAX_CANTIDAD;
     $("#productoTotal").textContent = money(precioUnitario(sel) * cantidad);
+    const encargo = esEncargo(actual, getTamano(actual, sel.tamano));
+    $("#productoEncargo").classList.toggle("d-none", !encargo);
+    $("#productoEncargo span").textContent =
+      `Se prepara por encargo: pídelo con al menos ${CFG.diasEncargo} días de anticipación. En el carrito eliges la fecha.`;
   }
 
   form.addEventListener("change", actualizarTotalProducto);
@@ -316,14 +346,32 @@
     toast(`${cantidad > 1 ? cantidad + "× " : ""}${actual.nombre} agregado al carrito`);
   });
 
+  const mensajeCotizacion = (p) => [
+    `¡Hola ${CFG.negocio}! 🎂 Quiero cotizar una ${p ? p.nombre.toLowerCase() : "torta personalizada"}.`,
+    "",
+    "• Ocasión:",
+    "• Fecha del evento:",
+    "• Número de porciones:",
+    "• Sabor:",
+    "• Idea o temática:"
+  ].join("\n");
+
+  function cotizar(id) {
+    const win = window.open(waUrl(mensajeCotizacion(getProducto(id))), "_blank");
+    if (win) win.opener = null;
+  }
+
   document.addEventListener("click", (e) => {
     const el = e.target.closest("[data-open]");
+    const cot = e.target.closest("[data-cotizar]");
     if (el) abrirProducto(el.dataset.open);
+    else if (cot) cotizar(cot.dataset.cotizar);
   });
   document.addEventListener("keydown", (e) => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.matches("article[data-open]")) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches("article[data-open], article[data-cotizar]")) {
       e.preventDefault();
-      abrirProducto(e.target.dataset.open);
+      if (e.target.dataset.open) abrirProducto(e.target.dataset.open);
+      else cotizar(e.target.dataset.cotizar);
     }
   });
 
@@ -344,7 +392,48 @@
   const costoDomicilio = () => (esDomicilio() && zonaSel() ? zonaSel().costo : 0);
   const soloDigitos = (s) => String(s || "").replace(/\D/g, "");
 
+  /* Fechas en hora de Colombia, formato AAAA-MM-DD */
+  function hoyBogota() {
+    const partes = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Bogota", year: "numeric", month: "2-digit", day: "2-digit"
+    }).formatToParts(new Date());
+    const get = (t) => partes.find((p) => p.type === t).value;
+    return `${get("year")}-${get("month")}-${get("day")}`;
+  }
+  const isoAFecha = (iso) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
+  };
+  const sumarDias = (iso, dias) => {
+    const f = isoAFecha(iso);
+    f.setUTCDate(f.getUTCDate() + dias);
+    return f.toISOString().slice(0, 10);
+  };
+  const fechaLarga = (iso) => new Intl.DateTimeFormat("es-CO", {
+    timeZone: "UTC", weekday: "long", day: "numeric", month: "long"
+  }).format(isoAFecha(iso));
+
+  function actualizarFecha() {
+    const encargo = carritoTieneEncargo();
+    const min = encargo ? sumarDias(hoyBogota(), CFG.diasEncargo) : hoyBogota();
+    const f = $("#cFecha");
+    f.min = min;
+    f.required = encargo;
+    $("#fechaOpcional").classList.toggle("d-none", encargo);
+    $("#fechaAyuda").textContent = encargo
+      ? `Tu pedido tiene productos por encargo: la fecha más cercana es el ${fechaLarga(min)}.`
+      : "Déjala vacía si lo quieres para hoy.";
+    let error = "";
+    if (f.value) {
+      if (f.value < min) error = encargo ? `Para productos por encargo elige desde el ${fechaLarga(min)}.` : "Elige una fecha desde hoy.";
+      else if (!CFG.horario[isoAFecha(f.value).getUTCDay()]) error = "Ese día no abrimos, elige otra fecha.";
+    }
+    f.setCustomValidity(error);
+    $("#fechaError").textContent = error || "Elige la fecha de entrega.";
+  }
+
   function actualizarCheckout() {
+    actualizarFecha();
     const dom = esDomicilio();
     $$("[data-solo-domicilio]").forEach((el) => {
       el.classList.toggle("d-none", !dom);
@@ -422,7 +511,7 @@
     const sub = subtotal();
     const envio = costoDomicilio();
     const L = [];
-    L.push(`🍓 *Nuevo pedido · ${CFG.negocio}*`);
+    L.push(`🧁 *Nuevo pedido · ${CFG.negocio}*`);
     L.push(`Pedido ${datos.codigo}`);
     L.push("");
     L.push(`*Cliente:* ${datos.nombre}`);
@@ -435,11 +524,12 @@
     } else {
       L.push(`*Entrega:* Recoger en el local`);
     }
+    L.push(`*Fecha:* ${datos.fecha ? fechaLarga(datos.fecha) : "Hoy, lo antes posible"}`);
     L.push("");
     L.push("*Productos:*");
     carrito.forEach((it, i) => {
       const d = describirItem(it);
-      L.push(`${i + 1}. ${it.cantidad}x ${d.p.nombre}${d.tamano ? ` (${d.tamano})` : ""} — ${money(precioUnitario(it) * it.cantidad)}`);
+      L.push(`${i + 1}. ${it.cantidad}x ${d.p.nombre}${d.tamano ? ` · ${d.tamano}` : ""} — ${money(precioUnitario(it) * it.cantidad)}`);
       if (d.adic.length) L.push(`   + ${d.adic.join(", ")}`);
       if (d.nota) L.push(`   Nota: ${d.nota}`);
     });
@@ -468,6 +558,7 @@
       telefono: cForm.telefono.value.trim(),
       direccion: (cForm.direccion.value || "").trim(),
       barrio: (cForm.barrio.value || "").trim(),
+      fecha: $("#cFecha").value,
       pago: $("#cPago").value,
       cambio: $("#cPago").value === "Efectivo" ? +soloDigitos($("#cCambio").value) : 0,
       notas: cForm.notas.value.trim()
@@ -534,6 +625,9 @@
       a.rel = "noopener";
     });
     $("#testBanner").classList.toggle("d-none", CFG.whatsapp !== NUMERO_PRUEBA);
+    $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
+    const personalizada = getProducto("torta-personalizada");
+    if (personalizada) $("#customArt").innerHTML = window.HM_ILUSTRACION(personalizada.ilustracion);
   }
 
   let toastInst;

@@ -109,12 +109,12 @@ h1, h2, h3, h4, .hm-display {
 .hm-navbar .navbar-brand { display: flex; align-items: center; gap: .6rem; color: var(--hm-cocoa); }
 .hm-navbar .navbar-brand img { width: 46px; height: 46px; border-radius: 50%; border: 2.5px solid var(--hm-cocoa); }
 .hm-navbar .navbar-brand span { font-family: var(--hm-font-brand); font-size: 1.45rem; line-height: 1; }
-.hm-navbar .nav-link { color: var(--hm-cocoa); font-weight: 700; border-radius: 999px; padding-inline: .9rem !important; }
+.hm-navbar .nav-link { white-space: nowrap; color: var(--hm-cocoa); font-weight: 700; border-radius: 999px; padding-inline: .9rem !important; }
 .hm-navbar .nav-link:hover, .hm-navbar .nav-link:focus-visible { background: var(--hm-pink-soft); color: var(--hm-cocoa); }
 .hm-navbar .navbar-toggler { border: var(--hm-border); border-radius: 12px; }
 .hm-navbar .navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(233, 122, 166, .55); }
 
-.hm-cart-btn { position: relative; }
+.hm-cart-btn { position: relative; white-space: nowrap; }
 .hm-cart-btn .badge {
   position: absolute; top: -8px; right: -8px;
   background: var(--hm-red); color: #fff8ee; border: 2px solid var(--hm-cocoa);
@@ -124,7 +124,7 @@ h1, h2, h3, h4, .hm-display {
 @keyframes hm-bump { 0% { transform: scale(1); } 40% { transform: scale(1.45); } 100% { transform: scale(1); } }
 .hm-status {
   display: inline-flex; align-items: center; gap: .4rem;
-  font-size: .8rem; font-weight: 800; padding: .3rem .7rem; border-radius: 999px;
+  font-size: .8rem; font-weight: 800; padding: .3rem .7rem; border-radius: 999px; white-space: nowrap;
   border: 2px solid var(--hm-cocoa); background: var(--hm-paper);
 }
 .hm-status::before { content: ""; width: .55rem; height: .55rem; border-radius: 50%; background: #9aa0a6; }
@@ -274,6 +274,44 @@ h1, h2, h3, h4, .hm-display {
 .hm-card .btn-hm { --bs-btn-padding-x: 1rem; --bs-btn-padding-y: .45rem; }
 .hm-card.is-disabled { cursor: default; }
 .hm-card.is-disabled .hm-card-media { filter: saturate(.7); }
+
+.hm-card-note {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .8rem; font-weight: 700; color: var(--hm-forest); margin: -.4rem 0 .8rem;
+}
+.row > .hm-cat-heading { flex: 0 0 100%; width: 100%; max-width: 100%; margin-top: 1.5rem; }
+.hm-cat-heading:first-child { margin-top: 0; }
+.hm-cat-heading h3 {
+  display: flex; align-items: center; gap: .6rem; font-size: 1.6rem; color: var(--hm-forest); margin: 0;
+}
+.hm-cat-heading h3::after { content: ""; flex: 1; border-bottom: 2px dashed rgba(60, 21, 14, .25); margin-left: .5rem; }
+.hm-cat-heading h3 i {
+  width: 2.3rem; height: 2.3rem; display: grid; place-items: center; font-size: 1rem; flex-shrink: 0;
+  background: var(--hm-pink); color: var(--hm-cocoa); border: 2px solid var(--hm-cocoa); border-radius: 50%;
+}
+
+.hm-notice {
+  display: flex; gap: .6rem; align-items: flex-start;
+  background: var(--hm-pink-soft); border: 2px solid var(--hm-cocoa); border-radius: 14px;
+  padding: .6rem .8rem; font-size: .9rem; font-weight: 600;
+}
+.hm-notice i { font-size: 1.1rem; color: var(--hm-red); }
+.hm-option-detail { font-weight: 600; font-size: .75rem; color: var(--hm-cocoa-soft); }
+
+/* ---------- Tortas personalizadas ---------- */
+.hm-custom { padding-block: clamp(2.5rem, 5vw, 4rem); }
+.hm-custom-card {
+  background: var(--hm-pink); border: var(--hm-border); border-radius: 28px;
+  box-shadow: 8px 8px 0 var(--hm-cocoa); padding: clamp(1.25rem, 3vw, 2.25rem);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, .45) 1.4px, transparent 1.8px);
+  background-size: 18px 18px;
+}
+.hm-custom-art {
+  background: var(--hm-paper); border: var(--hm-border); border-radius: 50%;
+  aspect-ratio: 1; max-width: 220px; margin-inline: auto; overflow: hidden;
+}
+.hm-custom-art svg { width: 100%; height: 100%; display: block; }
+.hm-custom .hm-kicker { color: var(--hm-red); }
 
 /* ---------- Temporada ---------- */
 .hm-season { background: var(--hm-forest); color: var(--hm-cream); position: relative; overflow: hidden; }
@@ -461,6 +499,9 @@ body.has-cart .hm-fab-wa { bottom: 5.25rem; }
   .hm-tag { top: .5rem; left: .5rem; font-size: .62rem; padding: .2rem .45rem; }
   .hm-season-item img { width: 76px; height: 76px; }
   .hm-product-media { aspect-ratio: 16 / 9; }
+  .hm-card-note { font-size: .72rem; margin: -.2rem 0 .5rem; }
+  .hm-cat-heading h3 { font-size: 1.3rem; }
+  .hm-custom-art { max-width: 160px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
