@@ -65,7 +65,20 @@ npx http-server -p 8080
 
 ## Publicar
 
-Es 100 % estático: no necesita servidor, base de datos ni comando de build.
+Es 100 % estático: no necesita servidor, base de datos ni comando de build. Se publica con **GitHub Pages** (rama `master`, carpeta raíz) en **https://honeymoonreposteria.com** (dominio registrado en Namecheap). Cada merge a `master` se publica solo.
 
-- **Pruebas (gratis, ya está en GitHub):** GitHub Pages → *Settings → Pages → Deploy from a branch* → rama `master`, carpeta `/ (root)`. Queda en `https://ndresth.github.io/Honeymoon/`.
-- **Producción con dominio propio:** Cloudflare Pages → *Workers & Pages → Create → Pages → Connect to Git* → este repo, sin comando de build y con directorio de salida `/`. Cada `git push` a `master` publica solo.
+- `CNAME` (raíz del repo) contiene el dominio; no lo borres o GitHub Pages deja de servir el dominio propio.
+- `canonical`, `og:url` y `og:image` en `index.html` apuntan al dominio (vista previa al compartir por WhatsApp y buscadores).
+
+DNS en Namecheap (*Domain List → Manage → Advanced DNS → Host Records*):
+
+| Tipo | Host | Valor |
+|---|---|---|
+| A | `@` | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+| CNAME | `www` | `ndresth.github.io.` |
+| TXT | `_github-pages-challenge-ndresth` | valor que da GitHub en *Settings → Pages → Add a domain* (perfil) |
+
+Sin registros comodín (`*`). Después de propagar: repo → *Settings → Pages* → **Enforce HTTPS**.
