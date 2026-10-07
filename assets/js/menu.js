@@ -1,340 +1,248 @@
 /* =========================================================
-   Honey Moon · Menú de prueba (repostería)
-   Precios en pesos colombianos (COP). Edita libremente.
+   Honeymoon · Menú
+   Precios en pesos colombianos (COP).
+
+   ⚠️ PRECIOS Y TAMAÑOS DE REFERENCIA: reemplázalos por los reales y luego
+   pon `preciosConfirmados: true` en config.js para quitar el aviso.
 
    Campos de cada producto:
    - tamanos: lista de tamaños con precio (si hay uno solo, no se muestra selector).
               Un tamaño puede llevar `detalle` (ej. "12 porciones") y `encargo: true`.
-   - adiciones: nombre del grupo de HM_ADICIONES que acepta ("postres", "tortas"...)
+   - adiciones: nombre del grupo de HM_ADICIONES que acepta ("donas", "galletaChips"...)
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
-   - cotizar: true para productos que se cotizan por WhatsApp (no van al carrito)
+   - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
    - notaPlaceholder: texto de ejemplo para la nota del producto
    - disponible: false para mostrarlo como "Próximamente"
    ========================================================= */
 window.HM_CATEGORIAS = [
   { id: "todos", nombre: "Todo", icono: "bi-stars" },
+  { id: "fresas", nombre: "Fresas con crema", icono: "bi-heart" },
+  { id: "paves", nombre: "Pavés", icono: "bi-layers" },
+  { id: "cheesecakes", nombre: "Cheesecakes", icono: "bi-cake2" },
+  { id: "donas", nombre: "Mini donas", icono: "bi-record-circle" },
+  { id: "galletas", nombre: "Galletas y alfajores", icono: "bi-cookie" },
   { id: "tortas", nombre: "Tortas", icono: "bi-cake" },
-  { id: "cupcakes", nombre: "Cupcakes", icono: "bi-cake2" },
-  { id: "horneados", nombre: "Brownies y galletas", icono: "bi-cookie" },
-  { id: "postres", nombre: "Fresas y postres", icono: "bi-heart" },
-  { id: "bebidas", nombre: "Bebidas", icono: "bi-cup-straw" },
   { id: "temporada", nombre: "Temporada", icono: "bi-moon-stars" }
 ];
 
 window.HM_ADICIONES = {
-  postres: [
-    { id: "queso", nombre: "Queso rallado", precio: 2000 },
-    { id: "leche", nombre: "Leche condensada", precio: 2000 },
-    { id: "arequipe", nombre: "Arequipe", precio: 2500 },
-    { id: "chocolate", nombre: "Chocolate derretido", precio: 2500 },
-    { id: "nutella", nombre: "Nutella", precio: 3500 },
-    { id: "oreo", nombre: "Galleta Oreo", precio: 2500 },
-    { id: "chips", nombre: "Chips de chocolate", precio: 2000 },
-    { id: "malvaviscos", nombre: "Mini malvaviscos", precio: 2000 },
-    { id: "almendras", nombre: "Almendras", precio: 3000 },
-    { id: "brownie", nombre: "Trozos de brownie", precio: 3500 },
-    { id: "helado", nombre: "Bola de helado", precio: 4000 }
+  // Toppings de las mini donas (precios de referencia)
+  donas: [
+    { id: "d-chocolate", nombre: "Salsa de chocolate", precio: 2000 },
+    { id: "d-oreo", nombre: "Oreo triturada", precio: 2000 },
+    { id: "d-almendras", nombre: "Almendras", precio: 3000 },
+    { id: "d-mani", nombre: "Maní", precio: 2000 },
+    { id: "d-arequipe", nombre: "Arequipe", precio: 2000 },
+    { id: "d-nutella", nombre: "Nutella", precio: 3500 },
+    { id: "d-leche", nombre: "Leche condensada", precio: 2000 },
+    { id: "d-chocoramo", nombre: "Chocoramo", precio: 3000 },
+    { id: "d-brownie", nombre: "Brownie", precio: 3000 },
+    { id: "d-queso", nombre: "Queso rallado", precio: 2000 }
   ],
-  tortas: [
-    { id: "velas", nombre: "Velas de cumpleaños", precio: 3000 },
-    { id: "tarjeta", nombre: "Tarjeta con dedicatoria", precio: 3000 },
-    { id: "fresas-deco", nombre: "Decoración con fresas", precio: 8000 },
-    { id: "topper", nombre: "Topper personalizado", precio: 12000 }
+  galletaChips: [
+    { id: "g-arequipe", nombre: "Topping de arequipe", precio: 2000 }
+  ],
+  galletaRedVelvet: [
+    { id: "g-frosting", nombre: "Topping de frosting de queso crema", precio: 2500 }
   ]
 };
 
 (function () {
-  const VASOS = (p9, p12, p16) => [
-    { id: "9oz", nombre: "9 oz", precio: p9 },
-    { id: "12oz", nombre: "12 oz", precio: p12 },
-    { id: "16oz", nombre: "16 oz", precio: p16 }
-  ];
+  // Tamaños y precios de referencia
+  const VASO = (precio) => [{ id: "vaso", nombre: "Vaso", precio }];
+  const PORCION = (precio) => [{ id: "porcion", nombre: "Porción", precio }];
+  const PAQUETE = (precio) => [{ id: "paquete", nombre: "Paquete", precio }];
   const TORTAS = (mini, mediana, grande) => [
     { id: "mini", nombre: "Mini", detalle: "6 porciones", precio: mini },
     { id: "mediana", nombre: "Mediana", detalle: "12 porciones", precio: mediana },
     { id: "grande", nombre: "Grande", detalle: "20 porciones", precio: grande }
   ];
-  const CAJAS = (unidad, x4, x6) => [
-    { id: "unidad", nombre: "Unidad", precio: unidad },
-    { id: "caja4", nombre: "Caja x4", precio: x4 },
-    { id: "caja6", nombre: "Caja x6", precio: x6 }
-  ];
-  const NOTA_TORTA = "Ej: escribir «Feliz cumpleaños, Ana»";
+  const NOTA_TORTA = "Ej: indicaciones especiales para tu torta";
 
   window.HM_MENU = [
+    /* ---------- Fresas con crema ---------- */
+    {
+      id: "fresas-hony",
+      categoria: "fresas",
+      nombre: "Fresas con crema Hony",
+      descripcion: "Fresa, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
+      tamanos: VASO(14000),
+      ilustracion: { tipo: "vaso", salsa: "#c98a3c", topping: "oreo", fondo: "#ffd9e8" }
+    },
+    {
+      id: "fresas-cheese",
+      categoria: "fresas",
+      nombre: "Fresas con crema Cheese",
+      descripcion: "Fresa, queso fresco, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
+      tamanos: VASO(15000),
+      ilustracion: { tipo: "vaso", salsa: "#c98a3c", topping: ["queso", "oreo"], fondo: "#fbe7b8" }
+    },
+    {
+      id: "fresas-nutella-moon",
+      categoria: "fresas",
+      nombre: "Fresas con crema Nutella Moon",
+      descripcion: "Fresa, crema, Nutella, maní tostado y salsa de fresa.",
+      tamanos: VASO(16000),
+      ilustracion: { tipo: "vaso", salsa: "#6b3a22", topping: "mani", fondo: "#f1d9c4" }
+    },
+    {
+      id: "fresas-oreo-crush",
+      categoria: "fresas",
+      nombre: "Fresas con crema Oreo Crush",
+      descripcion: "Fresa, crema, Oreo triturada, salsa de chocolate y salsa de fresa.",
+      tamanos: VASO(15000),
+      ilustracion: { tipo: "vaso", salsa: "#3b2620", topping: "oreo", fondo: "#e3e6d4" }
+    },
+
+    /* ---------- Pavés ---------- */
+    {
+      id: "pave-klim",
+      categoria: "paves",
+      nombre: "Pavé de leche Klim",
+      descripcion: "Capas de nuestra crema secreta con galletas Ducales, coronado con leche Klim.",
+      tamanos: VASO(13000),
+      ilustracion: { tipo: "pave", capa: "galleta", topping: "klim", fondo: "#e3e6d4" }
+    },
+    {
+      id: "pave-milo",
+      categoria: "paves",
+      nombre: "Pavé de Milo",
+      descripcion: "Capas de nuestra crema secreta con crumble de Milo, coronado con galletas de Milo trituradas.",
+      tamanos: VASO(13000),
+      ilustracion: { tipo: "pave", capa: "milo", topping: "milo", fondo: "#f1d9c4" }
+    },
+    {
+      id: "pave-oblea",
+      categoria: "paves",
+      nombre: "Pavé de oblea",
+      descripcion: "Capas de nuestra crema secreta con oblea y mermelada de mora, coronado con queso fresco.",
+      etiqueta: "Especial de la casa",
+      tamanos: VASO(14000),
+      ilustracion: { tipo: "pave", capa: "oblea", topping: "queso", fondo: "#ffd9e8" }
+    },
+
+    /* ---------- Cheesecakes ---------- */
+    {
+      id: "cheesecake-frutos-rojos",
+      categoria: "cheesecakes",
+      nombre: "Cheesecake de frutos rojos",
+      descripcion: "Base de galleta de la casa, nuestra crema especial y mermelada de frutos rojos.",
+      etiqueta: "A bocados",
+      tamanos: PORCION(13000),
+      ilustracion: { tipo: "porcion", salsa: "#fff1d6", cobertura: "#b0213a", fondo: "#ffd9e8" }
+    },
+    {
+      id: "cheesecake-oreo",
+      categoria: "cheesecakes",
+      nombre: "Cheesecake de Oreo",
+      descripcion: "Base de galleta Oreo, nuestra crema especial y ganache de chocolate, coronado con galleta Oreo y chantilly de la casa.",
+      tamanos: PORCION(14000),
+      ilustracion: { tipo: "porcion", salsa: "#fff6ea", cobertura: "#3b2620", base: "#2b2422", extra: "oreo", fondo: "#e3e6d4" }
+    },
+
+    /* ---------- Mini donas ---------- */
+    {
+      id: "mini-donas-honey",
+      categoria: "donas",
+      nombre: "Mini donas Honey",
+      descripcion: "Mini donas frescas con crema de la casa, fresas frescas y salsa de fresa. Agrégales tus toppings favoritos.",
+      tamanos: PORCION(14000),
+      adiciones: "donas",
+      ilustracion: { tipo: "donas", fondo: "#fbe7b8" }
+    },
+
+    /* ---------- Galletas y alfajores ---------- */
+    {
+      id: "galletas-mini-chips",
+      categoria: "galletas",
+      nombre: "Galletas mini de chips de chocolate",
+      descripcion: "Galletas mini con chips de chocolate. Puedes agregarles topping de arequipe.",
+      tamanos: PAQUETE(10000),
+      adiciones: "galletaChips",
+      ilustracion: { tipo: "galleta", salsa: "#e2b06a", chips: "#4a2414", fondo: "#fbe7b8" }
+    },
+    {
+      id: "galletas-mini-red-velvet",
+      categoria: "galletas",
+      nombre: "Galletas mini red velvet",
+      descripcion: "Galletas mini red velvet. Puedes agregarles topping de frosting de queso crema.",
+      tamanos: PAQUETE(11000),
+      adiciones: "galletaRedVelvet",
+      ilustracion: { tipo: "galleta", salsa: "#b3263a", chips: "#fffaf2", fondo: "#e3e6d4" }
+    },
+    {
+      id: "galletas-mini-klim",
+      categoria: "galletas",
+      nombre: "Galletas mini de leche Klim",
+      descripcion: "Galletas mini de leche Klim.",
+      tamanos: PAQUETE(10000),
+      ilustracion: { tipo: "galleta", salsa: "#f3dfb0", chips: "#fffaf2", fondo: "#ffd9e8" }
+    },
+    {
+      id: "alfajores-arequipe",
+      categoria: "galletas",
+      nombre: "Alfajores de arequipe",
+      descripcion: "Alfajores de maicena con relleno de arequipe y bordeado de coco.",
+      tamanos: PAQUETE(12000),
+      ilustracion: { tipo: "alfajor", fondo: "#f1d9c4" }
+    },
+
     /* ---------- Tortas ---------- */
     {
-      id: "torta-chocolate",
+      id: "torta-chocolate-honey",
       categoria: "tortas",
-      nombre: "Torta Chocolate Honey",
-      descripcion: "Bizcocho de chocolate húmedo, relleno de crema, ganache y fresas frescas.",
-      etiqueta: "Más pedida",
+      nombre: "Torta de chocolate Honey",
+      descripcion: "Nuestra torta de chocolate de la casa.",
       tamanos: TORTAS(55000, 95000, 140000),
       encargo: true,
-      adiciones: "tortas",
       notaPlaceholder: NOTA_TORTA,
       ilustracion: { tipo: "torta", salsa: "#6b3a22", relleno: "#fffaf2", cobertura: "#4a2414", fondo: "#ffd9e8" }
     },
     {
       id: "torta-red-velvet",
       categoria: "tortas",
-      nombre: "Red Velvet",
-      descripcion: "Bizcocho red velvet con capas de frosting de queso crema.",
+      nombre: "Torta Red Velvet",
+      descripcion: "Nuestra torta red velvet.",
       tamanos: TORTAS(60000, 105000, 150000),
       encargo: true,
-      adiciones: "tortas",
       notaPlaceholder: NOTA_TORTA,
       ilustracion: { tipo: "torta", salsa: "#b3263a", relleno: "#fffaf2", cobertura: "#fffaf2", topping: "migas", fondo: "#e3e6d4" }
     },
     {
-      id: "torta-zanahoria",
+      id: "torta-naranja",
       categoria: "tortas",
-      nombre: "Torta de zanahoria",
-      descripcion: "Con nueces, canela y frosting de queso crema.",
+      nombre: "Torta de naranja",
+      descripcion: "Nuestra torta de naranja.",
       tamanos: TORTAS(50000, 90000, 130000),
       encargo: true,
-      adiciones: "tortas",
       notaPlaceholder: NOTA_TORTA,
-      ilustracion: { tipo: "torta", salsa: "#d98c3f", relleno: "#fffaf2", cobertura: "#fffaf2", topping: "zanahoria", fondo: "#fbe7b8" }
+      ilustracion: { tipo: "torta", salsa: "#f2b24b", relleno: "#fff1d0", cobertura: "#ffd98a", topping: "naranja", fondo: "#fbe7b8" }
     },
     {
       id: "torta-tres-leches",
       categoria: "tortas",
-      nombre: "Tres leches",
-      descripcion: "Bizcocho bañado en tres leches, con merengue y canela.",
+      nombre: "Torta tres leches",
+      descripcion: "Nuestra torta tres leches.",
       tamanos: TORTAS(45000, 80000, 120000),
       encargo: true,
-      adiciones: "tortas",
       notaPlaceholder: NOTA_TORTA,
       ilustracion: { tipo: "torta", salsa: "#f6e2b3", relleno: "#fff1d0", cobertura: "#fffaf2", topping: "merengue", fondo: "#f1d9c4" }
-    },
-    {
-      id: "cheesecake",
-      categoria: "tortas",
-      nombre: "Cheesecake de frutos rojos",
-      descripcion: "Base de galleta, crema de queso horneada y salsa de frutos rojos.",
-      tamanos: [
-        { id: "porcion", nombre: "Porción", precio: 12000 },
-        { id: "entero", nombre: "Entero", detalle: "8 porciones", precio: 85000, encargo: true }
-      ],
-      ilustracion: { tipo: "porcion", salsa: "#fff1d6", cobertura: "#b0213a", fondo: "#ffd9e8" }
-    },
-    {
-      id: "torta-personalizada",
-      categoria: "tortas",
-      nombre: "Torta personalizada",
-      descripcion: "Temática para cumpleaños, baby shower o grados. Cuéntanos tu idea y te cotizamos.",
-      etiqueta: "Para eventos",
-      tamanos: [{ id: "cotizar", nombre: "Desde", precio: 150000 }],
-      cotizar: true,
-      ilustracion: { tipo: "torta", salsa: "#f7b6cf", relleno: "#fffaf2", cobertura: "#ffc5de", velas: true, fondo: "#e3e6d4" }
-    },
-
-    /* ---------- Cupcakes ---------- */
-    {
-      id: "cupcake-honey",
-      categoria: "cupcakes",
-      nombre: "Cupcake Honey",
-      descripcion: "Chocolate con frosting de vainilla y chips. El favorito de nuestro honguito.",
-      etiqueta: "Favorito del honguito",
-      tamanos: CAJAS(7000, 26000, 38000),
-      ilustracion: { tipo: "cupcake", salsa: "#6b3a22", frosting: "#fffaf2", capsula: "#6b3a22", rayas: "#4a2414", fondo: "#ffd9e8" }
-    },
-    {
-      id: "cupcake-fresa",
-      categoria: "cupcakes",
-      nombre: "Cupcake de fresa",
-      descripcion: "Vainilla relleno de mermelada de fresa con frosting rosado.",
-      tamanos: CAJAS(7000, 26000, 38000),
-      ilustracion: { tipo: "cupcake", salsa: "#f3d3a0", frosting: "#ffc5de", fresa: true, fondo: "#e3e6d4" }
-    },
-    {
-      id: "cupcake-red-velvet",
-      categoria: "cupcakes",
-      nombre: "Cupcake red velvet",
-      descripcion: "Red velvet con frosting de queso crema.",
-      tamanos: CAJAS(8000, 30000, 44000),
-      ilustracion: { tipo: "cupcake", salsa: "#b3263a", frosting: "#fffaf2", capsula: "#b3263a", rayas: "#8f1c2c", fondo: "#fbe7b8" }
-    },
-
-    /* ---------- Brownies y galletas ---------- */
-    {
-      id: "brownie-clasico",
-      categoria: "horneados",
-      nombre: "Brownie clásico",
-      descripcion: "Húmedo por dentro, crujiente por fuera, con trozos de chocolate.",
-      tamanos: [
-        { id: "unidad", nombre: "Unidad", precio: 6000 },
-        { id: "caja6", nombre: "Caja x6", precio: 33000 }
-      ],
-      ilustracion: { tipo: "brownie", fondo: "#f1d9c4" }
-    },
-    {
-      id: "brownie-nutella",
-      categoria: "horneados",
-      nombre: "Brownie con Nutella",
-      descripcion: "Nuestro brownie relleno y cubierto de Nutella.",
-      etiqueta: "Nuevo",
-      tamanos: [
-        { id: "unidad", nombre: "Unidad", precio: 8000 },
-        { id: "caja6", nombre: "Caja x6", precio: 45000 }
-      ],
-      ilustracion: { tipo: "brownie", topping: "nutella", fondo: "#ffd9e8" }
-    },
-    {
-      id: "galletas-chips",
-      categoria: "horneados",
-      nombre: "Galletas chips de chocolate",
-      descripcion: "Grandes, doradas por fuera y suaves en el centro.",
-      tamanos: [
-        { id: "unidad", nombre: "Unidad", precio: 4500 },
-        { id: "caja6", nombre: "Caja x6", precio: 25000 },
-        { id: "caja12", nombre: "Caja x12", precio: 48000 }
-      ],
-      ilustracion: { tipo: "galleta", salsa: "#e2b06a", chips: "#4a2414", fondo: "#fbe7b8" }
-    },
-    {
-      id: "galletas-red-velvet",
-      categoria: "horneados",
-      nombre: "Galletas red velvet",
-      descripcion: "Red velvet con chips de chocolate blanco.",
-      tamanos: [
-        { id: "unidad", nombre: "Unidad", precio: 5000 },
-        { id: "caja6", nombre: "Caja x6", precio: 28000 },
-        { id: "caja12", nombre: "Caja x12", precio: 54000 }
-      ],
-      ilustracion: { tipo: "galleta", salsa: "#b3263a", chips: "#fffaf2", fondo: "#e3e6d4" }
-    },
-    {
-      id: "alfajores",
-      categoria: "horneados",
-      nombre: "Alfajores de arequipe",
-      descripcion: "De maicena, rellenos de arequipe y bordeados de coco.",
-      tamanos: [
-        { id: "caja6", nombre: "Caja x6", precio: 18000 },
-        { id: "caja12", nombre: "Caja x12", precio: 34000 }
-      ],
-      ilustracion: { tipo: "alfajor", fondo: "#ffd9e8" }
-    },
-
-    /* ---------- Fresas y postres ---------- */
-    {
-      id: "clasica-honey",
-      categoria: "postres",
-      nombre: "Fresas con crema Honey",
-      descripcion: "Fresas frescas, nuestra crema de la casa y un hilo de leche condensada.",
-      etiqueta: "Clásico",
-      tamanos: VASOS(12000, 15000, 19000),
-      adiciones: "postres",
-      ilustracion: { tipo: "vaso", salsa: "#fff1d0", fondo: "#ffd9e8" }
-    },
-    {
-      id: "costena",
-      categoria: "postres",
-      nombre: "Fresas La Costeña",
-      descripcion: "Fresas, crema, queso rallado y leche condensada. El clásico de Barranquilla.",
-      etiqueta: "Bien barranquillera",
-      tamanos: VASOS(13000, 16000, 20000),
-      adiciones: "postres",
-      ilustracion: { tipo: "vaso", salsa: "#fff1d0", topping: "queso", fondo: "#fbe7b8" }
-    },
-    {
-      id: "nutella-moon",
-      categoria: "postres",
-      nombre: "Nutella Moon",
-      descripcion: "Fresas, crema, Nutella por dentro y por encima, con almendras tostadas.",
-      tamanos: VASOS(15000, 19000, 23000),
-      adiciones: "postres",
-      ilustracion: { tipo: "vaso", salsa: "#6b3a22", topping: "almendras", fondo: "#f1d9c4" }
-    },
-    {
-      id: "oreo-crush",
-      categoria: "postres",
-      nombre: "Oreo Crush",
-      descripcion: "Fresas, crema, galleta Oreo triturada y salsa de chocolate.",
-      tamanos: VASOS(14000, 17000, 21000),
-      adiciones: "postres",
-      ilustracion: { tipo: "vaso", salsa: "#3b2620", topping: "oreo", fondo: "#e3e6d4" }
-    },
-    {
-      id: "fresas-helado",
-      categoria: "postres",
-      nombre: "Fresas con helado",
-      descripcion: "Fresas, crema y una bola de helado de vainilla encima.",
-      tamanos: [
-        { id: "12oz", nombre: "12 oz", precio: 16000 },
-        { id: "16oz", nombre: "16 oz", precio: 20000 }
-      ],
-      adiciones: "postres",
-      ilustracion: { tipo: "helado", salsa: "#e5412d", fondo: "#ffe0d6" }
-    },
-    {
-      id: "waffle-fresas",
-      categoria: "postres",
-      nombre: "Waffle de fresas",
-      descripcion: "Waffle recién hecho con fresas, crema de la casa y salsa de chocolate.",
-      tamanos: [{ id: "unico", nombre: "Unidad", precio: 18000 }],
-      adiciones: "postres",
-      ilustracion: { tipo: "waffle", salsa: "#5a2d1c", fondo: "#fbe7b8" }
-    },
-
-    /* ---------- Bebidas ---------- */
-    {
-      id: "malteada-fresa",
-      categoria: "bebidas",
-      nombre: "Malteada de fresa",
-      descripcion: "Helado, leche y fresas licuadas, con crema y fresa encima.",
-      tamanos: [
-        { id: "12oz", nombre: "12 oz", precio: 13000 },
-        { id: "16oz", nombre: "16 oz", precio: 15000 }
-      ],
-      ilustracion: { tipo: "malteada", salsa: "#f6a3c3", fondo: "#ffd9e8" }
-    },
-    {
-      id: "frappe-fresas-crema",
-      categoria: "bebidas",
-      nombre: "Frappé fresas con crema",
-      descripcion: "Granizado cremoso de fresa con chantilly y sirope de frutos rojos.",
-      tamanos: [{ id: "16oz", nombre: "16 oz", precio: 14000 }],
-      ilustracion: { tipo: "malteada", salsa: "#ef8fb1", fondo: "#f6e3e9" }
-    },
-    {
-      id: "limonada-fresa",
-      categoria: "bebidas",
-      nombre: "Limonada de fresa",
-      descripcion: "Limonada natural con fresas, bien fría para el calor de Barranquilla.",
-      tamanos: [{ id: "16oz", nombre: "16 oz", precio: 9000 }],
-      ilustracion: { tipo: "limonada", salsa: "#ffbfcf", fondo: "#e3e6d4" }
     },
 
     /* ---------- Temporada ---------- */
     {
-      id: "vampi-cupcake",
+      id: "torta-envinada-hony",
       categoria: "temporada",
-      nombre: "Vampi-Cupcake",
-      descripcion: "Chocolate con corazón de frutos rojos y colmillos de chocolate blanco. Solo en octubre.",
-      etiqueta: "Octubre",
-      tamanos: [
-        { id: "unidad", nombre: "Unidad", precio: 8000 },
-        { id: "caja4", nombre: "Caja x4", precio: 30000 }
-      ],
-      imagen: "assets/img/mascota-octubre.webp",
-      fondo: "#3a4e33"
-    },
-    {
-      id: "navi-cupcake",
-      categoria: "temporada",
-      nombre: "Navi-Cupcake",
-      descripcion: "Chocolate, canela y galleta de jengibre. Llega en diciembre.",
-      etiqueta: "Diciembre",
-      tamanos: [
-        { id: "unidad", nombre: "Unidad", precio: 8000 },
-        { id: "caja4", nombre: "Caja x4", precio: 30000 }
-      ],
+      nombre: "Torta envinada Hony",
+      descripcion: "Nuestra torta de temporada para noviembre y diciembre.",
+      etiqueta: "Nov – Dic",
+      tamanos: TORTAS(60000, 105000, 150000),
+      encargo: true,
+      temporada: { desde: "11-01", hasta: "12-31", texto: "Disponible en noviembre y diciembre" },
+      notaPlaceholder: NOTA_TORTA,
       imagen: "assets/img/mascota-diciembre.webp",
-      fondo: "#1a2738",
-      disponible: false
+      fondo: "#1a2738"
     }
   ];
 })();

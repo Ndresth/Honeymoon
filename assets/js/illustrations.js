@@ -1,5 +1,5 @@
 /* =========================================================
-   Honey Moon · Ilustraciones SVG de los productos
+   Honeymoon · Ilustraciones SVG de los productos
    Dibujos con trazo grueso, en el mismo estilo de la mascota.
    ========================================================= */
 (function () {
@@ -46,10 +46,11 @@
       <path d="M30 70 l-10 -6"/>
     </g>`;
 
-  const toppings = (tipo, puntos) => {
-    if (!tipo) return "";
+  const toppings = (tipos, puntos) => {
+    if (!tipos) return "";
+    const lista = [].concat(tipos);
     return puntos.map(([x, y, r], i) => {
-      switch (tipo) {
+      switch (lista[i % lista.length]) {
         case "oreo":
           return `<g transform="translate(${x} ${y}) rotate(${r})"><circle r="6.5" fill="#2b2422" stroke="${K}" stroke-width="2"/><circle r="2.4" fill="#f4efe6"/></g>`;
         case "queso":
@@ -62,6 +63,8 @@
           return `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="2" fill="#4a2414" stroke="${K}" stroke-width="2" transform="rotate(${r} ${x} ${y})"/>`;
         case "galleta":
           return `<rect x="${x - 4.5}" y="${y - 4}" width="9" height="8" rx="2" fill="#e2b06a" stroke="#a8722f" stroke-width="1.4" transform="rotate(${r} ${x} ${y})"/>`;
+        case "mani":
+          return `<path transform="translate(${x} ${y}) rotate(${r * 2})" d="M-6 0 C-6 -4 -1 -4 0 -1.5 C1 -4 6 -4 6 0 C6 4 1 4 0 1.5 C-1 4 -6 4 -6 0Z" fill="#d9a35b" stroke="#8a5528" stroke-width="1.3"/>`;
         default:
           return "";
       }
@@ -223,6 +226,14 @@
         return [[90, 94, 20], [102, 88, -40], [116, 96, 60], [128, 88, 10], [142, 94, -20], [154, 90, 45], [110, 100, -60], [134, 100, 30], [98, 98, 80], [148, 99, -10]]
           .map(([x, y, r], i) => `<rect x="${x - 4}" y="${y - 1.5}" width="8" height="3" rx="1.5" fill="${cols[i % cols.length]}" stroke="${K}" stroke-width=".8" transform="rotate(${r} ${x} ${y})"/>`).join("");
       }
+      case "naranja":
+        return [[96, 90, -10], [120, 86, 0], [144, 90, 12]].map(([x, y, r]) => `
+          <g transform="translate(${x} ${y}) rotate(${r}) scale(1 .62)">
+            <circle r="11" fill="#f6a13a" stroke="${K}" stroke-width="2.6"/>
+            <circle r="7.5" fill="#ffd27a"/>
+            <g stroke="#f6a13a" stroke-width="1.6"><path d="M0 -7.5 V7.5"/><path d="M-7.5 0 H7.5"/><path d="M-5.3 -5.3 L5.3 5.3"/><path d="M5.3 -5.3 L-5.3 5.3"/></g>
+          </g>`).join("") +
+          `<path d="M120 76 C114 66 122 60 128 64 C126 70 124 74 120 76Z" fill="${LEAF}" stroke="${K}" stroke-width="2"/>`;
       default:
         return fresa(98, 80, 1, -18) + fresa(122, 74, 1.15, 4) + fresa(146, 80, 1, 20);
     }
@@ -256,17 +267,89 @@
   function porcion(c) {
     const cuerpo = c.salsa || "#fff1d6";
     const salsa = c.cobertura || "#b0213a";
+    const base = c.base || "#c98a3c";
+    const oreo = (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r})">
+      <ellipse rx="12" ry="7" fill="#2b2422" stroke="${K}" stroke-width="2.5"/>
+      <rect x="-12" y="-1.6" width="24" height="3.2" fill="#f4efe6"/>
+      <ellipse rx="12" ry="7" cy="-3" fill="#3a302d" stroke="${K}" stroke-width="2.5"/>
+      <circle cx="-4" cy="-3" r="1.2" fill="#55463f"/><circle cx="3" cy="-4" r="1.2" fill="#55463f"/></g>`;
+    const remate = c.extra === "oreo"
+      ? `<path d="M128 100 C120 90 132 82 138 88 C140 78 156 80 154 90 C162 90 162 102 152 104 C144 108 132 108 128 100Z" fill="#fffaf2" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>
+         ${oreo(110, 104, -12)}${oreo(168, 98, 14)}`
+      : `<circle cx="120" cy="104" r="5" fill="#3b4a8a" stroke="${K}" stroke-width="2"/>
+         <circle cx="104" cy="112" r="4.5" fill="#3b4a8a" stroke="${K}" stroke-width="2"/>
+         ${fresa(150, 92, 1.05, 14)}${fresa(174, 102, .85, 30)}`;
     return `
       ${decoracion()}
       ${plato(160, 98, 24)}
       <path d="M52 128 L190 114 L190 154 L52 168 Z" fill="${cuerpo}" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
-      <path d="M52 158 L190 144 L190 154 L52 168 Z" fill="#c98a3c" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M52 158 L190 144 L190 154 L52 168 Z" fill="${base}" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>
       <path d="M52 128 L150 92 C176 92 198 102 190 114 Z" fill="${salsa}" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
       <path d="M60 127 C64 140 72 140 74 126 M96 122 C98 138 108 138 110 120 M134 118 C136 132 146 132 148 116 M166 116 C168 128 176 128 178 115"
         fill="${salsa}" stroke="${K}" stroke-width="2.5" stroke-linejoin="round"/>
-      <circle cx="120" cy="104" r="5" fill="#3b4a8a" stroke="${K}" stroke-width="2"/>
-      <circle cx="104" cy="112" r="4.5" fill="#3b4a8a" stroke="${K}" stroke-width="2"/>
-      ${fresa(150, 92, 1.05, 14)}${fresa(174, 102, .85, 30)}`;
+      ${remate}`;
+  }
+
+  /* Pavé: capas de crema y galleta en vaso, con cuchara */
+  function pave(c, uid) {
+    const vasoPath = "M68 62 L172 62 L164 184 Q120 191 76 184 Z";
+    const CAPAS = {
+      galleta: { color: "#e9c88f", detalle: "#c99a55" },
+      milo: { color: "#6b4a2b", detalle: "#3f2a18" },
+      oblea: { color: "#f3d9a0", detalle: "#d7b36a" }
+    };
+    const capa = CAPAS[c.capa] || CAPAS.galleta;
+    const banda = (y, h) => {
+      let migas = "";
+      for (let x = 72; x < 170; x += 11) migas += `<circle cx="${x + (y % 7)}" cy="${y + h / 2 + ((x / 11) % 2 ? 2 : -2)}" r="1.8" fill="${capa.detalle}"/>`;
+      const rejilla = c.capa === "oblea"
+        ? `<path d="${Array.from({ length: 9 }, (_, i) => `M${74 + i * 11} ${y} v${h}`).join(" ")}" stroke="${capa.detalle}" stroke-width="1.4"/>`
+        : migas;
+      const mora = c.capa === "oblea" ? `<rect x="60" y="${y - 3}" width="120" height="4" fill="#5b1f4a"/>` : "";
+      return `<rect x="60" y="${y}" width="120" height="${h}" fill="${capa.color}"/>${rejilla}${mora}`;
+    };
+    const cima = {
+      klim: [[84, 80], [96, 76], [108, 82], [122, 77], [136, 81], [150, 76], [160, 82], [102, 86], [130, 86], [144, 86], [90, 86], [116, 72]]
+        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#fffdf6" stroke="#e8dcc0" stroke-width=".8"/>`).join(""),
+      milo: [[82, 80, 0], [94, 76, 30], [108, 82, -20], [122, 76, 45], [136, 82, 10], [150, 77, -35], [160, 83, 20], [100, 86, 60], [128, 86, -50], [144, 86, 15]]
+        .map(([x, y, r]) => `<rect x="${x - 4}" y="${y - 3}" width="8" height="6" rx="2" fill="#5a3a22" stroke="${K}" stroke-width="1" transform="rotate(${r} ${x} ${y})"/>`).join(""),
+      queso: [[84, 80, 8], [100, 76, -12], [118, 81, 20], [134, 76, -6], [150, 80, 14], [108, 87, 0], [140, 87, -18]]
+        .map(([x, y, r]) => `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="2" fill="#fffdf2" stroke="${K}" stroke-width="1.6" transform="rotate(${r} ${x} ${y})"/>`).join("") +
+        `<path d="M78 74 q8 6 16 0 q8 -6 16 0 q8 6 16 0 q8 -6 16 0 q8 6 16 0" fill="none" stroke="#5b1f4a" stroke-width="3" stroke-linecap="round" opacity=".85"/>`
+    }[c.topping] || "";
+    return `
+      ${decoracion()}
+      <path d="M166 14 L140 84" stroke="${K}" stroke-width="11" stroke-linecap="round"/>
+      <path d="M166 14 L140 84" stroke="#dfe6ea" stroke-width="6" stroke-linecap="round"/>
+      <defs><clipPath id="cp-${uid}"><path d="${vasoPath}"/></clipPath></defs>
+      <g clip-path="url(#cp-${uid})">
+        <rect x="60" y="60" width="120" height="132" fill="#fffaf2"/>
+        ${banda(160, 30)}${banda(124, 18)}${banda(96, 14)}
+        <rect x="60" y="70" width="120" height="22" fill="#fffaf2"/>
+        ${cima}
+        <path d="M80 76 L86 174" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+      </g>
+      <path d="${vasoPath}" fill="none" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
+      <rect x="62" y="56" width="116" height="10" rx="5" fill="#fffdf7" stroke="${K}" stroke-width="4"/>`;
+  }
+
+  /* Mini donas con crema, fresas y salsa de fresa */
+  function donas() {
+    const dona = (x, y, s) => `
+      <g transform="translate(${x} ${y}) scale(${s})">
+        <ellipse rx="30" ry="20" fill="#e6a861" stroke="${K}" stroke-width="4"/>
+        <path d="M-25 -3 C-26 -17 26 -17 25 -3 C24 3 19 1 16 5 C13 9 9 3 5 7 C1 11 -3 4 -7 8 C-11 11 -15 3 -19 5 C-23 6 -25 2 -25 -3Z"
+          fill="#fffaf2" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
+        <path d="M-19 -9 l6 4 l6 -5 l6 5 l6 -5 l6 5 l6 -4" fill="none" stroke="#e5412d" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <ellipse rx="8" ry="4.6" cy="-5" fill="#e6a861" stroke="${K}" stroke-width="2.6"/>
+        <ellipse rx="5" ry="2.4" cy="-4" fill="#c98a3c"/>
+      </g>`;
+    return `
+      ${decoracion()}
+      ${plato(166, 98, 20)}
+      ${dona(80, 146, 1)}${dona(160, 146, 1)}${dona(120, 112, 1.05)}
+      ${rodaja(60, 128, .8, -20)}${rodaja(182, 126, .8, 25)}
+      ${fresa(120, 80, 1.1, 8)}${fresa(150, 96, .85, 28)}`;
   }
 
   function brownie(c) {
@@ -338,7 +421,9 @@
       porcion: () => porcion(cfg),
       brownie: () => brownie(cfg),
       galleta: () => galleta(cfg),
-      alfajor: () => alfajor(cfg)
+      alfajor: () => alfajor(cfg),
+      pave: () => pave(cfg, uid),
+      donas: () => donas(cfg)
     };
     const cuerpo = (dibujos[cfg.tipo] || dibujos.vaso)();
     return `<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false">${cuerpo}</svg>`;

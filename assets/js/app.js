@@ -1,5 +1,5 @@
 /* =========================================================
-   Honey Moon · Lógica de menú, carrito y pedido por WhatsApp
+   Honeymoon · Lógica de menú, carrito y pedido por WhatsApp
    ========================================================= */
 (function () {
   "use strict";
@@ -12,6 +12,7 @@
   const NUMERO_PRUEBA = "573000000000";
   const TEL = String(CFG.whatsapp).replace(/\D/g, ""); // tolera "+57 300 ..." en config.js
   const MAX_CANTIDAD = 20;
+  const preciosConfirmados = CFG.preciosConfirmados !== false;
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
@@ -46,7 +47,56 @@
   }
   const fondo = (p) => (p.ilustracion && p.ilustracion.fondo) || p.fondo || "var(--hm-pink-soft)";
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
-  const disponible = (p) => p.disponible !== false;
+  /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
+  function ahoraBogota() {
+    const partes = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Bogota", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "numeric", minute: "numeric", hourCycle: "h23"
+    }).formatToParts(new Date());
+    const get = (t) => partes.find((p) => p.type === t).value;
+    return {
+      fecha: `${get("year")}-${get("month")}-${get("day")}`,
+      hora: +get("hour") + +get("minute") / 60
+    };
+  }
+  const hoyBogota = () => ahoraBogota().fecha;
+  const isoAFecha = (iso) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
+  };
+  const sumarDias = (iso, dias) => {
+    const f = isoAFecha(iso);
+    f.setUTCDate(f.getUTCDate() + dias);
+    return f.toISOString().slice(0, 10);
+  };
+  const fechaLarga = (iso) => new Intl.DateTimeFormat("es-CO", {
+    timeZone: "UTC", weekday: "long", day: "numeric", month: "long"
+  }).format(isoAFecha(iso));
+  // Productos de temporada: solo se pueden pedir entre temporada.desde y temporada.hasta (MM-DD)
+  const abreEl = (iso) => !!CFG.horario[isoAFecha(iso).getUTCDay()];
+  const proximoAbierto = (iso) => {
+    let d = iso;
+    for (let i = 0; i < 14 && !abreEl(d); i++) d = sumarDias(d, 1);
+    return d;
+  };
+  // Temporadas en formato MM-DD (pueden cruzar el año, ej. 12-01 → 01-31)
+  const enRango = (md, t) => (t.desde <= t.hasta ? md >= t.desde && md <= t.hasta : md >= t.desde || md <= t.hasta);
+  // Último día de la temporada vigente, en AAAA-MM-DD
+  const finTemporada = (t, hoy = hoyBogota()) => {
+    const y = +hoy.slice(0, 4);
+    const fin = `${y}-${t.hasta}`;
+    return fin >= hoy ? fin : `${y + 1}-${t.hasta}`;
+  };
+  // Se puede pedir si hoy está en temporada y, si es por encargo, la primera entrega posible también
+  const enTemporada = (p) => {
+    if (!p.temporada) return true;
+    const hoy = hoyBogota();
+    if (!enRango(hoy.slice(5), p.temporada)) return false;
+    if (!p.encargo) return true;
+    const primera = proximoAbierto(sumarDias(hoy, CFG.diasEncargo));
+    return primera <= finTemporada(p.temporada, hoy);
+  };
+  const disponible = (p) => p.disponible !== false && enTemporada(p);
   const getTamano = (p, id) => p.tamanos.find((t) => t.id === id) || p.tamanos[0];
   const nombreTamano = (t) => t.nombre + (t.detalle ? ` (${t.detalle})` : "");
   const esEncargo = (p, t) => !!(p.encargo || (t && t.encargo));
@@ -149,7 +199,7 @@
         <div class="hm-empty">
           <img src="assets/img/mascota-hoy.webp" alt="">
           <h3 class="fs-4">Tu carrito está vacío</h3>
-          <p class="text-cocoa-soft">Nuestro honguito te espera con algo dulce.</p>
+          <p class="text-cocoa-soft">Hony te espera con algo dulce.</p>
           <button type="button" class="btn btn-hm btn-hm-red" data-ver-menu>Ver el menú</button>
         </div>`;
       return;
@@ -238,7 +288,8 @@
     const ok = disponible(p);
     const varios = p.tamanos.length > 1 || p.cotizar;
     const precio = `${varios ? "desde " : ""}${money(precioDesde(p))}`;
-    const encargo = p.encargo ? textoEncargo()
+    const encargo = !ok && p.temporada ? p.temporada.texto
+      : p.encargo ? textoEncargo()
       : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
     const detalle = `${precio}${encargo ? ", " + encargo : ""}`;
     const accion = p.cotizar
@@ -369,7 +420,7 @@
       <div class="hm-group-title" id="lblTamano">Tamaño <small>Elige uno</small></div>
       <div class="row g-2" role="radiogroup" aria-labelledby="lblTamano">
         ${p.tamanos.map((t, i) => `
-          <div class="col-${p.tamanos.length === 2 ? 6 : 4}">
+          <div class="col-${p.tamanos.length === 2 ? 6 : 4} hm-opt-wrap">
             <input type="radio" class="btn-check" name="tamano" id="t-${t.id}" value="${t.id}" ${i === 0 ? "checked" : ""}>
             <label class="hm-option flex-column text-center gap-0 h-100" for="t-${t.id}">
               <span>${esc(t.nombre)}</span>
@@ -385,7 +436,7 @@
       <div class="hm-group-title" id="lblAdic">Adiciones <small>Opcional</small></div>
       <div class="row g-2" role="group" aria-labelledby="lblAdic">
         ${grupo.map((a) => `
-          <div class="col-sm-6">
+          <div class="col-sm-6 hm-opt-wrap">
             <input type="checkbox" class="btn-check" name="adicion" id="a-${a.id}" value="${a.id}">
             <label class="hm-option" for="a-${a.id}">
               <span class="hm-option-name d-flex align-items-center"><span class="hm-check" aria-hidden="true"></span>${esc(a.nombre)}</span>
@@ -430,6 +481,12 @@
   }
 
   form.addEventListener("change", actualizarTotalProducto);
+  form.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.matches(".btn-check")) {
+      e.preventDefault();
+      e.target.click();
+    }
+  });
   form.addEventListener("click", (e) => {
     const b = e.target.closest("[data-qty]");
     if (!b) return;
@@ -443,7 +500,7 @@
     const n = agregar(seleccionActual());
     productoModal.hide();
     if (n === 0) toast(`Ya tienes el máximo (${MAX_CANTIDAD}) de ${actual.nombre}`);
-    else toast(`${n > 1 ? n + "× " : ""}${actual.nombre} agregado al carrito${n < cantidad ? ` (máximo ${MAX_CANTIDAD})` : ""}`);
+    else toast(`Agregado al carrito: ${n > 1 ? n + "× " : ""}${actual.nombre}${n < cantidad ? ` (máximo ${MAX_CANTIDAD})` : ""}`);
   });
 
   $("#productoModal").addEventListener("hidden.bs.modal", () => {
@@ -496,37 +553,6 @@
   const costoDomicilio = () => (esDomicilio() && zonaSel() ? zonaSel().costo : 0);
   const soloDigitos = (s) => String(s || "").replace(/\D/g, "");
 
-  /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
-  function ahoraBogota() {
-    const partes = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Bogota", year: "numeric", month: "2-digit", day: "2-digit",
-      hour: "numeric", minute: "numeric", hourCycle: "h23"
-    }).formatToParts(new Date());
-    const get = (t) => partes.find((p) => p.type === t).value;
-    return {
-      fecha: `${get("year")}-${get("month")}-${get("day")}`,
-      hora: +get("hour") + +get("minute") / 60
-    };
-  }
-  const hoyBogota = () => ahoraBogota().fecha;
-  const isoAFecha = (iso) => {
-    const [y, m, d] = iso.split("-").map(Number);
-    return new Date(Date.UTC(y, m - 1, d));
-  };
-  const sumarDias = (iso, dias) => {
-    const f = isoAFecha(iso);
-    f.setUTCDate(f.getUTCDate() + dias);
-    return f.toISOString().slice(0, 10);
-  };
-  const fechaLarga = (iso) => new Intl.DateTimeFormat("es-CO", {
-    timeZone: "UTC", weekday: "long", day: "numeric", month: "long"
-  }).format(isoAFecha(iso));
-  const abreEl = (iso) => !!CFG.horario[isoAFecha(iso).getUTCDay()];
-  const proximoAbierto = (iso) => {
-    let d = iso;
-    for (let i = 0; i < 14 && !abreEl(d); i++) d = sumarDias(d, 1);
-    return d;
-  };
   // ¿Todavía se puede entregar hoy? (hoy abre y no ha pasado la hora de cierre)
   const atiendeHoyAun = () => {
     const ahora = ahoraBogota();
@@ -540,8 +566,10 @@
     const hoyNo = !encargo && !atiendeHoyAun();
     const min = proximoAbierto(encargo ? sumarDias(hoy, CFG.diasEncargo) : hoyNo ? sumarDias(hoy, 1) : hoy);
     const obligatoria = encargo || hoyNo;
+    const max = carrito.map((it) => getProducto(it.id).temporada).filter(Boolean).map((t) => finTemporada(t, hoy)).sort()[0] || "";
     const f = $("#cFecha");
     f.min = min;
+    f.max = max;
     f.required = obligatoria;
     $("#fechaOpcional").classList.toggle("d-none", obligatoria);
     $("#fechaAyuda").textContent = encargo
@@ -554,6 +582,8 @@
         error = encargo ? `Para productos por encargo elige desde el ${fechaLarga(min)}.`
           : hoyNo ? `Hoy ya no atendemos: elige desde el ${fechaLarga(min)}.`
           : "Elige una fecha desde hoy.";
+      } else if (max && f.value > max) {
+        error = `Los productos de temporada se entregan hasta el ${fechaLarga(max)}.`;
       } else if (!abreEl(f.value)) {
         error = "Ese día no abrimos, elige otra fecha.";
       }
@@ -684,6 +714,7 @@
     L.push(`Subtotal: ${money(sub)}`);
     if (esDomicilio()) L.push(`Domicilio: ${money(envio)}`);
     L.push(`*Total: ${money(sub + envio)}*`);
+    if (!preciosConfirmados) L.push("_Precios de referencia: confirmar total._");
     L.push("");
     L.push(`*Pago:* ${datos.pago}${datos.cambio ? ` (paga con ${money(datos.cambio)})` : ""}`);
     if (datos.notas) L.push(`*Notas:* ${datos.notas}`);
@@ -692,6 +723,16 @@
 
   cForm.addEventListener("submit", (e) => {
     e.preventDefault();
+    // La página pudo quedar abierta mientras terminaba una temporada
+    const vigentes = carrito.filter((it) => disponible(getProducto(it.id)));
+    if (vigentes.length < carrito.length) {
+      carrito = vigentes;
+      guardar();
+      if (carrito.length) actualizarCheckout();
+      else checkoutModal.hide();
+      toast("Quitamos productos que ya no están disponibles. Revisa tu pedido.");
+      return;
+    }
     if (!carrito.length) {
       checkoutModal.hide();
       toast("Tu carrito está vacío");
@@ -784,15 +825,18 @@
       a.target = "_blank";
       a.rel = "noopener";
     });
-    $("#testBanner").classList.toggle("d-none", TEL !== NUMERO_PRUEBA);
+    const banner = $("#testBanner");
+    if (TEL === NUMERO_PRUEBA) {
+      banner.innerHTML = `<i class="bi bi-cone-striped" aria-hidden="true"></i> <strong>Modo prueba:</strong> los pedidos se envían a un WhatsApp de prueba.`;
+    } else if (!preciosConfirmados) {
+      banner.innerHTML = `<i class="bi bi-info-circle" aria-hidden="true"></i> <strong>Precios de referencia:</strong> te confirmamos el total por WhatsApp.`;
+    }
+    banner.classList.toggle("d-none", TEL !== NUMERO_PRUEBA && preciosConfirmados);
     $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
-    const personalizada = getProducto("torta-personalizada");
     const arte = $("#customArt");
-    if (personalizada) {
-      arte.style.background = fondo(personalizada);
-      arte.innerHTML = media(personalizada);
-    } else {
-      arte.closest(".hm-custom").classList.add("d-none");
+    if (arte) {
+      arte.style.background = "#e3e6d4";
+      arte.innerHTML = window.HM_ILUSTRACION({ tipo: "torta", salsa: "#f7b6cf", relleno: "#fffaf2", cobertura: "#ffc5de", velas: true });
     }
   }
 
