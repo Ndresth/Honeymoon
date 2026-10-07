@@ -65,12 +65,12 @@ npx http-server -p 8080
 
 ## Publicar
 
-Es 100 % estático: no necesita servidor, base de datos ni comando de build. Se publica con **GitHub Pages** (rama `master`, carpeta raíz) en **https://honeymoonreposteria.com** (dominio registrado en Namecheap). Cada merge a `master` se publica solo.
+Es 100 % estático: no necesita servidor, base de datos ni comando de build. Se publica con **GitHub Pages** (rama `master`, carpeta raíz) en **https://honeymoonreposteria.com** (dominio registrado en Hostinger). Cada merge a `master` se publica solo.
 
 - `CNAME` (raíz del repo) contiene el dominio; no lo borres o GitHub Pages deja de servir el dominio propio.
 - `canonical`, `og:url` y `og:image` en `index.html` apuntan al dominio (vista previa al compartir por WhatsApp y buscadores).
 
-DNS en Namecheap (*Domain List → Manage → Advanced DNS → Host Records*):
+DNS en Hostinger (*hPanel → Dominios → Portafolio de dominios → el dominio → DNS / Nameservers → Registros DNS*). Antes, borrar los registros `A` de `@` y el `CNAME` de `www` que Hostinger crea por defecto:
 
 | Tipo | Host | Valor |
 |---|---|---|
