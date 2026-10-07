@@ -58,7 +58,7 @@ window.HM_ADICIONES = {
     { id: "mediana", nombre: "Mediana", detalle: "12 porciones", precio: mediana },
     { id: "grande", nombre: "Grande", detalle: "20 porciones", precio: grande }
   ];
-  const NOTA_TORTA = "Ej: mensaje para la torta o indicaciones especiales";
+  const NOTA_TORTA = "Ej: indicaciones especiales para tu torta";
 
   window.HM_MENU = [
     /* ---------- Fresas con crema ---------- */
@@ -67,7 +67,6 @@ window.HM_ADICIONES = {
       categoria: "fresas",
       nombre: "Fresas con crema Honey",
       descripcion: "Fresa, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
-      etiqueta: "La de la casa",
       tamanos: VASO(14000),
       ilustracion: { tipo: "vaso", salsa: "#c98a3c", topping: "oreo", fondo: "#ffd9e8" }
     },
@@ -195,7 +194,6 @@ window.HM_ADICIONES = {
       categoria: "tortas",
       nombre: "Torta de chocolate Honey",
       descripcion: "Nuestra torta de chocolate de la casa.",
-      etiqueta: "Favorita",
       tamanos: TORTAS(55000, 95000, 140000),
       encargo: true,
       notaPlaceholder: NOTA_TORTA,

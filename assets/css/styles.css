@@ -451,7 +451,11 @@ h1, h2, h3, h4, .hm-display {
 .hm-cart-thumb { width: 72px; height: 60px; border-radius: 12px; border: 2px solid var(--hm-cocoa); overflow: hidden; flex-shrink: 0; }
 .hm-cart-thumb svg, .hm-cart-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .hm-cart-name { font-weight: 800; line-height: 1.2; }
-.hm-cart-meta { font-size: .85rem; color: var(--hm-cocoa-soft); }
+.hm-cart-meta { font-size: .85rem; color: var(--hm-cocoa-soft); overflow-wrap: anywhere; }
+.hm-cart-name, .hm-summary-line > span:first-child { overflow-wrap: anywhere; }
+/* El input de cada opción cubre su etiqueta: al tabular, el navegador muestra la opción completa */
+.hm-opt-wrap { position: relative; }
+.hm-opt-wrap > .btn-check { inset: 0; width: 100%; height: 100%; }
 .hm-cart-remove { border: 0; background: none; color: var(--hm-cocoa-soft); padding: .25rem; }
 .hm-cart-remove:hover { color: var(--hm-red); }
 .hm-empty { text-align: center; padding: 2rem 1rem; }

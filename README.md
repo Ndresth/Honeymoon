@@ -38,9 +38,9 @@ En `assets/js/menu.js`:
   - `tamanos`: con precio y, opcional, `detalle` ("12 porciones") y `encargo: true`.
   - `adiciones`: nombre del grupo de adiciones que acepta.
   - `encargo: true`: todo el producto se hace por encargo.
-  - `cotizar: true`: no va al carrito, abre WhatsApp para cotizar (torta personalizada).
+  - `cotizar: true` (opcional): el producto no va al carrito; su botón abre WhatsApp para pedir cotización.
   - `ilustracion` (dibujo SVG) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
-  - `notaPlaceholder`: ejemplo para la nota (dedicatoria en tortas).
+  - `notaPlaceholder`: texto de ejemplo para la nota del producto.
   - `temporada: { desde: "11-01", hasta: "12-31", texto }`: solo se puede pedir en esas fechas (hora de Colombia); fuera de ellas sale como "Próximamente".
   - `disponible: false`: se muestra como "Próximamente" y no se puede pedir.
 
@@ -51,7 +51,7 @@ Las zonas de domicilio, sus costos, el horario, los métodos de pago y `diasEnca
 1. El cliente elige producto, tamaño, adiciones, notas y cantidad.
 2. El carrito se guarda en el navegador (`localStorage`), así no se pierde si recarga la página.
 3. En "Finalizar pedido" llena nombre, celular, domicilio o recogida, zona, fecha de entrega y método de pago. Si el carrito tiene productos por encargo, la fecha es obligatoria y no deja elegir antes de `diasEncargo` días ni días cerrados.
-4. Se abre `https://wa.me/<número>?text=...` con el pedido formateado: código de pedido, datos del cliente, fecha, productos con tamaño/adiciones/dedicatoria, subtotal, domicilio, total y forma de pago.
+4. Se abre `https://wa.me/<número>?text=...` con el pedido formateado: código de pedido, datos del cliente, fecha, productos con tamaño/adiciones/notas, subtotal, domicilio, total y forma de pago.
 
 ## Ver en local
 
