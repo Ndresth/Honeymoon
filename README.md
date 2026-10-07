@@ -1,4 +1,4 @@
-# Honey Moon · Repostería en Barranquilla
+# Honeymoon · Repostería en Barranquilla
 
 Sitio web estático (HTML + Bootstrap 5.3 + JavaScript puro) para una repostería: fresas con crema, pavés, cheesecakes, mini donas, galletas, alfajores y tortas por encargo, con carrito y envío del pedido por WhatsApp.
 
@@ -39,6 +39,8 @@ En `assets/js/menu.js`:
   - `adiciones`: nombre del grupo de adiciones que acepta.
   - `encargo: true`: todo el producto se hace por encargo.
   - `cotizar: true` (opcional): el producto no va al carrito; su botón abre WhatsApp para pedir cotización.
+
+La franja **Tortas personalizadas para tu evento** (`#personalizadas` en `index.html`) abre WhatsApp con una plantilla para cotizar: ocasión, fecha, porciones, sabor e idea.
   - `ilustracion` (dibujo SVG) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
   - `notaPlaceholder`: texto de ejemplo para la nota del producto.
   - `temporada: { desde: "11-01", hasta: "12-31", texto }`: solo se puede pedir en esas fechas (hora de Colombia); fuera de ellas sale como "Próximamente".

@@ -1,5 +1,5 @@
 /* =========================================================
-   Honey Moon · Menú
+   Honeymoon · Menú
    Precios en pesos colombianos (COP).
 
    ⚠️ PRECIOS Y TAMAÑOS DE REFERENCIA: reemplázalos por los reales y luego
@@ -63,9 +63,9 @@ window.HM_ADICIONES = {
   window.HM_MENU = [
     /* ---------- Fresas con crema ---------- */
     {
-      id: "fresas-honey",
+      id: "fresas-hony",
       categoria: "fresas",
-      nombre: "Fresas con crema Honey",
+      nombre: "Fresas con crema Hony",
       descripcion: "Fresa, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(14000),
       ilustracion: { tipo: "vaso", salsa: "#c98a3c", topping: "oreo", fondo: "#ffd9e8" }
@@ -232,9 +232,9 @@ window.HM_ADICIONES = {
 
     /* ---------- Temporada ---------- */
     {
-      id: "torta-envinada-honey",
+      id: "torta-envinada-hony",
       categoria: "temporada",
-      nombre: "Torta envinada Honey",
+      nombre: "Torta envinada Hony",
       descripcion: "Nuestra torta de temporada para noviembre y diciembre.",
       etiqueta: "Nov – Dic",
       tamanos: TORTAS(60000, 105000, 150000),

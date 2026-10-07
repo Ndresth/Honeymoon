@@ -1,14 +1,14 @@
 /* =========================================================
-   Honey Moon · Configuración del negocio
+   Honeymoon · Configuración del negocio
    Edita este archivo para cambiar número, horarios y domicilios.
    ========================================================= */
 window.HM_CONFIG = {
-  negocio: "Honey Moon",
+  negocio: "Honeymoon",
   ciudad: "Barranquilla",
   // Redes sociales: id = nombre del ícono de Bootstrap Icons (bi-instagram, bi-tiktok...)
   redes: [
     { id: "instagram", nombre: "Instagram", usuario: "l.hooneymoonn", url: "https://www.instagram.com/l.hooneymoonn/" },
-    { id: "tiktok", nombre: "TikTok", usuario: "l.honeymoon", url: "https://www.tiktok.com/@l.honeymoon" }
+    { id: "tiktok", nombre: "TikTok", usuario: "honeymoonpostres", url: "https://www.tiktok.com/@honeymoonpostres" }
   ],
 
   // WhatsApp del negocio: código de país (57) + número, sin espacios ni "+".

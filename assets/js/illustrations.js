@@ -1,5 +1,5 @@
 /* =========================================================
-   Honey Moon · Ilustraciones SVG de los productos
+   Honeymoon · Ilustraciones SVG de los productos
    Dibujos con trazo grueso, en el mismo estilo de la mascota.
    ========================================================= */
 (function () {

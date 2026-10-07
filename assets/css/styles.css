@@ -1,5 +1,5 @@
 /* =========================================================
-   Honey Moon · Estilos
+   Honeymoon · Estilos
    Paleta tomada del logo y la mascota.
    ========================================================= */
 :root {
@@ -310,6 +310,21 @@ h1, h2, h3, h4, .hm-display {
 .hm-notice i { font-size: 1.1rem; color: var(--hm-red); }
 .hm-option-detail { font-weight: 600; font-size: .75rem; color: var(--hm-cocoa-soft); }
 
+/* ---------- Tortas personalizadas ---------- */
+.hm-custom { padding-block: clamp(2.5rem, 5vw, 4rem); }
+.hm-custom-card {
+  background: var(--hm-pink); border: var(--hm-border); border-radius: 28px;
+  box-shadow: 8px 8px 0 var(--hm-cocoa); padding: clamp(1.25rem, 3vw, 2.25rem);
+  background-image: radial-gradient(circle, rgba(255, 255, 255, .45) 1.4px, transparent 1.8px);
+  background-size: 18px 18px;
+}
+.hm-custom-art {
+  background: var(--hm-paper); border: var(--hm-border); border-radius: 50%;
+  aspect-ratio: 1; max-width: 220px; margin-inline: auto; overflow: hidden;
+}
+.hm-custom-art svg { width: 100%; height: 100%; display: block; }
+.hm-custom .hm-kicker { color: var(--hm-cocoa); }
+
 /* ---------- Temporada ---------- */
 .hm-season { background: var(--hm-forest); color: var(--hm-cream); position: relative; overflow: hidden; }
 .hm-season .hm-section-title { color: var(--hm-cream); }
@@ -522,6 +537,7 @@ body.has-cart .hm-fab-wa { bottom: 5.25rem; }
   .hm-card .btn-hm { --bs-btn-padding-y: .35rem; --bs-btn-font-size: .9rem; box-shadow: 3px 3px 0 var(--hm-cocoa); }
   .hm-tag { top: .5rem; left: .5rem; font-size: .62rem; padding: .2rem .45rem; }
   .hm-season-media { width: 76px; height: 76px; }
+  .hm-custom-art { max-width: 160px; }
   .hm-product-media { aspect-ratio: 16 / 9; }
   .hm-card-note { font-size: .72rem; margin: -.2rem 0 .5rem; }
   .hm-cat-heading h3 { font-size: 1.3rem; }

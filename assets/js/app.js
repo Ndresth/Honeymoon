@@ -1,5 +1,5 @@
 /* =========================================================
-   Honey Moon · Lógica de menú, carrito y pedido por WhatsApp
+   Honeymoon · Lógica de menú, carrito y pedido por WhatsApp
    ========================================================= */
 (function () {
   "use strict";
@@ -199,7 +199,7 @@
         <div class="hm-empty">
           <img src="assets/img/mascota-hoy.webp" alt="">
           <h3 class="fs-4">Tu carrito está vacío</h3>
-          <p class="text-cocoa-soft">Nuestro honguito te espera con algo dulce.</p>
+          <p class="text-cocoa-soft">Hony te espera con algo dulce.</p>
           <button type="button" class="btn btn-hm btn-hm-red" data-ver-menu>Ver el menú</button>
         </div>`;
       return;
@@ -833,6 +833,11 @@
     }
     banner.classList.toggle("d-none", TEL !== NUMERO_PRUEBA && preciosConfirmados);
     $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
+    const arte = $("#customArt");
+    if (arte) {
+      arte.style.background = "#e3e6d4";
+      arte.innerHTML = window.HM_ILUSTRACION({ tipo: "torta", salsa: "#f7b6cf", relleno: "#fffaf2", cobertura: "#ffc5de", velas: true });
+    }
   }
 
   const redes = () => (CFG.redes || []).filter((r) => /^https:\/\//.test(r.url));
