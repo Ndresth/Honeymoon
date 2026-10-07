@@ -12,6 +12,7 @@
   const NUMERO_PRUEBA = "573000000000";
   const TEL = String(CFG.whatsapp).replace(/\D/g, ""); // tolera "+57 300 ..." en config.js
   const MAX_CANTIDAD = 20;
+  const preciosConfirmados = CFG.preciosConfirmados !== false;
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
@@ -46,7 +47,39 @@
   }
   const fondo = (p) => (p.ilustracion && p.ilustracion.fondo) || p.fondo || "var(--hm-pink-soft)";
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
-  const disponible = (p) => p.disponible !== false;
+  /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
+  function ahoraBogota() {
+    const partes = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Bogota", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "numeric", minute: "numeric", hourCycle: "h23"
+    }).formatToParts(new Date());
+    const get = (t) => partes.find((p) => p.type === t).value;
+    return {
+      fecha: `${get("year")}-${get("month")}-${get("day")}`,
+      hora: +get("hour") + +get("minute") / 60
+    };
+  }
+  const hoyBogota = () => ahoraBogota().fecha;
+  const isoAFecha = (iso) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
+  };
+  const sumarDias = (iso, dias) => {
+    const f = isoAFecha(iso);
+    f.setUTCDate(f.getUTCDate() + dias);
+    return f.toISOString().slice(0, 10);
+  };
+  const fechaLarga = (iso) => new Intl.DateTimeFormat("es-CO", {
+    timeZone: "UTC", weekday: "long", day: "numeric", month: "long"
+  }).format(isoAFecha(iso));
+  // Productos de temporada: solo se pueden pedir entre temporada.desde y temporada.hasta (MM-DD)
+  const enTemporada = (p) => {
+    if (!p.temporada) return true;
+    const md = hoyBogota().slice(5);
+    const { desde, hasta } = p.temporada;
+    return desde <= hasta ? md >= desde && md <= hasta : md >= desde || md <= hasta;
+  };
+  const disponible = (p) => p.disponible !== false && enTemporada(p);
   const getTamano = (p, id) => p.tamanos.find((t) => t.id === id) || p.tamanos[0];
   const nombreTamano = (t) => t.nombre + (t.detalle ? ` (${t.detalle})` : "");
   const esEncargo = (p, t) => !!(p.encargo || (t && t.encargo));
@@ -238,7 +271,8 @@
     const ok = disponible(p);
     const varios = p.tamanos.length > 1 || p.cotizar;
     const precio = `${varios ? "desde " : ""}${money(precioDesde(p))}`;
-    const encargo = p.encargo ? textoEncargo()
+    const encargo = !ok && p.temporada ? p.temporada.texto
+      : p.encargo ? textoEncargo()
       : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
     const detalle = `${precio}${encargo ? ", " + encargo : ""}`;
     const accion = p.cotizar
@@ -496,31 +530,6 @@
   const costoDomicilio = () => (esDomicilio() && zonaSel() ? zonaSel().costo : 0);
   const soloDigitos = (s) => String(s || "").replace(/\D/g, "");
 
-  /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
-  function ahoraBogota() {
-    const partes = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Bogota", year: "numeric", month: "2-digit", day: "2-digit",
-      hour: "numeric", minute: "numeric", hourCycle: "h23"
-    }).formatToParts(new Date());
-    const get = (t) => partes.find((p) => p.type === t).value;
-    return {
-      fecha: `${get("year")}-${get("month")}-${get("day")}`,
-      hora: +get("hour") + +get("minute") / 60
-    };
-  }
-  const hoyBogota = () => ahoraBogota().fecha;
-  const isoAFecha = (iso) => {
-    const [y, m, d] = iso.split("-").map(Number);
-    return new Date(Date.UTC(y, m - 1, d));
-  };
-  const sumarDias = (iso, dias) => {
-    const f = isoAFecha(iso);
-    f.setUTCDate(f.getUTCDate() + dias);
-    return f.toISOString().slice(0, 10);
-  };
-  const fechaLarga = (iso) => new Intl.DateTimeFormat("es-CO", {
-    timeZone: "UTC", weekday: "long", day: "numeric", month: "long"
-  }).format(isoAFecha(iso));
   const abreEl = (iso) => !!CFG.horario[isoAFecha(iso).getUTCDay()];
   const proximoAbierto = (iso) => {
     let d = iso;
@@ -684,6 +693,7 @@
     L.push(`Subtotal: ${money(sub)}`);
     if (esDomicilio()) L.push(`Domicilio: ${money(envio)}`);
     L.push(`*Total: ${money(sub + envio)}*`);
+    if (!preciosConfirmados) L.push("_Precios de referencia: confirmar total._");
     L.push("");
     L.push(`*Pago:* ${datos.pago}${datos.cambio ? ` (paga con ${money(datos.cambio)})` : ""}`);
     if (datos.notas) L.push(`*Notas:* ${datos.notas}`);
@@ -784,16 +794,14 @@
       a.target = "_blank";
       a.rel = "noopener";
     });
-    $("#testBanner").classList.toggle("d-none", TEL !== NUMERO_PRUEBA);
-    $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
-    const personalizada = getProducto("torta-personalizada");
-    const arte = $("#customArt");
-    if (personalizada) {
-      arte.style.background = fondo(personalizada);
-      arte.innerHTML = media(personalizada);
-    } else {
-      arte.closest(".hm-custom").classList.add("d-none");
+    const banner = $("#testBanner");
+    if (TEL === NUMERO_PRUEBA) {
+      banner.innerHTML = `<i class="bi bi-cone-striped" aria-hidden="true"></i> <strong>Modo prueba:</strong> los pedidos se envían a un WhatsApp de prueba.`;
+    } else if (!preciosConfirmados) {
+      banner.innerHTML = `<i class="bi bi-info-circle" aria-hidden="true"></i> <strong>Precios de referencia:</strong> te confirmamos el total por WhatsApp.`;
     }
+    banner.classList.toggle("d-none", TEL !== NUMERO_PRUEBA && preciosConfirmados);
+    $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
   }
 
   const redes = () => (CFG.redes || []).filter((r) => /^https:\/\//.test(r.url));
