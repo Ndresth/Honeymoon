@@ -546,12 +546,21 @@
      ===================================================== */
   const cForm = $("#checkoutForm");
 
-  $("#cZona").innerHTML = `<option value="" selected disabled>Elige tu zona</option>` +
+  $("#cZona").innerHTML = `<option value="" selected disabled>Elige tu ciudad</option>` +
     CFG.zonas.map((z) => `<option value="${esc(z.id)}">${esc(z.nombre)}</option>`).join("");
   $("#cPago").innerHTML = CFG.metodosPago.map((m) => `<option>${esc(m)}</option>`).join("");
   $("#puntoRecogida").textContent = CFG.puntoRecogida;
 
-  const esDomicilio = () => cForm.entrega.value === "domicilio";
+  // Recoger aún no está disponible: la opción se ve como "Próximamente" y no se puede elegir
+  const RECOGER = CFG.recoger === true;
+  if (!RECOGER) {
+    $("#eRecoger").disabled = true;
+    $("#eDomicilio").checked = true;
+    $("#eRecoger").closest(".hm-opt-wrap").classList.add("is-soon");
+    $('label[for="eRecoger"]').insertAdjacentHTML("beforeend", `<span class="hm-soon">Próximamente</span>`);
+  }
+
+  const esDomicilio = () => !RECOGER || cForm.entrega.value === "domicilio";
   const zonaSel = () => CFG.zonas.find((z) => z.id === $("#cZona").value);
   const soloDigitos = (s) => String(s || "").replace(/\D/g, "");
 
@@ -698,7 +707,7 @@
       L.push(`*Entrega:* Domicilio`);
       L.push(`*Dirección:* ${datos.direccion}`);
       L.push(`*Barrio:* ${datos.barrio}`);
-      L.push(`*Zona:* ${zonaSel().nombre}`);
+      L.push(`*Ciudad:* ${zonaSel().nombre}`);
     } else {
       L.push(`*Entrega:* Recoger en el local`);
     }
@@ -818,7 +827,10 @@
       const [dias, horas] = t.split("·").map((s) => s.trim());
       return `<li><span>${esc(dias)}</span><strong class="text-end text-nowrap">${esc(horas || "")}</strong></li>`;
     }).join("");
-    $("#zonasLista").innerHTML = CFG.zonas.map((z) => `<span class="hm-pill">${esc(z.nombre)}</span>`).join("");
+    const ciudades = CFG.zonas.map((z) => z.nombre);
+    $("#zonasTexto").textContent = window.Intl && Intl.ListFormat
+      ? new Intl.ListFormat("es", { type: "conjunction" }).format(ciudades)
+      : ciudades.join(", ");
     $("#pagosLista").innerHTML = CFG.metodosPago.map((m) => `<span class="hm-pill">${esc(m)}</span>`).join("");
     $$("[data-precio-min]").forEach((el) => (el.textContent = money(Math.min(...MENU.filter(disponible).map(precioDesde)))));
     $("#anio").textContent = new Date().getFullYear();
