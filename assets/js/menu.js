@@ -12,6 +12,7 @@
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
    - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
+   - fotoReferencia: true muestra la etiqueta "Foto de referencia" sobre la imagen
    - notaPlaceholder: texto de ejemplo para la nota del producto
    - disponible: false para mostrarlo como "Próximamente"
    ========================================================= */
@@ -59,6 +60,7 @@ window.HM_ADICIONES = {
     { id: "grande", nombre: "Grande", detalle: "20 porciones", precio: grande }
   ];
   const NOTA_TORTA = "Ej: indicaciones especiales para tu torta";
+  const FOTO_FRESAS = "assets/img/fresas-con-crema.webp"; // foto real de referencia
 
   window.HM_MENU = [
     /* ---------- Fresas con crema ---------- */
@@ -68,7 +70,9 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Hony",
       descripcion: "Fresa, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(14000),
-      ilustracion: { tipo: "vaso", salsa: "#c98a3c", topping: "oreo", fondo: "#ffd9e8" }
+      imagen: FOTO_FRESAS,
+      fotoReferencia: true,
+      fondo: "#f6c9d8"
     },
     {
       id: "fresas-cheese",
@@ -76,7 +80,9 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Cheese",
       descripcion: "Fresa, queso fresco, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(15000),
-      ilustracion: { tipo: "vaso", salsa: "#c98a3c", topping: ["queso", "oreo"], fondo: "#fbe7b8" }
+      imagen: FOTO_FRESAS,
+      fotoReferencia: true,
+      fondo: "#f6c9d8"
     },
     {
       id: "fresas-nutella-moon",
@@ -84,7 +90,9 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Nutella Moon",
       descripcion: "Fresa, crema, Nutella, maní tostado y salsa de fresa.",
       tamanos: VASO(16000),
-      ilustracion: { tipo: "vaso", salsa: "#6b3a22", topping: "mani", fondo: "#f1d9c4" }
+      imagen: FOTO_FRESAS,
+      fotoReferencia: true,
+      fondo: "#f6c9d8"
     },
     {
       id: "fresas-oreo-crush",
@@ -92,7 +100,9 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Oreo Crush",
       descripcion: "Fresa, crema, Oreo triturada, salsa de chocolate y salsa de fresa.",
       tamanos: VASO(15000),
-      ilustracion: { tipo: "vaso", salsa: "#3b2620", topping: "oreo", fondo: "#e3e6d4" }
+      imagen: FOTO_FRESAS,
+      fotoReferencia: true,
+      fondo: "#f6c9d8"
     },
 
     /* ---------- Pavés ---------- */
