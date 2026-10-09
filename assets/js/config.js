@@ -34,15 +34,10 @@ window.HM_CONFIG = {
     "Lunes · descansamos"
   ],
 
-  // Zonas de domicilio (valores de prueba, ajústalos a tus tarifas reales).
-  // Zonas de domicilio. El valor del domicilio se confirma por WhatsApp según el barrio.
+  // Ciudades a las que llegan los domicilios (sección Domicilios y campo "Ciudad" del pedido).
+  // El valor del domicilio se confirma por WhatsApp según el barrio.
   zonas: [
-    { id: "riomar", nombre: "Riomar" },
-    { id: "norte-centro", nombre: "Norte – Centro Histórico" },
-    { id: "suroccidente", nombre: "Suroccidente" },
-    { id: "metropolitana", nombre: "Metropolitana" },
-    { id: "suroriente", nombre: "Suroriente" },
-    { id: "puerto-colombia", nombre: "Puerto Colombia" },
+    { id: "barranquilla", nombre: "Barranquilla" },
     { id: "soledad", nombre: "Soledad" }
   ],
 

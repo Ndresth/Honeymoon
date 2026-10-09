@@ -49,13 +49,13 @@ La franja **Tortas personalizadas para tu evento** (`#personalizadas` en `index.
 
 Recoger en el local está apagado (`recoger: false` en `config.js`): en el checkout sale como **Próximamente** y solo se puede pedir a domicilio. Cuando haya local, pon `recoger: true` y la dirección en `puntoRecogida`.
 
-Las zonas de domicilio, el horario, los métodos de pago y `diasEncargo` (anticipación mínima para tortas, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su zona y se le confirma por WhatsApp. Los precios, tamaños y horario actuales son de referencia.
+Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario, los métodos de pago y `diasEncargo` (anticipación mínima para tortas, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp. Los precios, tamaños y horario actuales son de referencia.
 
 ## Cómo funciona el pedido
 
 1. El cliente elige producto, tamaño, adiciones, notas y cantidad.
 2. El carrito se guarda en el navegador (`localStorage`), así no se pierde si recarga la página.
-3. En "Finalizar pedido" llena nombre, celular, dirección, zona, fecha de entrega y método de pago. Si el carrito tiene productos por encargo, la fecha es obligatoria y no deja elegir antes de `diasEncargo` días ni días cerrados.
+3. En "Finalizar pedido" llena nombre, celular, dirección, barrio, ciudad, fecha de entrega y método de pago. Si el carrito tiene productos por encargo, la fecha es obligatoria y no deja elegir antes de `diasEncargo` días ni días cerrados.
 4. Se abre `https://wa.me/<número>?text=...` con el pedido formateado: código de pedido, datos del cliente, fecha, productos con tamaño/adiciones/notas, subtotal, total (sin domicilio, que queda "por confirmar") y forma de pago.
 
 ## Ver en local
