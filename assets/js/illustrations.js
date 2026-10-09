@@ -186,6 +186,97 @@
   }
 
 
+
+  /* ---------- Fresas con crema: vaso abierto visto desde arriba ---------- */
+  const PUNTOS_CIMA = [[84, 64], [96, 74], [104, 58], [112, 78], [128, 80], [142, 77], [154, 72], [162, 64], [154, 57],
+    [140, 55], [94, 66], [86, 72], [166, 70], [132, 70], [108, 68], [76, 66], [118, 54], [148, 64], [100, 79], [146, 81]];
+
+  const migaja = (tipo, x, y, i) => {
+    switch (tipo) {
+      case "oreo":
+        return `<path transform="translate(${x} ${y}) rotate(${(i * 47) % 360}) scale(${1 + (i % 3) * .25})" d="M-3 -2 L1.5 -3.2 L3.6 .4 L1 2.8 L-3 2Z" fill="#2b2422"/>`;
+      case "queso":
+        return `<rect x="${x - 2.8}" y="${y - 2.4}" width="5.6" height="4.8" rx="1.2" fill="#ffffff" stroke="#d8cdbb" stroke-width=".8" transform="rotate(${(i * 31) % 90} ${x} ${y})"/>`;
+      case "mani":
+        return `<path transform="translate(${x} ${y}) rotate(${(i * 53) % 360}) scale(.72)" d="M-6 0 C-6 -4 -1 -4 0 -1.5 C1 -4 6 -4 6 0 C6 4 1 4 0 1.5 C-1 4 -6 4 -6 0Z" fill="#d9a35b" stroke="#8a5528" stroke-width="1.3"/>`;
+      default:
+        return "";
+    }
+  };
+
+  // Hilo de salsa en espiral ondulada sobre la crema (con borde fino, estilo caricatura)
+  const hiloSalsa = (cx, cy, rx, ry, n, color, w) => {
+    let d = "";
+    for (let k = 0; k <= 90; k++) {
+      const t = (k / 90) * Math.PI * 2;
+      const f = 1 + .13 * Math.sin(n * t);
+      d += `${k ? " L" : "M"}${(cx + rx * f * Math.cos(t)).toFixed(1)} ${(cy + ry * f * Math.sin(t)).toFixed(1)}`;
+    }
+    return `<path d="${d}Z" fill="none" stroke="${K}" stroke-width="${w + 2.2}" stroke-linejoin="round" opacity=".55"/>
+      <path d="${d}Z" fill="none" stroke="${color}" stroke-width="${w}" stroke-linejoin="round"/>`;
+  };
+
+  // Rosa de fresa en tajadas con salsa de fresa
+  const rosaFresa = (x, y) => `
+    <g transform="translate(${x} ${y})">
+      <ellipse rx="17" ry="8" cy="4" fill="#c8102e" stroke="${K}" stroke-width="2"/>
+      ${[[-8, 0, -40], [8, 0, 40], [-4, 3, -15], [4, 3, 15], [0, -4, 0]].map(([a, b, r]) => `
+        <g transform="translate(${a} ${b}) rotate(${r}) scale(.66)">
+          <path d="M0,-10 C8,-12 13,-5 12,2 C11,9 4,14 0,15 C-4,14 -11,9 -12,2 C-13,-5 -8,-12 0,-10Z" fill="${RED}" stroke="${K}" stroke-width="2.6"/>
+          <path d="M0,-5 C4,-6 7,-2 6,2 C5,6 2,9 0,9 C-2,9 -5,6 -6,2 C-7,-2 -4,-6 0,-5Z" fill="#ff9aa8"/>
+        </g>`).join("")}
+    </g>`;
+
+  function fresas(c, uid) {
+    const cuerpo = "M56 68 L76 184 Q120 192 164 184 L184 68 Z";
+    const migas = [].concat(c.migas || []);
+    const salsas = [].concat(c.salsas || []);
+    const puntos = c.densa ? PUNTOS_CIMA : PUNTOS_CIMA.slice(0, 14);
+    const migasDentro = migas.includes("oreo")
+      ? [[96, 132], [136, 124], [104, 164], [152, 142], [124, 150], [84, 120]].map(([x, y], i) => migaja("oreo", x, y, i)).join("")
+      : "";
+    return `
+      ${decoracion()}
+      <defs><clipPath id="cp-${uid}"><path d="${cuerpo}"/></clipPath></defs>
+      <g clip-path="url(#cp-${uid})">
+        <rect x="50" y="60" width="140" height="140" fill="#fbeedd"/>
+        <path d="M50 112 q20 -10 40 0 t40 0 t40 0 t40 0" fill="none" stroke="#e04a5f" stroke-width="5" opacity=".8"/>
+        <path d="M50 152 q20 8 40 0 t40 0 t40 0 t40 0" fill="none" stroke="#e04a5f" stroke-width="5" opacity=".8"/>
+        <path d="M60 78 q4 12 0 22 M98 80 q5 10 1 18 M142 80 q-4 12 0 20 M178 78 q-3 10 -1 18" fill="none" stroke="#d6334a" stroke-width="5" stroke-linecap="round"/>
+        ${rodaja(82, 104, 1, 15)}${rodaja(158, 110, 1, -20)}${rodaja(118, 128, 1.05, 40)}${rodaja(88, 152, 1, -10)}
+        ${rodaja(148, 156, 1.1, 25)}${rodaja(112, 178, 1, 0)}${rodaja(142, 182, .9, -30)}
+        ${migasDentro}
+        <path d="M74 92 L88 176" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+      </g>
+      <path d="${cuerpo}" fill="none" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="120" cy="68" rx="64" ry="20" fill="#fffdf7" stroke="${K}" stroke-width="4"/>
+      <ellipse cx="120" cy="69" rx="57" ry="16" fill="#fff6e6"/>
+      ${migas.length ? puntos.map(([x, y], i) => migaja(migas[i % migas.length], x, y, i)).join("") : ""}
+      ${salsas.map((color, i) => hiloSalsa(120, 69, i ? 27 : 45, i ? 8.5 : 13, 5 + i, color, 3.4)).join("")}
+      ${rosaFresa(120, 63)}`;
+  }
+
+  /* ---------- Cheesecake a bocados ---------- */
+  function bocados(c) {
+    const jam = c.cobertura || "#9b1b30";
+    const cubo = (x, y) => `
+      <g transform="translate(${x} ${y})">
+        <path d="M46 0 L58 -10 L58 30 L46 40 Z" fill="#f3e0bd" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M46 30 L58 20 L58 30 L46 40 Z" fill="#a8722f"/>
+        <rect x="0" y="0" width="46" height="40" fill="#fff1d6" stroke="${K}" stroke-width="3"/>
+        <rect x="1.5" y="30" width="43" height="8.5" fill="#c98a3c"/>
+        <path d="M0 0 L12 -10 L58 -10 L46 0 Z" fill="${jam}" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M2 0 C3 9 9 9 10 1 Z M20 0 C21 11 28 11 29 1 Z M36 0 C37 8 42 8 43 1 Z" fill="${jam}" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="22" cy="-5" r="3.2" fill="#3b4a8a" stroke="${K}" stroke-width="1.5"/>
+        <circle cx="36" cy="-6" r="3" fill="#c2185b" stroke="${K}" stroke-width="1.5"/>
+        <path d="M14 -6 q3 -2 6 0" stroke="#fff" stroke-width="1.6" fill="none" opacity=".6" stroke-linecap="round"/>
+      </g>`;
+    return `
+      ${decoracion()}
+      ${plato(170, 98, 20)}
+      ${cubo(92, 88)}${cubo(50, 126)}${cubo(130, 126)}`;
+  }
+
   /* ---------- Repostería ---------- */
   const goteo = (x0, x1, y, largos, color) => {
     const w = (x1 - x0) / largos.length;
@@ -215,8 +306,27 @@
           </g>`).join("") + decoTorta("nueces");
       case "migas":
         return [[90, 92], [104, 86], [118, 94], [132, 87], [146, 93], [112, 99], [128, 100], [98, 98], [140, 99]]
-          .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="#b3263a" stroke="${K}" stroke-width="1"/>`).join("") +
-          fresa(120, 74, 1.05, 6);
+          .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.2" fill="#b3263a" stroke="${K}" stroke-width="1"/>`).join("");
+      case "virutas":
+        return [[92, 90, -20], [110, 84, 15], [130, 86, -10], [148, 90, 25], [104, 96, 40], [138, 97, -35], [120, 92, 5]]
+          .map(([x, y, r]) => `<g transform="translate(${x} ${y}) rotate(${r})">
+            <rect x="-9" y="-3" width="18" height="6" rx="3" fill="#5a2d1c" stroke="${K}" stroke-width="1.6"/>
+            <path d="M-6 -1 H6" stroke="#8a5a3c" stroke-width="1.4" stroke-linecap="round"/></g>`).join("") +
+          [[98, 86], [124, 98], [144, 84], [114, 88]].map(([x, y]) => `<path transform="translate(${x} ${y})" d="M-3 0 L0 -2 L3 0 L0 2Z" fill="#3a1b0f"/>`).join("");
+      case "frutas":
+        return [[92, 92], [106, 86], [134, 88], [150, 93], [118, 98], [100, 99], [140, 99]]
+          .map(([x, y], i) => i % 3 === 0
+            ? `<circle cx="${x}" cy="${y}" r="4.6" fill="#c8102e" stroke="${K}" stroke-width="1.6"/><circle cx="${x - 1.4}" cy="${y - 1.6}" r="1.2" fill="#fff" opacity=".7"/>`
+            : i % 3 === 1
+              ? `<ellipse cx="${x}" cy="${y}" rx="4" ry="2.8" fill="#4a1f3a" stroke="${K}" stroke-width="1.2"/>`
+              : `<rect x="${x - 3}" y="${y - 2.5}" width="6" height="5" rx="1" fill="#7fae5a" stroke="${K}" stroke-width="1.1"/>`).join("") +
+          `<g transform="translate(120 78)">
+            <path d="M0 0 C-6 -10 -18 -8 -22 -2 C-16 -2 -14 4 -8 4 C-6 2 -3 1 0 0Z" fill="#3f7a3a" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M0 0 C6 -10 18 -8 22 -2 C16 -2 14 4 8 4 C6 2 3 1 0 0Z" fill="#3f7a3a" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="-3" cy="-4" r="3.6" fill="#e5412d" stroke="${K}" stroke-width="1.6"/>
+            <circle cx="3.5" cy="-4.5" r="3.6" fill="#e5412d" stroke="${K}" stroke-width="1.6"/>
+            <circle cx="0" cy="-9.5" r="3.6" fill="#e5412d" stroke="${K}" stroke-width="1.6"/>
+          </g>`;
       case "merengue":
         return [[86, 92], [102, 86], [120, 84], [138, 86], [154, 92], [110, 98], [130, 98]]
           .map(([x, y]) => `<path transform="translate(${x} ${y})" d="M-7 4 C-7 -2 -2 -4 0 -10 C2 -4 7 -2 7 4 Z" fill="#fffaf2" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>`).join("") +
@@ -256,8 +366,10 @@
       <path d="M100 184 L140 184 L150 196 L90 196 Z" fill="#fffdf7" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
       ${plato(178, 92, 14)}
       <rect x="60" y="94" width="120" height="78" rx="8" fill="${bizcocho}" stroke="${K}" stroke-width="4"/>
-      <rect x="62" y="124" width="116" height="9" fill="${relleno}"/>
-      <rect x="62" y="150" width="116" height="9" fill="${relleno}"/>
+      ${c.sinCapas ? "" : `<rect x="62" y="124" width="116" height="9" fill="${relleno}"/>
+      <rect x="62" y="150" width="116" height="9" fill="${relleno}"/>`}
+      ${c.motas ? [[76, 130], [96, 150], [118, 128], [140, 156], [162, 134], [86, 162], [130, 142], [154, 118], [104, 118]]
+        .map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i % 2 ? 2.4 : 3}" fill="${i % 3 ? "#7a2a3a" : "#c8102e"}" opacity=".9"/>`).join("") : ""}
       <path d="M70 112 V164" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".22"/>
       ${goteo(60, 180, 100, [22, 12, 28, 14, 24, 10, 26, 16], cobertura)}
       <ellipse cx="120" cy="94" rx="60" ry="12" fill="${cobertura}" stroke="${K}" stroke-width="4"/>
@@ -302,20 +414,28 @@
     const banda = (y, h) => {
       let migas = "";
       for (let x = 72; x < 170; x += 11) migas += `<circle cx="${x + (y % 7)}" cy="${y + h / 2 + ((x / 11) % 2 ? 2 : -2)}" r="1.8" fill="${capa.detalle}"/>`;
+      const ducales = () => {
+        let r = "";
+        for (let x = 60; x < 180; x += 24) {
+          r += `<rect x="${x}" y="${y + 1}" width="21" height="${h - 2}" rx="2" fill="#e8b866" stroke="#b9852f" stroke-width="1.2"/>`;
+          r += `<circle cx="${x + 6}" cy="${y + h / 2}" r="1.3" fill="#b9852f"/><circle cx="${x + 15}" cy="${y + h / 2}" r="1.3" fill="#b9852f"/>`;
+        }
+        return r;
+      };
       const rejilla = c.capa === "oblea"
         ? `<path d="${Array.from({ length: 9 }, (_, i) => `M${74 + i * 11} ${y} v${h}`).join(" ")}" stroke="${capa.detalle}" stroke-width="1.4"/>`
-        : migas;
-      const mora = c.capa === "oblea" ? `<rect x="60" y="${y - 3}" width="120" height="4" fill="#5b1f4a"/>` : "";
+        : c.capa === "galleta" ? ducales() : migas;
+      const mora = c.capa === "oblea" ? `<rect x="60" y="${y - 5}" width="120" height="5" fill="#5b1f4a"/>` : "";
       return `<rect x="60" y="${y}" width="120" height="${h}" fill="${capa.color}"/>${rejilla}${mora}`;
     };
     const cima = {
-      klim: [[84, 80], [96, 76], [108, 82], [122, 77], [136, 81], [150, 76], [160, 82], [102, 86], [130, 86], [144, 86], [90, 86], [116, 72]]
-        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#fffdf6" stroke="#e8dcc0" stroke-width=".8"/>`).join(""),
+      klim: `<ellipse cx="120" cy="80" rx="46" ry="7" fill="#fffdf6" stroke="#e8dcc0" stroke-width="1"/>` +
+        [[78, 82], [84, 78], [92, 84], [100, 77], [108, 83], [116, 76], [124, 82], [132, 77], [140, 83], [148, 78], [156, 82], [162, 79], [96, 88], [112, 89], [128, 88], [144, 88]]
+          .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.9" fill="#fffdf6" stroke="#e1d3b2" stroke-width=".7"/>`).join(""),
       milo: [[82, 80, 0], [94, 76, 30], [108, 82, -20], [122, 76, 45], [136, 82, 10], [150, 77, -35], [160, 83, 20], [100, 86, 60], [128, 86, -50], [144, 86, 15]]
         .map(([x, y, r]) => `<rect x="${x - 4}" y="${y - 3}" width="8" height="6" rx="2" fill="#5a3a22" stroke="${K}" stroke-width="1" transform="rotate(${r} ${x} ${y})"/>`).join(""),
       queso: [[84, 80, 8], [100, 76, -12], [118, 81, 20], [134, 76, -6], [150, 80, 14], [108, 87, 0], [140, 87, -18]]
-        .map(([x, y, r]) => `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="2" fill="#fffdf2" stroke="${K}" stroke-width="1.6" transform="rotate(${r} ${x} ${y})"/>`).join("") +
-        `<path d="M78 74 q8 6 16 0 q8 -6 16 0 q8 6 16 0 q8 -6 16 0 q8 6 16 0" fill="none" stroke="#5b1f4a" stroke-width="3" stroke-linecap="round" opacity=".85"/>`
+        .map(([x, y, r]) => `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" rx="2" fill="#fffdf2" stroke="${K}" stroke-width="1.6" transform="rotate(${r} ${x} ${y})"/>`).join("")
     }[c.topping] || "";
     return `
       ${decoracion()}
@@ -347,9 +467,10 @@
     return `
       ${decoracion()}
       ${plato(166, 98, 20)}
-      ${dona(80, 146, 1)}${dona(160, 146, 1)}${dona(120, 112, 1.05)}
-      ${rodaja(60, 128, .8, -20)}${rodaja(182, 126, .8, 25)}
-      ${fresa(120, 80, 1.1, 8)}${fresa(150, 96, .85, 28)}`;
+      ${dona(96, 118, .72)}${dona(144, 118, .72)}
+      ${dona(72, 148, .72)}${dona(120, 152, .72)}${dona(168, 148, .72)}
+      ${rodaja(96, 108, .62, -20)}${rodaja(144, 108, .62, 25)}${rodaja(120, 142, .62, 0)}${rodaja(72, 138, .58, -10)}${rodaja(168, 138, .58, 15)}
+      ${fresa(120, 92, .95, 8)}`;
   }
 
   function brownie(c) {
@@ -373,22 +494,25 @@
 
   function galleta(c) {
     const masa = c.salsa || "#e2b06a";
-    const chip = c.chips || "#4a2414";
+    const chip = c.chips;
     const cookie = (x, y, r, rot) => {
       const pts = [[-.45, -.35], [.3, -.45], [.5, .15], [-.1, .5], [-.5, .25], [.05, -.05], [.25, .45]];
       return `<g transform="translate(${x} ${y}) rotate(${rot})">
         <path d="M${-r} 0 C${-r} ${-r * .6} ${-r * .6} ${-r} 0 ${-r} C${r * .62} ${-r} ${r} ${-r * .55} ${r} 0 C${r} ${r * .6} ${r * .55} ${r} 0 ${r} C${-r * .6} ${r} ${-r} ${r * .58} ${-r} 0Z"
           fill="${masa}" stroke="${K}" stroke-width="4"/>
         <path d="M${-r * .5} ${-r * .1} l${r * .2} ${r * .08} M${r * .2} ${r * .2} l${r * .18} ${-r * .06}" stroke="${K}" stroke-width="2" opacity=".25" stroke-linecap="round"/>
-        ${pts.map(([a, b]) => `<path transform="translate(${a * r} ${b * r})" d="M-4 -3 C0 -6 5 -3 4 1 C3 5 -3 5 -4 2 Z" fill="${chip}" stroke="${K}" stroke-width="1.2"/>`).join("")}
+        ${c.chips ? pts.map(([a, b]) => `<path transform="translate(${a * r} ${b * r}) scale(${c.mini ? .7 : 1})" d="M-4 -3 C0 -6 5 -3 4 1 C3 5 -3 5 -4 2 Z" fill="${chip}" stroke="${K}" stroke-width="1.2"/>`).join("") : ""}
+        ${c.grietas ? `<path d="M${-r * .55} ${-r * .15} l${r * .3} ${r * .12} l${r * .25} ${-r * .2} M${-r * .2} ${r * .35} l${r * .3} ${-r * .1} l${r * .3} ${r * .12} M${r * .1} ${-r * .55} l${r * .05} ${r * .3}" fill="none" stroke="#f08ca0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+        ${c.polvo ? [[-.4, -.3], [-.1, -.5], [.3, -.35], [.45, .05], [.15, .1], [-.3, .15], [-.05, .45], [.3, .4], [-.5, .4]]
+          .map(([a, b]) => `<circle cx="${a * r}" cy="${b * r}" r="1.6" fill="#fffef8"/>`).join("") : ""}
       </g>`;
     };
+    const grandes = [[150, 104, 40, 20], [100, 124, 48, -10], [170, 148, 26, 40]];
+    const mini = [[96, 102, 18, 20], [142, 102, 18, -15], [70, 128, 19, 10], [118, 128, 19, 35], [166, 128, 19, -25], [92, 154, 19, 0], [144, 154, 19, 30]];
     return `
       ${decoracion()}
       ${plato(168, 96, 18)}
-      ${cookie(150, 104, 40, 20)}
-      ${cookie(100, 124, 48, -10)}
-      ${cookie(170, 148, 26, 40)}`;
+      ${(c.mini ? mini : grandes).map(([x, y, r, rot]) => cookie(x, y, r, rot)).join("")}`;
   }
 
   function alfajor() {
@@ -423,7 +547,9 @@
       galleta: () => galleta(cfg),
       alfajor: () => alfajor(cfg),
       pave: () => pave(cfg, uid),
-      donas: () => donas(cfg)
+      donas: () => donas(cfg),
+      fresas: () => fresas(cfg, uid),
+      bocados: () => bocados(cfg)
     };
     const cuerpo = (dibujos[cfg.tipo] || dibujos.vaso)();
     return `<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false">${cuerpo}</svg>`;

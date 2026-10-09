@@ -20,6 +20,8 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const getProducto = (id) => MENU.find((p) => p.id === id);
   const getAdicion = (id) => ADICIONES.find((a) => a.id === id);
+  // En la tarjeta va el nombre corto (la sección ya dice "Fresas con crema"); en el resto, el completo.
+  const nombreLargo = (p) => p.nombreCompleto || p.nombre;
   const waUrl = (texto) => `https://wa.me/${TEL}?text=${encodeURIComponent(texto)}`;
   const suave = () => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
 
@@ -214,14 +216,14 @@
           <div class="hm-cart-thumb" style="background:${fondo(d.p)}">${media(d.p)}</div>
           <div class="flex-grow-1 min-w-0">
             <div class="d-flex justify-content-between gap-2">
-              <div class="hm-cart-name">${esc(d.p.nombre)}</div>
-              <button class="hm-cart-remove" type="button" data-remove="${i}" aria-label="Quitar ${esc(d.p.nombre)}"><i class="bi bi-trash3"></i></button>
+              <div class="hm-cart-name">${esc(nombreLargo(d.p))}</div>
+              <button class="hm-cart-remove" type="button" data-remove="${i}" aria-label="Quitar ${esc(nombreLargo(d.p))}"><i class="bi bi-trash3"></i></button>
             </div>
             ${meta ? `<div class="hm-cart-meta">${esc(meta)}</div>` : ""}
             ${d.nota ? `<div class="hm-cart-meta fst-italic">“${esc(d.nota)}”</div>` : ""}
             ${d.encargo ? `<div class="hm-cart-meta"><i class="bi bi-calendar-heart me-1"></i>Por encargo</div>` : ""}
             <div class="d-flex justify-content-between align-items-center mt-2">
-              <div class="hm-qty hm-qty-sm" role="group" aria-label="Cantidad de ${esc(d.p.nombre)}">
+              <div class="hm-qty hm-qty-sm" role="group" aria-label="Cantidad de ${esc(nombreLargo(d.p))}">
                 <button type="button" data-step="${i}" data-delta="-1" aria-label="Quitar uno"><i class="bi bi-dash-lg"></i></button>
                 <output>${Number(it.cantidad)}</output>
                 <button type="button" data-step="${i}" data-delta="1" aria-label="Agregar uno" ${it.cantidad >= MAX_CANTIDAD ? "disabled" : ""}><i class="bi bi-plus-lg"></i></button>
@@ -294,8 +296,8 @@
       : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
     const detalle = `${precio}${encargo ? ", " + encargo : ""}`;
     const accion = p.cotizar
-      ? `data-cotizar="${p.id}" aria-label="Cotizar ${esc(p.nombre)} por WhatsApp, ${esc(detalle)}"`
-      : `data-open="${p.id}" aria-label="Personalizar ${esc(p.nombre)}, ${esc(detalle)}"`;
+      ? `data-cotizar="${p.id}" aria-label="Cotizar ${esc(nombreLargo(p))} por WhatsApp, ${esc(detalle)}"`
+      : `data-open="${p.id}" aria-label="Personalizar ${esc(nombreLargo(p))}, ${esc(detalle)}"`;
     let boton = `<span class="btn btn-hm btn-hm-red text-nowrap" aria-hidden="true"><i class="bi bi-plus-lg"></i><span class="ms-1">Agregar</span></span>`;
     if (p.cotizar) boton = `<span class="btn btn-hm btn-hm-wa text-nowrap" aria-hidden="true"><i class="bi bi-whatsapp"></i><span class="ms-1">Cotizar</span></span>`;
     if (!ok) boton = `<span class="btn btn-hm btn-hm-paper disabled text-nowrap" aria-hidden="true">Próximamente</span>`;
@@ -410,7 +412,7 @@
     cantidad = 1;
     disparador = document.activeElement;
 
-    $("#productoTitulo").textContent = p.nombre;
+    $("#productoTitulo").textContent = nombreLargo(p);
     $("#productoDesc").textContent = p.descripcion;
     const m = $("#productoMedia");
     m.style.background = fondo(p);
@@ -500,8 +502,8 @@
     if (!$("#productoModal").classList.contains("show")) return;
     const n = agregar(seleccionActual());
     productoModal.hide();
-    if (n === 0) toast(`Ya tienes el máximo (${MAX_CANTIDAD}) de ${actual.nombre}`);
-    else toast(`Agregado al carrito: ${n > 1 ? n + "× " : ""}${actual.nombre}${n < cantidad ? ` (máximo ${MAX_CANTIDAD})` : ""}`);
+    if (n === 0) toast(`Ya tienes el máximo (${MAX_CANTIDAD}) de ${nombreLargo(actual)}`);
+    else toast(`Agregado al carrito: ${n > 1 ? n + "× " : ""}${nombreLargo(actual)}${n < cantidad ? ` (máximo ${MAX_CANTIDAD})` : ""}`);
   });
 
   $("#productoModal").addEventListener("hidden.bs.modal", () => {
@@ -511,7 +513,7 @@
   });
 
   const mensajeCotizacion = (p) => [
-    `¡Hola ${CFG.negocio}! 🎂 Quiero cotizar una ${p ? p.nombre.toLowerCase() : "torta personalizada"}.`,
+    `¡Hola ${CFG.negocio}! 🎂 Quiero cotizar una ${p ? nombreLargo(p).toLowerCase() : "torta personalizada"}.`,
     "",
     "• Ocasión:",
     "• Fecha del evento:",
@@ -630,7 +632,7 @@
       const d = describirItem(it);
       const extra = [d.tamano, ...d.adic].filter(Boolean).join(", ");
       return `<div class="hm-summary-line">
-        <span><strong>${Number(it.cantidad)}×</strong> ${esc(d.p.nombre)}${extra ? `<br><small class="text-cocoa-soft">${esc(extra)}</small>` : ""}</span>
+        <span><strong>${Number(it.cantidad)}×</strong> ${esc(nombreLargo(d.p))}${extra ? `<br><small class="text-cocoa-soft">${esc(extra)}</small>` : ""}</span>
         <span class="text-nowrap">${money(precioUnitario(it) * it.cantidad)}</span>
       </div>`;
     }).join("");
@@ -705,7 +707,7 @@
     L.push("*Productos:*");
     carrito.forEach((it, i) => {
       const d = describirItem(it);
-      L.push(`${i + 1}. ${it.cantidad}x ${d.p.nombre}${d.tamano ? ` · ${d.tamano}` : ""} — ${money(precioUnitario(it) * it.cantidad)}`);
+      L.push(`${i + 1}. ${it.cantidad}x ${nombreLargo(d.p)}${d.tamano ? ` · ${d.tamano}` : ""} — ${money(precioUnitario(it) * it.cantidad)}`);
       if (d.adic.length) L.push(`   + ${d.adic.join(", ")}`);
       if (d.nota) L.push(`   Nota: ${d.nota}`);
     });
