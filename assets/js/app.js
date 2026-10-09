@@ -45,6 +45,7 @@
     if (p.imagen) return `<img src="${esc(p.imagen)}" alt="" loading="lazy">`;
     return window.HM_ILUSTRACION(p.ilustracion || {});
   }
+  const etiquetaFoto = (p) => (p.imagen && p.fotoReferencia ? `<span class="hm-ref">Foto de referencia</span>` : "");
   const fondo = (p) => (p.ilustracion && p.ilustracion.fondo) || p.fondo || "var(--hm-pink-soft)";
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
   /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
@@ -302,7 +303,7 @@
       <div class="col" data-cat="${p.categoria}">
         <div class="hm-card${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" ${accion}` : `aria-disabled="true"`}>
           <div class="hm-card-media" style="background:${fondo(p)}">
-            ${media(p)}
+            ${media(p)}${etiquetaFoto(p)}
             ${p.etiqueta ? `<span class="hm-tag${ok ? "" : " is-soon"}">${esc(p.etiqueta)}</span>` : ""}
           </div>
           <div class="hm-card-body">
@@ -413,7 +414,7 @@
     $("#productoDesc").textContent = p.descripcion;
     const m = $("#productoMedia");
     m.style.background = fondo(p);
-    m.innerHTML = media(p);
+    m.innerHTML = media(p) + etiquetaFoto(p);
 
     const varios = p.tamanos.length > 1;
     $("#productoTamanos").innerHTML = varios ? `
@@ -544,13 +545,12 @@
   const cForm = $("#checkoutForm");
 
   $("#cZona").innerHTML = `<option value="" selected disabled>Elige tu zona</option>` +
-    CFG.zonas.map((z) => `<option value="${esc(z.id)}">${esc(z.nombre)} · ${money(z.costo)}</option>`).join("");
+    CFG.zonas.map((z) => `<option value="${esc(z.id)}">${esc(z.nombre)}</option>`).join("");
   $("#cPago").innerHTML = CFG.metodosPago.map((m) => `<option>${esc(m)}</option>`).join("");
   $("#puntoRecogida").textContent = CFG.puntoRecogida;
 
   const esDomicilio = () => cForm.entrega.value === "domicilio";
   const zonaSel = () => CFG.zonas.find((z) => z.id === $("#cZona").value);
-  const costoDomicilio = () => (esDomicilio() && zonaSel() ? zonaSel().costo : 0);
   const soloDigitos = (s) => String(s || "").replace(/\D/g, "");
 
   // ¿Todavía se puede entregar hoy? (hoy abre y no ha pasado la hora de cierre)
@@ -619,12 +619,12 @@
     $("#cCambio").disabled = !efectivo;
 
     const sub = subtotal();
-    const envio = costoDomicilio();
-    $("#checkoutDomicilio").textContent = !dom ? "Gratis (recoges)" : zonaSel() ? money(envio) : "Elige tu zona";
-    $("#checkoutTotal").textContent = money(sub + envio);
+    $("#checkoutDomicilio").textContent = dom ? "Se confirma por WhatsApp" : "No aplica (recoges)";
+    $("#checkoutTotalLabel").textContent = dom ? "Total sin domicilio" : "Total";
+    $("#checkoutTotal").textContent = money(sub);
 
     const cambio = +soloDigitos($("#cCambio").value);
-    $("#cCambio").setCustomValidity(efectivo && cambio && cambio < sub + envio ? "El valor es menor que el total." : "");
+    $("#cCambio").setCustomValidity(efectivo && cambio && cambio < sub ? "El valor es menor que el total." : "");
 
     $("#checkoutResumen").innerHTML = carrito.map((it) => {
       const d = describirItem(it);
@@ -686,7 +686,6 @@
 
   function construirMensaje(datos) {
     const sub = subtotal();
-    const envio = costoDomicilio();
     const L = [];
     L.push(`🧁 *Nuevo pedido · ${CFG.negocio}*`);
     L.push(`Pedido ${datos.codigo}`);
@@ -712,8 +711,12 @@
     });
     L.push("");
     L.push(`Subtotal: ${money(sub)}`);
-    if (esDomicilio()) L.push(`Domicilio: ${money(envio)}`);
-    L.push(`*Total: ${money(sub + envio)}*`);
+    if (esDomicilio()) {
+      L.push("Domicilio: por confirmar");
+      L.push(`*Total sin domicilio: ${money(sub)}*`);
+    } else {
+      L.push(`*Total: ${money(sub)}*`);
+    }
     if (!preciosConfirmados) L.push("_Precios de referencia: confirmar total._");
     L.push("");
     L.push(`*Pago:* ${datos.pago}${datos.cambio ? ` (paga con ${money(datos.cambio)})` : ""}`);
@@ -813,7 +816,7 @@
       const [dias, horas] = t.split("·").map((s) => s.trim());
       return `<li><span>${esc(dias)}</span><strong class="text-end text-nowrap">${esc(horas || "")}</strong></li>`;
     }).join("");
-    $("#zonasLista").innerHTML = CFG.zonas.map((z) => `<li><span>${esc(z.nombre)}</span><strong>${money(z.costo)}</strong></li>`).join("");
+    $("#zonasLista").innerHTML = CFG.zonas.map((z) => `<span class="hm-pill">${esc(z.nombre)}</span>`).join("");
     $("#pagosLista").innerHTML = CFG.metodosPago.map((m) => `<span class="hm-pill">${esc(m)}</span>`).join("");
     $$("[data-precio-min]").forEach((el) => (el.textContent = money(Math.min(...MENU.filter(disponible).map(precioDesde)))));
     $("#anio").textContent = new Date().getFullYear();

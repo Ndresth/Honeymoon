@@ -35,14 +35,15 @@ window.HM_CONFIG = {
   ],
 
   // Zonas de domicilio (valores de prueba, ajústalos a tus tarifas reales).
+  // Zonas de domicilio. El valor del domicilio se confirma por WhatsApp según el barrio.
   zonas: [
-    { id: "riomar", nombre: "Riomar", costo: 5000 },
-    { id: "norte-centro", nombre: "Norte – Centro Histórico", costo: 5000 },
-    { id: "suroccidente", nombre: "Suroccidente", costo: 7000 },
-    { id: "metropolitana", nombre: "Metropolitana", costo: 7000 },
-    { id: "suroriente", nombre: "Suroriente", costo: 8000 },
-    { id: "puerto-colombia", nombre: "Puerto Colombia", costo: 10000 },
-    { id: "soledad", nombre: "Soledad", costo: 10000 }
+    { id: "riomar", nombre: "Riomar" },
+    { id: "norte-centro", nombre: "Norte – Centro Histórico" },
+    { id: "suroccidente", nombre: "Suroccidente" },
+    { id: "metropolitana", nombre: "Metropolitana" },
+    { id: "suroriente", nombre: "Suroriente" },
+    { id: "puerto-colombia", nombre: "Puerto Colombia" },
+    { id: "soledad", nombre: "Soledad" }
   ],
 
   // Punto de recogida (de prueba).

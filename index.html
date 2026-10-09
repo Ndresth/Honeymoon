@@ -216,8 +216,9 @@
           <div class="col-md-6 col-lg-4">
             <div class="hm-info-card">
               <h3><i class="bi bi-bicycle"></i> Domicilios</h3>
-              <ul class="hm-list" id="zonasLista"></ul>
-              <p class="small text-cocoa-soft mt-3 mb-0">Valores de referencia. Te confirmamos por WhatsApp según tu barrio.</p>
+              <p class="mt-3 mb-2">Llegamos a:</p>
+              <div id="zonasLista"></div>
+              <p class="small text-cocoa-soft mt-2 mb-0">El valor del domicilio depende de tu barrio y te lo confirmamos por WhatsApp.</p>
             </div>
           </div>
           <div class="col-md-12 col-lg-4">
@@ -314,7 +315,7 @@
     <div class="hm-offcanvas-foot p-3" id="carritoFoot">
       <div class="hm-totals mb-3">
         <div><span>Subtotal</span><strong data-cart-subtotal>$0</strong></div>
-        <div class="small text-cocoa-soft"><span>Domicilio</span><span>Se calcula al finalizar</span></div>
+        <div class="small text-cocoa-soft"><span>Domicilio</span><span>Se confirma por WhatsApp</span></div>
       </div>
       <div class="d-grid gap-2">
         <button class="btn btn-hm btn-hm-red btn-lg" type="button" id="irCheckout">Finalizar pedido <i class="bi bi-arrow-right ms-1"></i></button>
@@ -413,7 +414,7 @@
                   <div class="hm-totals mt-2 pt-2 border-top border-2" style="border-color: rgba(60,21,14,.2) !important;">
                     <div><span>Subtotal</span><span data-cart-subtotal>$0</span></div>
                     <div><span>Domicilio</span><span id="checkoutDomicilio">$0</span></div>
-                    <div class="hm-grand"><span>Total</span><span id="checkoutTotal">$0</span></div>
+                    <div class="hm-grand"><span id="checkoutTotalLabel">Total</span><span id="checkoutTotal">$0</span></div>
                   </div>
                 </div>
               </div>
@@ -421,7 +422,7 @@
           </div>
 
           <div id="checkoutExito" class="hm-success d-none" tabindex="-1">
-            <img src="assets/img/mascota-hoy.webp" alt="">
+            <img src="assets/img/mascota-hoy.webp" alt="Hony, la mascota de Honeymoon, feliz con un cupcake" width="520" height="272">
             <h3 class="fs-2">¡Pedido listo!</h3>
             <p class="text-cocoa-soft mx-auto" style="max-width: 28rem;">Abrimos WhatsApp con tu pedido. Solo dale <strong>enviar</strong> en el chat y te confirmamos el tiempo de entrega.</p>
             <div class="d-flex flex-wrap gap-2 justify-content-center">
