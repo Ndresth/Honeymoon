@@ -60,7 +60,7 @@ window.HM_ADICIONES = {
     { id: "grande", nombre: "Grande", detalle: "20 porciones", precio: grande }
   ];
   const NOTA_TORTA = "Ej: indicaciones especiales para tu torta";
-  const FOTO_FRESAS = "assets/img/fresas-con-crema.webp"; // foto real de referencia
+  const FOTO_FRESAS = "assets/img/fresas-con-crema.webp"; // foto real de las Fresas con crema Cheese
 
   window.HM_MENU = [
     /* ---------- Fresas con crema ---------- */
@@ -70,9 +70,7 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Hony",
       descripcion: "Fresa, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(14000),
-      imagen: FOTO_FRESAS,
-      fotoReferencia: true,
-      fondo: "#f6c9d8"
+      ilustracion: { tipo: "fresas", migas: ["oreo"], salsas: ["#d9932f", "#fff1d6"], fondo: "#ffd9e8" }
     },
     {
       id: "fresas-cheese",
@@ -81,7 +79,6 @@ window.HM_ADICIONES = {
       descripcion: "Fresa, queso fresco, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(15000),
       imagen: FOTO_FRESAS,
-      fotoReferencia: true,
       fondo: "#f6c9d8"
     },
     {
@@ -90,9 +87,7 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Nutella Moon",
       descripcion: "Fresa, crema, Nutella, maní tostado y salsa de fresa.",
       tamanos: VASO(16000),
-      imagen: FOTO_FRESAS,
-      fotoReferencia: true,
-      fondo: "#f6c9d8"
+      ilustracion: { tipo: "fresas", migas: ["mani"], salsas: ["#6b3a22"], fondo: "#f1d9c4" }
     },
     {
       id: "fresas-oreo-crush",
@@ -100,9 +95,7 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema Oreo Crush",
       descripcion: "Fresa, crema, Oreo triturada, salsa de chocolate y salsa de fresa.",
       tamanos: VASO(15000),
-      imagen: FOTO_FRESAS,
-      fotoReferencia: true,
-      fondo: "#f6c9d8"
+      ilustracion: { tipo: "fresas", migas: ["oreo"], densa: true, salsas: ["#4a2414"], fondo: "#e3e6d4" }
     },
 
     /* ---------- Pavés ---------- */
@@ -140,7 +133,7 @@ window.HM_ADICIONES = {
       descripcion: "Base de galleta de la casa, nuestra crema especial y mermelada de frutos rojos.",
       etiqueta: "A bocados",
       tamanos: PORCION(13000),
-      ilustracion: { tipo: "porcion", salsa: "#fff1d6", cobertura: "#b0213a", fondo: "#ffd9e8" }
+      ilustracion: { tipo: "bocados", cobertura: "#9b1b30", fondo: "#ffd9e8" }
     },
     {
       id: "cheesecake-oreo",
@@ -170,7 +163,7 @@ window.HM_ADICIONES = {
       descripcion: "Galletas mini con chips de chocolate. Puedes agregarles topping de arequipe.",
       tamanos: PAQUETE(10000),
       adiciones: "galletaChips",
-      ilustracion: { tipo: "galleta", salsa: "#e2b06a", chips: "#4a2414", fondo: "#fbe7b8" }
+      ilustracion: { tipo: "galleta", mini: true, salsa: "#e2b06a", chips: "#4a2414", fondo: "#fbe7b8" }
     },
     {
       id: "galletas-mini-red-velvet",
@@ -179,7 +172,7 @@ window.HM_ADICIONES = {
       descripcion: "Galletas mini red velvet. Puedes agregarles topping de frosting de queso crema.",
       tamanos: PAQUETE(11000),
       adiciones: "galletaRedVelvet",
-      ilustracion: { tipo: "galleta", salsa: "#b3263a", chips: "#fffaf2", fondo: "#e3e6d4" }
+      ilustracion: { tipo: "galleta", mini: true, salsa: "#b3263a", grietas: true, fondo: "#e3e6d4" }
     },
     {
       id: "galletas-mini-klim",
@@ -187,7 +180,7 @@ window.HM_ADICIONES = {
       nombre: "Galletas mini de leche Klim",
       descripcion: "Galletas mini de leche Klim.",
       tamanos: PAQUETE(10000),
-      ilustracion: { tipo: "galleta", salsa: "#f3dfb0", chips: "#fffaf2", fondo: "#ffd9e8" }
+      ilustracion: { tipo: "galleta", mini: true, salsa: "#f3dfb0", polvo: true, fondo: "#ffd9e8" }
     },
     {
       id: "alfajores-arequipe",
@@ -207,7 +200,7 @@ window.HM_ADICIONES = {
       tamanos: TORTAS(55000, 95000, 140000),
       encargo: true,
       notaPlaceholder: NOTA_TORTA,
-      ilustracion: { tipo: "torta", salsa: "#6b3a22", relleno: "#fffaf2", cobertura: "#4a2414", fondo: "#ffd9e8" }
+      ilustracion: { tipo: "torta", salsa: "#6b3a22", relleno: "#fffaf2", cobertura: "#4a2414", topping: "virutas", fondo: "#ffd9e8" }
     },
     {
       id: "torta-red-velvet",
@@ -251,8 +244,7 @@ window.HM_ADICIONES = {
       encargo: true,
       temporada: { desde: "11-01", hasta: "12-31", texto: "Disponible en noviembre y diciembre" },
       notaPlaceholder: NOTA_TORTA,
-      imagen: "assets/img/mascota-diciembre.webp",
-      fondo: "#1a2738"
+      ilustracion: { tipo: "torta", salsa: "#3f1d12", sinCapas: true, motas: true, cobertura: "#5a2817", topping: "frutas", fondo: "#f1d9c4" }
     }
   ];
 })();
