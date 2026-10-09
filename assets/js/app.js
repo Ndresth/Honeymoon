@@ -551,7 +551,16 @@
   $("#cPago").innerHTML = CFG.metodosPago.map((m) => `<option>${esc(m)}</option>`).join("");
   $("#puntoRecogida").textContent = CFG.puntoRecogida;
 
-  const esDomicilio = () => cForm.entrega.value === "domicilio";
+  // Recoger aún no está disponible: la opción se ve como "Próximamente" y no se puede elegir
+  const RECOGER = CFG.recoger === true;
+  if (!RECOGER) {
+    $("#eRecoger").disabled = true;
+    $("#eDomicilio").checked = true;
+    $("#eRecoger").closest(".hm-opt-wrap").classList.add("is-soon");
+    $('label[for="eRecoger"]').insertAdjacentHTML("beforeend", `<span class="hm-soon">Próximamente</span>`);
+  }
+
+  const esDomicilio = () => !RECOGER || cForm.entrega.value === "domicilio";
   const zonaSel = () => CFG.zonas.find((z) => z.id === $("#cZona").value);
   const soloDigitos = (s) => String(s || "").replace(/\D/g, "");
 

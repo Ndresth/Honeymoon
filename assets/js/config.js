@@ -46,7 +46,9 @@ window.HM_CONFIG = {
     { id: "soledad", nombre: "Soledad" }
   ],
 
-  // Punto de recogida (de prueba).
+  // Recoger en el local: false = en el checkout sale "Próximamente" y solo hay domicilio.
+  // Pon true cuando haya punto de recogida (y ajusta puntoRecogida).
+  recoger: false,
   puntoRecogida: "Barranquilla · dirección por confirmar",
 
   metodosPago: ["Efectivo", "Nequi", "Daviplata", "Transferencia Bancolombia"],

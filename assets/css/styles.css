@@ -477,6 +477,15 @@ h1, h2, h3, h4, .hm-display {
 /* El input de cada opción cubre su etiqueta: al tabular, el navegador muestra la opción completa */
 .hm-opt-wrap { position: relative; }
 .hm-opt-wrap > .btn-check { inset: 0; width: 100%; height: 100%; }
+.hm-opt-wrap.is-soon .hm-option {
+  cursor: not-allowed; border-style: dashed; background: var(--hm-cream-2); color: var(--hm-cocoa-soft);
+}
+.hm-opt-wrap.is-soon .hm-option:hover { background: var(--hm-cream-2); }
+.hm-soon {
+  position: absolute; top: -.6rem; right: .75rem;
+  background: var(--hm-navy); color: #fff8ee; border: 2px solid var(--hm-cocoa); border-radius: 999px;
+  font-size: .62rem; font-weight: 800; padding: .1rem .45rem; text-transform: uppercase; letter-spacing: .04em;
+}
 .hm-cart-remove { border: 0; background: none; color: var(--hm-cocoa-soft); padding: .25rem; }
 .hm-cart-remove:hover { color: var(--hm-red); }
 .hm-empty { text-align: center; padding: 2rem 1rem; }
