@@ -67,7 +67,8 @@ window.HM_ADICIONES = {
     {
       id: "fresas-hony",
       categoria: "fresas",
-      nombre: "Fresas con crema Hony",
+      nombre: "Hony",
+      nombreCompleto: "Fresas con crema Hony",
       descripcion: "Fresa, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(14000),
       ilustracion: { tipo: "fresas", migas: ["oreo"], salsas: ["#d9932f", "#fff1d6"], fondo: "#ffd9e8" }
@@ -75,7 +76,8 @@ window.HM_ADICIONES = {
     {
       id: "fresas-cheese",
       categoria: "fresas",
-      nombre: "Fresas con crema Cheese",
+      nombre: "Cheese",
+      nombreCompleto: "Fresas con crema Cheese",
       descripcion: "Fresa, queso fresco, crema, Oreo, dulce de leche, leche condensada y salsa de fresa.",
       tamanos: VASO(15000),
       imagen: FOTO_FRESAS,
@@ -84,7 +86,8 @@ window.HM_ADICIONES = {
     {
       id: "fresas-nutella-moon",
       categoria: "fresas",
-      nombre: "Fresas con crema Nutella Moon",
+      nombre: "Nutella Moon",
+      nombreCompleto: "Fresas con crema Nutella Moon",
       descripcion: "Fresa, crema, Nutella, maní tostado y salsa de fresa.",
       tamanos: VASO(16000),
       ilustracion: { tipo: "fresas", migas: ["mani"], salsas: ["#6b3a22"], fondo: "#f1d9c4" }
@@ -92,7 +95,8 @@ window.HM_ADICIONES = {
     {
       id: "fresas-oreo-crush",
       categoria: "fresas",
-      nombre: "Fresas con crema Oreo Crush",
+      nombre: "Oreo Crush",
+      nombreCompleto: "Fresas con crema Oreo Crush",
       descripcion: "Fresa, crema, Oreo triturada, salsa de chocolate y salsa de fresa.",
       tamanos: VASO(15000),
       ilustracion: { tipo: "fresas", migas: ["oreo"], densa: true, salsas: ["#4a2414"], fondo: "#e3e6d4" }

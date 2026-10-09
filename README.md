@@ -35,6 +35,7 @@ En `assets/js/menu.js`:
 - `HM_CATEGORIAS`: filtros del menú (Fresas con crema, Pavés, Cheesecakes, Mini donas, Galletas y alfajores, Tortas, Temporada).
 - `HM_ADICIONES`: grupos de toppings con precio (`donas`, `galletaChips`, `galletaRedVelvet`).
 - `HM_MENU`: productos. Campos principales:
+  - `nombre`: lo que sale en la tarjeta. `nombreCompleto` (opcional): el que sale en el detalle, el carrito y el mensaje de WhatsApp; las fresas usan `nombre: "Hony"` y `nombreCompleto: "Fresas con crema Hony"` porque la sección ya dice "Fresas con crema".
   - `tamanos`: con precio y, opcional, `detalle` ("12 porciones") y `encargo: true`.
   - `adiciones`: nombre del grupo de adiciones que acepta.
   - `encargo: true`: todo el producto se hace por encargo.
