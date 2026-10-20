@@ -7,7 +7,7 @@
   const CFG = window.HM_CONFIG;
   const MENU = window.HM_MENU;
   const GRUPOS_ADICIONES = window.HM_ADICIONES;
-  const ADICIONES = Object.values(GRUPOS_ADICIONES).flat();
+  const ADICIONES = Object.values(GRUPOS_ADICIONES).flatMap((g) => g.items);
   const NUMERO_PRUEBA = "573000000000";
   const TEL = String(CFG.whatsapp).replace(/\D/g, ""); // tolera "+57 300 ..." en config.js
   const MAX_CANTIDAD = 20;
@@ -19,6 +19,67 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const getProducto = (id) => MENU.find((p) => p.id === id);
   const getAdicion = (id) => ADICIONES.find((a) => a.id === id);
+  const grupoDe = (p) => (p && p.adiciones && GRUPOS_ADICIONES[p.adiciones]) || null;
+
+  /* Toppings con cantidad: el carrito guarda un id por porción (["f-oreo", "f-oreo"]) */
+  const contar = (ids) => ids.reduce((c, id) => ((c[id] = (c[id] || 0) + 1), c), {});
+  const expandir = (grupo, c) => (grupo ? grupo.items.flatMap((a) => Array(c[a.id] || 0).fill(a.id)) : []);
+  const maxDe = (a) => a.max || 1;
+  // Porciones de los demás toppings
+  const sumaOtros = (c, id) => Object.entries(c).reduce((s, [k, v]) => s + (k === id ? 0 : v), 0);
+  // Toppings cuyo límite está activo (ej. 2 de Oreo: nada más; 2 de Queso: solo 1 topping más)
+  const limitesActivos = (grupo, c) => grupo.items.filter((a) => a.limite && (c[a.id] || 0) >= a.limite.desde);
+  const limiteRoto = (grupo, c) => limitesActivos(grupo, c).find((a) => sumaOtros(c, a.id) > a.limite.otros);
+  const toppingsMas = (n) => (n === 1 ? "1 topping más" : `${n} toppings más`);
+  // Por qué no se puede sumar otra porción de un topping ("" si sí se puede)
+  function bloqueoTopping(grupo, c, id) {
+    const a = grupo.items.find((x) => x.id === id);
+    const n = c[id] || 0;
+    if (n >= maxDe(a)) return `Máximo ${maxDe(a)} de ${a.nombre}.`;
+    const nuevo = { ...c, [id]: n + 1 };
+    const roto = limiteRoto(grupo, nuevo);
+    if (!roto) return "";
+    const otros = roto.limite.otros;
+    if (roto.id === id) {
+      return otros === 0
+        ? `Para pedir ${n + 1} de ${a.nombre}, quita los demás toppings.`
+        : `Para pedir ${n + 1} de ${a.nombre}, deja máximo ${toppingsMas(otros)}.`;
+    }
+    return otros === 0
+      ? `Con ${c[roto.id]} de ${roto.nombre} no se pueden agregar otros toppings.`
+      : `Con ${c[roto.id]} de ${roto.nombre} solo se puede agregar ${toppingsMas(otros)}.`;
+  }
+  // Aviso fijo mientras un límite esté activo
+  function avisoLimite(grupo, c) {
+    const a = limitesActivos(grupo, c)[0];
+    if (!a) return "";
+    return a.limite.otros === 0
+      ? `Con ${c[a.id]} de ${a.nombre}, ese topping va solo.`
+      : `Con ${c[a.id]} de ${a.nombre} puedes agregar solo ${toppingsMas(a.limite.otros)}.`;
+  }
+  // Ajusta un pedido guardado a los límites actuales
+  function sanearToppings(grupo, c) {
+    const r = {};
+    grupo.items.forEach((a) => {
+      const n = Math.min(c[a.id] || 0, maxDe(a));
+      if (n > 0) r[a.id] = n;
+    });
+    // Si un límite no se cumple, ese topping baja a una porción menos de donde empieza el límite
+    for (let i = 0; i < grupo.items.length; i++) {
+      const roto = limiteRoto(grupo, r);
+      if (!roto) break;
+      r[roto.id] = roto.limite.desde - 1;
+      if (!r[roto.id]) delete r[roto.id];
+    }
+    return r;
+  }
+  // "Queso, Oreo x2"
+  function nombresToppings(p, ids) {
+    const grupo = grupoDe(p);
+    if (!grupo) return [];
+    const c = contar(ids);
+    return grupo.items.filter((a) => c[a.id]).map((a) => (c[a.id] > 1 ? `${a.nombre} x${c[a.id]}` : a.nombre));
+  }
   // Nombre completo para carrito y WhatsApp (por defecto, el mismo de la tarjeta)
   const nombreLargo = (p) => p.nombreCompleto || p.nombre;
   const waUrl = (texto) => `https://wa.me/${TEL}?text=${encodeURIComponent(texto)}`;
@@ -42,7 +103,7 @@
     }
   };
 
-  // Opción elegida de un producto con "eleccion" (ej. el topping del pavé); la primera por defecto
+  // Opción elegida de un producto con "eleccion" (ej. el topping del paveé); la primera por defecto
   const getOpcion = (p, id) => (p.eleccion ? p.eleccion.opciones.find((o) => o.id === id) || p.eleccion.opciones[0] : null);
   const ilustracionDe = (p, opcion) => {
     const o = getOpcion(p, opcion);
@@ -54,7 +115,13 @@
   }
   const etiquetaFoto = (p) => (p.imagen && p.fotoReferencia ? `<span class="hm-ref">Foto de referencia</span>` : "");
   const fondo = (p, opcion) => ilustracionDe(p, opcion).fondo || p.fondo || "var(--hm-lilac-100)";
-  const listaY = (items, y = "y") => (items.length > 1 ? `${items.slice(0, -1).join(", ")} ${y} ${items[items.length - 1]}` : items.join(""));
+  // "a, b y c"; "y" pasa a "e" antes de i- y "o" a "u" antes de o- (Piazza u Oreo)
+  const listaY = (items, y = "y") => {
+    if (items.length < 2) return items.join("");
+    const ult = items[items.length - 1];
+    const conj = y === "o" && /^h?o/i.test(ult) ? "u" : y === "y" && /^h?i(?![aeou])/i.test(ult) ? "e" : y;
+    return `${items.slice(0, -1).join(", ")} ${conj} ${ult}`;
+  };
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
   /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
   function ahoraBogota() {
@@ -135,10 +202,16 @@
       id: p.id,
       tamano: it.tamano,
       opcion: p.eleccion ? getOpcion(p, it.opcion).id : "",
-      adiciones: Array.isArray(it.adiciones) ? it.adiciones.filter((id) => typeof id === "string" && getAdicion(id)) : [],
+      adiciones: adicionesValidas(p, it.adiciones),
       nota: typeof it.nota === "string" ? it.nota.slice(0, 140) : "",
       cantidad
     };
+  }
+  function adicionesValidas(p, ids) {
+    const grupo = grupoDe(p);
+    if (!grupo || !Array.isArray(ids)) return [];
+    const propios = ids.filter((id) => typeof id === "string" && grupo.items.some((a) => a.id === id));
+    return expandir(grupo, sanearToppings(grupo, contar(propios)));
   }
   const cargarCarrito = () => store.get("hm_carrito", []).map(normalizarItem).filter(Boolean);
 
@@ -185,7 +258,7 @@
   function describirItem(it) {
     const p = getProducto(it.id);
     const t = getTamano(p, it.tamano);
-    const adic = it.adiciones.map((id) => getAdicion(id)).filter(Boolean).map((a) => a.nombre);
+    const adic = nombresToppings(p, it.adiciones);
     const o = getOpcion(p, it.opcion);
     return {
       p, tamano: p.tamanos.length > 1 ? nombreTamano(t) : "", adic, nota: it.nota.trim(), encargo: esEncargo(p, t),
@@ -298,35 +371,48 @@
      ===================================================== */
   // Precio de los toppings para la tarjeta: "+$2.000 c/u" si todos valen lo mismo
   function precioToppings(grupo) {
-    const precios = [...new Set(grupo.map((a) => a.precio))];
+    const precios = [...new Set(grupo.items.map((a) => a.precio))];
     return precios.length === 1 ? `+${money(precios[0])} c/u` : `desde +${money(Math.min(...precios))}`;
+  }
+
+  // Foto del topping; si no hay, su ícono dibujado y, en último caso, la inicial
+  function fotoTopping(a) {
+    if (a.foto) return `<img class="hm-topping-foto" src="${esc(a.foto)}" alt="" loading="lazy" width="96" height="96">`;
+    const icono = a.icono && window.HM_ICONO_TOPPING ? window.HM_ICONO_TOPPING(a.icono) : "";
+    if (icono) return `<span class="hm-topping-foto is-icono" aria-hidden="true">${icono}</span>`;
+    return `<span class="hm-topping-foto is-inicial" aria-hidden="true">${esc(a.nombre.charAt(0))}</span>`;
   }
 
   function tarjeta(p) {
     const ok = disponible(p);
     const varios = p.tamanos.length > 1;
-    const grupo = p.adiciones ? GRUPOS_ADICIONES[p.adiciones] || [] : [];
+    const grupo = grupoDe(p);
     const encargo = !ok && p.temporada ? p.temporada.texto
       : p.encargo ? textoEncargo()
       : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
     const detalle = `${varios ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
     const extra = p.eleccion
       ? `<p class="hm-card-extra"><strong>${esc(p.eleccion.titulo)} incluido:</strong> ${esc(listaY(p.eleccion.opciones.map((o) => o.nombre), "o"))}</p>`
-      : grupo.length
-        ? `<p class="hm-card-extra"><strong>Toppings ${esc(precioToppings(grupo))}:</strong> ${esc(listaY(grupo.map((a) => a.nombre)))}</p>`
+      : grupo
+        ? `<div class="hm-card-toppings">
+            <p class="hm-card-extra mb-2"><strong>Toppings ${esc(precioToppings(grupo))}</strong></p>
+            ${grupo.texto ? `<p class="hm-card-extra">${esc(grupo.texto)}</p>` : ""}
+            <ul class="hm-topping-chips">${grupo.items.map((a) => `<li>${fotoTopping(a)}<span>${esc(a.nombre)}</span></li>`).join("")}</ul>
+          </div>`
         : "";
     const boton = ok
       ? `<span class="btn btn-hm btn-hm-primary w-100 text-nowrap" aria-hidden="true"><i class="bi bi-plus-lg"></i><span class="ms-1">Agregar</span></span>`
       : `<span class="btn btn-hm btn-hm-paper w-100 disabled text-nowrap" aria-hidden="true">Próximamente</span>`;
     return `
-      <div class="col">
-        <div class="hm-card${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" data-open="${p.id}" aria-label="Personalizar ${esc(nombreLargo(p))}, ${esc(detalle)}"` : `aria-disabled="true"`}>
+      <div class="col${p.destacado ? " hm-col-destacado" : ""}">
+        <div class="hm-card${p.destacado ? " is-featured" : ""}${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" data-open="${p.id}" aria-label="Personalizar ${esc(nombreLargo(p))}, ${esc(detalle)}"` : `aria-disabled="true"`}>
           <div class="hm-card-media" style="background:${fondo(p)}">
             ${media(p)}${etiquetaFoto(p)}
             ${p.etiqueta ? `<span class="hm-tag${ok ? "" : " is-soon"}">${esc(p.etiqueta)}</span>` : ""}
           </div>
           <div class="hm-card-body">
             <h3 class="hm-card-title"><span>${esc(p.nombre)}</span></h3>
+            <p class="hm-card-desc">${esc(p.descripcion)}</p>
             <ul class="hm-card-sizes">
               ${p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`).join("")}
             </ul>
@@ -349,6 +435,7 @@
   let actual = null;
   let cantidad = 1;
   let disparador = null;
+  let conteoToppings = {};
 
   function abrirProducto(id) {
     const p = getProducto(id);
@@ -387,21 +474,31 @@
           </div>`).join("")}
       </div>` : "";
 
-    const grupo = p.adiciones ? GRUPOS_ADICIONES[p.adiciones] || [] : [];
-    $("#productoAdiciones").innerHTML = grupo.length ? `
-      <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional</small></div>
+    const grupo = grupoDe(p);
+    conteoToppings = {};
+    $("#productoAdiciones").innerHTML = grupo ? `
+      <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional · ${esc(precioToppings(grupo))}</small></div>
+      ${grupo.texto ? `<p class="hm-group-intro">${esc(grupo.texto)}</p>` : ""}
       <div class="row g-2" role="group" aria-labelledby="lblAdic">
-        ${grupo.map((a) => `
-          <div class="col-sm-6 hm-opt-wrap">
-            <input type="checkbox" class="btn-check" name="adicion" id="a-${a.id}" value="${a.id}">
-            <label class="hm-option" for="a-${a.id}">
-              <span class="hm-option-name d-flex align-items-center"><span class="hm-check" aria-hidden="true"></span>${esc(a.nombre)}</span>
-              <span class="hm-option-price">+${money(a.precio)}</span>
-            </label>
+        ${grupo.items.map((a) => `
+          <div class="col-12">
+            <div class="hm-topping" data-topping="${a.id}">
+              ${fotoTopping(a)}
+              <span class="hm-topping-info"><strong>${esc(a.nombre)}</strong><small>+${money(a.precio)} · máx. ${maxDe(a)}</small></span>
+              <div class="hm-qty hm-qty-sm" role="group" aria-label="Porciones de ${esc(a.nombre)}">
+                <button type="button" data-topping-paso="-1" aria-label="Quitar una porción de ${esc(a.nombre)}"><i class="bi bi-dash-lg"></i></button>
+                <output aria-live="off">0</output>
+                <button type="button" data-topping-paso="1" aria-label="Agregar una porción de ${esc(a.nombre)}"><i class="bi bi-plus-lg"></i></button>
+              </div>
+            </div>
           </div>`).join("")}
-      </div>` : "";
+      </div>
+      <p class="hm-topping-aviso" id="toppingAviso" role="status" aria-live="polite"></p>
+      <span class="visually-hidden" id="toppingAnuncio" role="status" aria-live="polite"></span>
+      <p class="hm-topping-reglas">${esc(reglasTexto(grupo))}</p>` : "";
 
     pintarMedia();
+    pintarToppings();
     $("#productoNota").value = "";
     $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";
     actualizarTotalProducto();
@@ -416,13 +513,45 @@
     m.innerHTML = media(actual, opcion) + etiquetaFoto(actual);
   }
 
+  // Texto con los límites del grupo, armado desde menu.js
+  function reglasTexto(grupo) {
+    const max = grupo.items.map((a) => `${a.nombre} ${maxDe(a)}`).join(", ");
+    const conLimite = grupo.items.filter((a) => a.limite);
+    const pocos = conLimite.filter((a) => a.limite.otros > 0).map((a) => ` Con ${a.limite.desde} de ${a.nombre}, solo ${toppingsMas(a.limite.otros)}.`).join("");
+    const solos = conLimite.filter((a) => a.limite.otros === 0);
+    const desde = [...new Set(solos.map((a) => a.limite.desde))];
+    const solo = solos.length && desde.length === 1
+      ? ` Si pides ${desde[0]} o más de ${listaY(solos.map((a) => a.nombre), "o")}, ese topping va solo.`
+      : solos.map((a) => ` Con ${a.limite.desde} o más de ${a.nombre}, va solo.`).join("");
+    return `Máximo por vaso: ${max}.${pocos}${solo}`;
+  }
+
+  // Botones + y − de cada topping según los límites; el aviso explica lo que no se puede
+  function pintarToppings(aviso) {
+    const grupo = grupoDe(actual);
+    if (!grupo) return;
+    grupo.items.forEach((a) => {
+      const fila = $(`[data-topping="${a.id}"]`, form);
+      const n = conteoToppings[a.id] || 0;
+      const out = $("output", fila);
+      if (out.textContent !== String(n)) out.textContent = n;
+      fila.classList.toggle("is-on", n > 0);
+      const menos = $('[data-topping-paso="-1"]', fila);
+      const mas = $('[data-topping-paso="1"]', fila);
+      menos.setAttribute("aria-disabled", String(n === 0));
+      mas.setAttribute("aria-disabled", String(!!bloqueoTopping(grupo, conteoToppings, a.id)));
+    });
+    const texto = aviso || avisoLimite(grupo, conteoToppings);
+    if ($("#toppingAviso").textContent !== texto) $("#toppingAviso").textContent = texto;
+  }
+
   function seleccionActual() {
     const fd = new FormData(form);
     return {
       id: actual.id,
       tamano: fd.get("tamano"),
       opcion: fd.get("opcion") || "",
-      adiciones: fd.getAll("adicion"),
+      adiciones: expandir(grupoDe(actual), conteoToppings),
       nota: ($("#productoNota").value || "").trim(),
       cantidad
     };
@@ -433,7 +562,7 @@
     const menos = $('[data-qty="-1"]', form);
     const mas = $('[data-qty="1"]', form);
     const enfocado = document.activeElement;
-    $("#productoCantidad").textContent = cantidad;
+    if ($("#productoCantidad").textContent !== String(cantidad)) $("#productoCantidad").textContent = cantidad;
     menos.disabled = cantidad <= 1;
     mas.disabled = cantidad >= MAX_CANTIDAD;
     // Si el botón enfocado se deshabilitó, el foco pasa al otro
@@ -457,6 +586,29 @@
     }
   });
   form.addEventListener("click", (e) => {
+    const paso = e.target.closest("[data-topping-paso]");
+    if (paso) {
+      const grupo = grupoDe(actual);
+      const id = paso.closest("[data-topping]").dataset.topping;
+      const n = conteoToppings[id] || 0;
+      let aviso = "";
+      if (paso.dataset.toppingPaso === "1") {
+        aviso = bloqueoTopping(grupo, conteoToppings, id);
+        if (!aviso) conteoToppings[id] = n + 1;
+      } else if (n > 0) {
+        conteoToppings[id] = n - 1;
+        if (!conteoToppings[id]) delete conteoToppings[id];
+      }
+      pintarToppings(aviso);
+      actualizarTotalProducto();
+      // Un solo anuncio para lectores de pantalla, con el nombre del topping
+      const t = grupo.items.find((x) => x.id === id);
+      const m = conteoToppings[id] || 0;
+      if (!aviso && m !== n) $("#toppingAnuncio").textContent = `${t.nombre}: ${m} ${m === 1 ? "porción" : "porciones"}. Total ${$("#productoTotal").textContent}.`;
+      // En pantallas pequeñas el aviso puede quedar fuera de la vista
+      if (aviso) $("#toppingAviso").scrollIntoView({ block: "nearest" });
+      return;
+    }
     const b = e.target.closest("[data-qty]");
     if (!b) return;
     cantidad = Math.max(1, Math.min(MAX_CANTIDAD, cantidad + +b.dataset.qty));
