@@ -6,7 +6,6 @@
 
   const CFG = window.HM_CONFIG;
   const MENU = window.HM_MENU;
-  const CATS = window.HM_CATEGORIAS;
   const GRUPOS_ADICIONES = window.HM_ADICIONES;
   const ADICIONES = Object.values(GRUPOS_ADICIONES).flat();
   const NUMERO_PRUEBA = "573000000000";
@@ -20,7 +19,7 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const getProducto = (id) => MENU.find((p) => p.id === id);
   const getAdicion = (id) => ADICIONES.find((a) => a.id === id);
-  // En la tarjeta va el nombre corto (la sección ya dice "Fresas con crema"); en el resto, el completo.
+  // Nombre completo para carrito y WhatsApp (por defecto, el mismo de la tarjeta)
   const nombreLargo = (p) => p.nombreCompleto || p.nombre;
   const waUrl = (texto) => `https://wa.me/${TEL}?text=${encodeURIComponent(texto)}`;
   const suave = () => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
@@ -43,12 +42,19 @@
     }
   };
 
-  function media(p) {
+  // Opción elegida de un producto con "eleccion" (ej. el topping del pavé); la primera por defecto
+  const getOpcion = (p, id) => (p.eleccion ? p.eleccion.opciones.find((o) => o.id === id) || p.eleccion.opciones[0] : null);
+  const ilustracionDe = (p, opcion) => {
+    const o = getOpcion(p, opcion);
+    return (o && o.ilustracion) || p.ilustracion || {};
+  };
+  function media(p, opcion) {
     if (p.imagen) return `<img src="${esc(p.imagen)}" alt="" loading="lazy">`;
-    return window.HM_ILUSTRACION(p.ilustracion || {});
+    return window.HM_ILUSTRACION(ilustracionDe(p, opcion));
   }
   const etiquetaFoto = (p) => (p.imagen && p.fotoReferencia ? `<span class="hm-ref">Foto de referencia</span>` : "");
-  const fondo = (p) => (p.ilustracion && p.ilustracion.fondo) || p.fondo || "var(--hm-pink-soft)";
+  const fondo = (p, opcion) => ilustracionDe(p, opcion).fondo || p.fondo || "var(--hm-lilac-100)";
+  const listaY = (items, y = "y") => (items.length > 1 ? `${items.slice(0, -1).join(", ")} ${y} ${items[items.length - 1]}` : items.join(""));
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
   /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
   function ahoraBogota() {
@@ -122,12 +128,13 @@
   function normalizarItem(it) {
     if (!it || typeof it !== "object") return null;
     const p = getProducto(it.id);
-    if (!p || !disponible(p) || p.cotizar || !p.tamanos.some((t) => t.id === it.tamano)) return null;
+    if (!p || !disponible(p) || !p.tamanos.some((t) => t.id === it.tamano)) return null;
     const cantidad = Math.min(MAX_CANTIDAD, Math.floor(Number(it.cantidad)));
     if (!(cantidad > 0)) return null;
     return {
       id: p.id,
       tamano: it.tamano,
+      opcion: p.eleccion ? getOpcion(p, it.opcion).id : "",
       adiciones: Array.isArray(it.adiciones) ? it.adiciones.filter((id) => typeof id === "string" && getAdicion(id)) : [],
       nota: typeof it.nota === "string" ? it.nota.slice(0, 140) : "",
       cantidad
@@ -138,7 +145,7 @@
   let carrito = cargarCarrito();
 
   function claveItem(it) {
-    return [it.id, it.tamano, [...it.adiciones].sort().join("+"), it.nota.trim().toLowerCase()].join("|");
+    return [it.id, it.tamano, it.opcion || "", [...it.adiciones].sort().join("+"), it.nota.trim().toLowerCase()].join("|");
   }
 
   function precioUnitario(it) {
@@ -179,7 +186,11 @@
     const p = getProducto(it.id);
     const t = getTamano(p, it.tamano);
     const adic = it.adiciones.map((id) => getAdicion(id)).filter(Boolean).map((a) => a.nombre);
-    return { p, tamano: p.tamanos.length > 1 ? nombreTamano(t) : "", adic, nota: it.nota.trim(), encargo: esEncargo(p, t) };
+    const o = getOpcion(p, it.opcion);
+    return {
+      p, tamano: p.tamanos.length > 1 ? nombreTamano(t) : "", adic, nota: it.nota.trim(), encargo: esEncargo(p, t),
+      opcion: o ? `${p.eleccion.titulo}: ${o.nombre}` : ""
+    };
   }
 
   const carritoTieneEncargo = () => carrito.some((it) => describirItem(it).encargo);
@@ -202,18 +213,18 @@
         <div class="hm-empty">
           <img src="assets/img/mascota-hoy.webp" alt="">
           <h3 class="fs-4">Tu carrito está vacío</h3>
-          <p class="text-cocoa-soft">Hony te espera con algo dulce.</p>
-          <button type="button" class="btn btn-hm btn-hm-red" data-ver-menu>Ver el menú</button>
+          <p class="text-plum-soft">Hony te espera con algo dulce.</p>
+          <button type="button" class="btn btn-hm btn-hm-primary" data-ver-menu>Ver el menú</button>
         </div>`;
       return;
     }
 
     cont.innerHTML = carrito.map((it, i) => {
       const d = describirItem(it);
-      const meta = [d.tamano, d.adic.length ? "+ " + d.adic.join(", ") : ""].filter(Boolean).join(" · ");
+      const meta = [d.tamano, d.opcion, d.adic.length ? "+ " + d.adic.join(", ") : ""].filter(Boolean).join(" · ");
       return `
         <div class="hm-cart-item">
-          <div class="hm-cart-thumb" style="background:${fondo(d.p)}">${media(d.p)}</div>
+          <div class="hm-cart-thumb" style="background:${fondo(d.p, it.opcion)}">${media(d.p, it.opcion)}</div>
           <div class="flex-grow-1 min-w-0">
             <div class="d-flex justify-content-between gap-2">
               <div class="hm-cart-name">${esc(nombreLargo(d.p))}</div>
@@ -285,116 +296,50 @@
   /* =====================================================
      Menú
      ===================================================== */
-  let categoriaActiva = "todos";
+  // Precio de los toppings para la tarjeta: "+$2.000 c/u" si todos valen lo mismo
+  function precioToppings(grupo) {
+    const precios = [...new Set(grupo.map((a) => a.precio))];
+    return precios.length === 1 ? `+${money(precios[0])} c/u` : `desde +${money(Math.min(...precios))}`;
+  }
 
-  function tarjeta(p, nivel = 3) {
+  function tarjeta(p) {
     const ok = disponible(p);
-    const varios = p.tamanos.length > 1 || p.cotizar;
-    const precio = `${varios ? "desde " : ""}${money(precioDesde(p))}`;
+    const varios = p.tamanos.length > 1;
+    const grupo = p.adiciones ? GRUPOS_ADICIONES[p.adiciones] || [] : [];
     const encargo = !ok && p.temporada ? p.temporada.texto
       : p.encargo ? textoEncargo()
       : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
-    const detalle = `${precio}${encargo ? ", " + encargo : ""}`;
-    const accion = p.cotizar
-      ? `data-cotizar="${p.id}" aria-label="Cotizar ${esc(nombreLargo(p))} por WhatsApp, ${esc(detalle)}"`
-      : `data-open="${p.id}" aria-label="Personalizar ${esc(nombreLargo(p))}, ${esc(detalle)}"`;
-    let boton = `<span class="btn btn-hm btn-hm-red text-nowrap" aria-hidden="true"><i class="bi bi-plus-lg"></i><span class="ms-1">Agregar</span></span>`;
-    if (p.cotizar) boton = `<span class="btn btn-hm btn-hm-wa text-nowrap" aria-hidden="true"><i class="bi bi-whatsapp"></i><span class="ms-1">Cotizar</span></span>`;
-    if (!ok) boton = `<span class="btn btn-hm btn-hm-paper disabled text-nowrap" aria-hidden="true">Próximamente</span>`;
+    const detalle = `${varios ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
+    const extra = p.eleccion
+      ? `<p class="hm-card-extra"><strong>${esc(p.eleccion.titulo)} incluido:</strong> ${esc(listaY(p.eleccion.opciones.map((o) => o.nombre), "o"))}</p>`
+      : grupo.length
+        ? `<p class="hm-card-extra"><strong>Toppings ${esc(precioToppings(grupo))}:</strong> ${esc(listaY(grupo.map((a) => a.nombre)))}</p>`
+        : "";
+    const boton = ok
+      ? `<span class="btn btn-hm btn-hm-primary w-100 text-nowrap" aria-hidden="true"><i class="bi bi-plus-lg"></i><span class="ms-1">Agregar</span></span>`
+      : `<span class="btn btn-hm btn-hm-paper w-100 disabled text-nowrap" aria-hidden="true">Próximamente</span>`;
     return `
-      <div class="col" data-cat="${p.categoria}">
-        <div class="hm-card${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" ${accion}` : `aria-disabled="true"`}>
+      <div class="col">
+        <div class="hm-card${ok ? "" : " is-disabled"}" ${ok ? `tabindex="0" role="button" data-open="${p.id}" aria-label="Personalizar ${esc(nombreLargo(p))}, ${esc(detalle)}"` : `aria-disabled="true"`}>
           <div class="hm-card-media" style="background:${fondo(p)}">
             ${media(p)}${etiquetaFoto(p)}
             ${p.etiqueta ? `<span class="hm-tag${ok ? "" : " is-soon"}">${esc(p.etiqueta)}</span>` : ""}
           </div>
           <div class="hm-card-body">
-            <h${nivel} class="hm-card-title">${esc(p.nombre)}</h${nivel}>
-            <p class="hm-card-desc">${esc(p.descripcion)}</p>
+            <h3 class="hm-card-title"><span>${esc(p.nombre)}</span></h3>
+            <ul class="hm-card-sizes">
+              ${p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`).join("")}
+            </ul>
+            ${extra}
             ${encargo ? `<p class="hm-card-note"><i class="bi bi-calendar-heart"></i>${esc(encargo)}</p>` : ""}
-            <div class="hm-card-foot">
-              <div class="hm-price">${varios ? "<small>Desde</small>" : ""}${money(precioDesde(p))}</div>
-              ${boton}
-            </div>
+            <div class="hm-card-foot">${boton}</div>
           </div>
         </div>
       </div>`;
   }
 
-  function renderCategorias() {
-    $("#categorias").innerHTML = CATS.map((c) => `
-      <button type="button" class="hm-cat${c.id === categoriaActiva ? " active" : ""}"
-        aria-pressed="${c.id === categoriaActiva}" data-cat="${c.id}">
-        <i class="bi ${c.icono}" aria-hidden="true"></i>${esc(c.nombre)}
-      </button>`).join("");
-  }
-
-  function marcarCategoria() {
-    $$("#categorias [data-cat]").forEach((b) => {
-      const on = b.dataset.cat === categoriaActiva;
-      b.classList.toggle("active", on);
-      b.setAttribute("aria-pressed", on);
-    });
-  }
-
   function renderProductos() {
-    let total;
-    if (categoriaActiva !== "todos") {
-      const lista = MENU.filter((p) => p.categoria === categoriaActiva);
-      total = lista.length;
-      $("#productos").innerHTML = lista.map((p) => tarjeta(p)).join("");
-    } else {
-      // En "Todo" se agrupa por categoría con su título
-      total = MENU.length;
-      $("#productos").innerHTML = CATS.filter((c) => c.id !== "todos").map((c) => {
-        const lista = MENU.filter((p) => p.categoria === c.id);
-        if (!lista.length) return "";
-        return `<div class="col-12 hm-cat-heading"><h3><i class="bi ${c.icono}" aria-hidden="true"></i>${esc(c.nombre)}</h3></div>` +
-          lista.map((p) => tarjeta(p, 4)).join("");
-      }).join("");
-    }
-    const cat = CATS.find((c) => c.id === categoriaActiva);
-    $("#menuEstado").textContent = `${total} ${total === 1 ? "producto" : "productos"} en ${cat ? cat.nombre : "el menú"}`;
-  }
-
-  $("#categorias").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-cat]");
-    if (!btn) return;
-    categoriaActiva = btn.dataset.cat;
-    marcarCategoria();
-    renderProductos();
-
-    // Centra la categoría elegida en el carrusel horizontal
-    const cont = $("#categorias");
-    const rb = btn.getBoundingClientRect();
-    const rc = cont.getBoundingClientRect();
-    cont.scrollBy({ left: rb.left + rb.width / 2 - (rc.left + rc.width / 2), behavior: suave() });
-
-    // Si el usuario estaba más abajo, vuelve al inicio de los productos filtrados
-    const off = $(".hm-navbar").offsetHeight + $(".hm-cats").offsetHeight + 8;
-    const top = $("#productos").getBoundingClientRect().top + window.scrollY - off;
-    if (window.scrollY > top) window.scrollTo({ top, behavior: suave() });
-  });
-
-  function renderTemporada() {
-    $("#temporadaLista").innerHTML = MENU.filter((p) => p.categoria === "temporada").map((p) => {
-      const ok = disponible(p);
-      return `
-        <div class="hm-season-item">
-          <div class="hm-season-media" style="background:${fondo(p)}">${media(p)}</div>
-          <div class="flex-grow-1">
-            ${p.etiqueta ? `<span class="hm-tag position-static d-inline-block mb-1${ok ? "" : " is-soon"}">${esc(p.etiqueta)}</span>` : ""}
-            <h3>${esc(p.nombre)}</h3>
-            <p>${esc(p.descripcion)}</p>
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-              <span class="hm-price fs-6">Desde ${money(precioDesde(p))}</span>
-              ${ok
-                ? `<button type="button" class="btn btn-hm btn-hm-red btn-sm text-nowrap" data-open="${p.id}"><i class="bi bi-plus-lg me-1"></i>Agregar</button>`
-                : `<button type="button" class="btn btn-hm btn-hm-paper btn-sm text-nowrap" disabled>Próximamente</button>`}
-            </div>
-          </div>
-        </div>`;
-    }).join("");
+    $("#productos").innerHTML = MENU.map((p) => tarjeta(p)).join("");
   }
 
   /* =====================================================
@@ -407,16 +352,13 @@
 
   function abrirProducto(id) {
     const p = getProducto(id);
-    if (!p || !disponible(p) || p.cotizar) return;
+    if (!p || !disponible(p)) return;
     actual = p;
     cantidad = 1;
     disparador = document.activeElement;
 
     $("#productoTitulo").textContent = nombreLargo(p);
     $("#productoDesc").textContent = p.descripcion;
-    const m = $("#productoMedia");
-    m.style.background = fondo(p);
-    m.innerHTML = media(p) + etiquetaFoto(p);
 
     const varios = p.tamanos.length > 1;
     $("#productoTamanos").innerHTML = varios ? `
@@ -434,12 +376,23 @@
       </div>` : `<input type="hidden" name="tamano" value="${p.tamanos[0].id}">
       <div class="hm-group-title">${esc(nombreTamano(p.tamanos[0]))} <small>${money(p.tamanos[0].precio)}</small></div>`;
 
+    const el = p.eleccion;
+    $("#productoEleccion").innerHTML = el ? `
+      <div class="hm-group-title" id="lblOpcion">${esc(el.titulo)} <small>${esc(el.detalle || "Elige uno")}</small></div>
+      <div class="row g-2" role="radiogroup" aria-labelledby="lblOpcion">
+        ${el.opciones.map((o, i) => `
+          <div class="col-${el.opciones.length === 2 ? 6 : 4} hm-opt-wrap">
+            <input type="radio" class="btn-check" name="opcion" id="o-${o.id}" value="${o.id}" ${i === 0 ? "checked" : ""}>
+            <label class="hm-option justify-content-center text-center h-100" for="o-${o.id}">${esc(o.nombre)}</label>
+          </div>`).join("")}
+      </div>` : "";
+
     const grupo = p.adiciones ? GRUPOS_ADICIONES[p.adiciones] || [] : [];
     $("#productoAdiciones").innerHTML = grupo.length ? `
-      <div class="hm-group-title" id="lblAdic">Adiciones <small>Opcional</small></div>
+      <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional</small></div>
       <div class="row g-2" role="group" aria-labelledby="lblAdic">
         ${grupo.map((a) => `
-          <div class="col-sm-6 hm-opt-wrap">
+          <div class="col-6 hm-opt-wrap">
             <input type="checkbox" class="btn-check" name="adicion" id="a-${a.id}" value="${a.id}">
             <label class="hm-option" for="a-${a.id}">
               <span class="hm-option-name d-flex align-items-center"><span class="hm-check" aria-hidden="true"></span>${esc(a.nombre)}</span>
@@ -448,10 +401,19 @@
           </div>`).join("")}
       </div>` : "";
 
+    pintarMedia();
     $("#productoNota").value = "";
-    $("#productoNota").placeholder = p.notaPlaceholder || "Ej: sin leche condensada, extra crema…";
+    $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";
     actualizarTotalProducto();
     productoModal.show();
+  }
+
+  // Foto o dibujo del producto; con "eleccion", el de la opción marcada
+  function pintarMedia() {
+    const opcion = (form.querySelector('input[name="opcion"]:checked') || {}).value;
+    const m = $("#productoMedia");
+    m.style.background = fondo(actual, opcion);
+    m.innerHTML = media(actual, opcion) + etiquetaFoto(actual);
   }
 
   function seleccionActual() {
@@ -459,6 +421,7 @@
     return {
       id: actual.id,
       tamano: fd.get("tamano"),
+      opcion: fd.get("opcion") || "",
       adiciones: fd.getAll("adicion"),
       nota: ($("#productoNota").value || "").trim(),
       cantidad
@@ -483,7 +446,10 @@
       `Se prepara por encargo: pídelo con al menos ${CFG.diasEncargo} días de anticipación. En el carrito eliges la fecha.`;
   }
 
-  form.addEventListener("change", actualizarTotalProducto);
+  form.addEventListener("change", (e) => {
+    if (e.target.name === "opcion") pintarMedia();
+    actualizarTotalProducto();
+  });
   form.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && e.target.matches(".btn-check")) {
       e.preventDefault();
@@ -512,32 +478,14 @@
     disparador = null;
   });
 
-  const mensajeCotizacion = (p) => [
-    `¡Hola ${CFG.negocio}! 🎂 Quiero cotizar una ${p ? nombreLargo(p).toLowerCase() : "torta personalizada"}.`,
-    "",
-    "• Ocasión:",
-    "• Fecha del evento:",
-    "• Número de porciones:",
-    "• Sabor:",
-    "• Idea o temática:"
-  ].join("\n");
-
-  function cotizar(id) {
-    const win = window.open(waUrl(mensajeCotizacion(getProducto(id))), "_blank");
-    if (win) win.opener = null;
-  }
-
   document.addEventListener("click", (e) => {
     const el = e.target.closest("[data-open]");
-    const cot = e.target.closest("[data-cotizar]");
     if (el) abrirProducto(el.dataset.open);
-    else if (cot) cotizar(cot.dataset.cotizar);
   });
   document.addEventListener("keydown", (e) => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".hm-card[data-open], .hm-card[data-cotizar]")) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".hm-card[data-open]")) {
       e.preventDefault();
-      if (e.target.dataset.open) abrirProducto(e.target.dataset.open);
-      else cotizar(e.target.dataset.cotizar);
+      abrirProducto(e.target.dataset.open);
     }
   });
 
@@ -639,9 +587,9 @@
 
     $("#checkoutResumen").innerHTML = carrito.map((it) => {
       const d = describirItem(it);
-      const extra = [d.tamano, ...d.adic].filter(Boolean).join(", ");
+      const extra = [d.tamano, d.opcion, ...d.adic].filter(Boolean).join(", ");
       return `<div class="hm-summary-line">
-        <span><strong>${Number(it.cantidad)}×</strong> ${esc(nombreLargo(d.p))}${extra ? `<br><small class="text-cocoa-soft">${esc(extra)}</small>` : ""}</span>
+        <span><strong>${Number(it.cantidad)}×</strong> ${esc(nombreLargo(d.p))}${extra ? `<br><small class="text-plum-soft">${esc(extra)}</small>` : ""}</span>
         <span class="text-nowrap">${money(precioUnitario(it) * it.cantidad)}</span>
       </div>`;
     }).join("");
@@ -717,6 +665,7 @@
     carrito.forEach((it, i) => {
       const d = describirItem(it);
       L.push(`${i + 1}. ${it.cantidad}x ${nombreLargo(d.p)}${d.tamano ? ` · ${d.tamano}` : ""} — ${money(precioUnitario(it) * it.cantidad)}`);
+      if (d.opcion) L.push(`   ${d.opcion}`);
       if (d.adic.length) L.push(`   + ${d.adic.join(", ")}`);
       if (d.nota) L.push(`   Nota: ${d.nota}`);
     });
@@ -849,12 +798,6 @@
       banner.innerHTML = `<i class="bi bi-info-circle" aria-hidden="true"></i> <strong>Precios de referencia:</strong> te confirmamos el total por WhatsApp.`;
     }
     banner.classList.toggle("d-none", TEL !== NUMERO_PRUEBA && preciosConfirmados);
-    $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
-    const arte = $("#customArt");
-    if (arte) {
-      arte.style.background = "#e3e6d4";
-      arte.innerHTML = window.HM_ILUSTRACION({ tipo: "torta", salsa: "#f7b6cf", relleno: "#fffaf2", cobertura: "#ffc5de", velas: true });
-    }
   }
 
   const redes = () => (CFG.redes || []).filter((r) => /^https:\/\//.test(r.url));
@@ -927,9 +870,7 @@
   });
 
   /* Init */
-  renderCategorias();
   renderProductos();
-  renderTemporada();
   renderInfo();
   renderDatosEstructurados();
   renderCarrito();

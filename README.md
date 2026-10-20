@@ -1,6 +1,8 @@
 # Honeymoon · Repostería en Barranquilla
 
-Sitio web estático (HTML + Bootstrap 5.3 + JavaScript puro) para una repostería: fresas con crema, pavés, cheesecakes, mini donas, galletas, alfajores y tortas por encargo, con carrito y envío del pedido por WhatsApp.
+Sitio web estático (HTML + Bootstrap 5.3 + JavaScript puro) para una repostería: fresas con crema, pavé, galletas y mini donas, con carrito y envío del pedido por WhatsApp.
+
+Branding lila: el lila del logo (`#c48ebf`), blanco y ciruela (`#4a1f48`) para textos y contornos, con el fondo de ondas del menú impreso. Tipografías Montserrat (títulos y etiquetas) y Nunito (texto).
 
 ## Estructura
 
@@ -11,7 +13,7 @@ assets/js/config.js        WhatsApp, horario, zonas de domicilio, pagos, días d
 assets/js/menu.js          Categorías, productos, tamaños y adiciones
 assets/js/illustrations.js Ilustraciones SVG de los productos
 assets/js/app.js           Lógica: menú, carrito, checkout y mensaje de WhatsApp
-assets/img/                Logo, favicon y recortes de la mascota
+assets/img/                Logo (SVG blanco), favicon, imagen para compartir, foto de las fresas y Hony
 assets/vendor/             Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 (copias locales, licencia MIT)
 ```
 
@@ -22,41 +24,40 @@ Bootstrap se sirve desde `assets/vendor/` en vez de un CDN: la página no depend
 En `assets/js/config.js`:
 
 - `whatsapp`: número del negocio con código de país, sin `+` ni espacios (hoy `573001233575`). Si se pone el de prueba `573000000000`, aparece la franja **Modo prueba**.
-- `preciosConfirmados`: mientras sea `false`, la página muestra la franja **Precios de referencia** y el mensaje de WhatsApp agrega "Precios de referencia: confirmar total". Cámbialo a `true` cuando los precios y tamaños de `menu.js` sean los reales.
+- `preciosConfirmados`: hoy en `true` (precios del menú oficial). Con `false`, la página muestra la franja **Precios de referencia** y el mensaje de WhatsApp agrega "Precios de referencia: confirmar total".
 
 ## Redes sociales
 
-En `assets/js/config.js`, la lista `redes` alimenta los botones del pie de página y de la sección Temporada, y los datos estructurados para buscadores (`sameAs`). Cada red lleva `id` (el nombre del ícono de Bootstrap Icons: `instagram`, `tiktok`, `facebook`…), `usuario` y `url` sin parámetros de rastreo.
+En `assets/js/config.js`, la lista `redes` alimenta los botones de "Síguenos" (sección Cómo pedir) y del pie de página, y los datos estructurados para buscadores (`sameAs`). Cada red lleva `id` (el nombre del ícono de Bootstrap Icons: `instagram`, `tiktok`, `facebook`…), `usuario` y `url` sin parámetros de rastreo.
 
 ## Editar el menú
 
 En `assets/js/menu.js`:
 
-- `HM_CATEGORIAS`: filtros del menú (Fresas con crema, Pavés, Cheesecakes, Mini donas, Galletas y alfajores, Tortas, Temporada).
-- `HM_ADICIONES`: grupos de toppings con precio (`donas`, `galletaChips`, `galletaRedVelvet`).
-- `HM_MENU`: productos. Campos principales:
-  - `nombre`: lo que sale en la tarjeta. `nombreCompleto` (opcional): el que sale en el detalle, el carrito y el mensaje de WhatsApp; las fresas usan `nombre: "Hony"` y `nombreCompleto: "Fresas con crema Hony"` porque la sección ya dice "Fresas con crema".
-  - `tamanos`: con precio y, opcional, `detalle` ("12 porciones") y `encargo: true`.
-  - `adiciones`: nombre del grupo de adiciones que acepta.
+- `HM_ADICIONES`: grupos de toppings con precio. Hoy `fresas`: Queso, Chocoramo, Piazza y Oreo a $2.000 cada uno.
+- `HM_MENU`: productos (Fresas con crema, Pavé, Galletas y Mini donas). Campos principales:
+  - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "9 mini donitas") y `encargo: true`.
+  - `adiciones`: nombre del grupo de toppings que acepta (se eligen varios y suman al precio).
+  - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del pavé (Galleta Oreo, Galleta Milo o Leche Klim). Si la opción trae `ilustracion`, el dibujo cambia al elegirla.
+  - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
   - `encargo: true`: todo el producto se hace por encargo.
-  - `cotizar: true` (opcional): el producto no va al carrito; su botón abre WhatsApp para pedir cotización.
-
-La franja **Tortas personalizadas para tu evento** (`#personalizadas` en `index.html`) abre WhatsApp con una plantilla para cotizar: ocasión, fecha, porciones, sabor e idea.
-  - `ilustracion` (dibujo SVG) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
+  - `nombreCompleto` (opcional): nombre para el carrito y WhatsApp si el de la tarjeta es corto.
   - `notaPlaceholder`: texto de ejemplo para la nota del producto.
   - `temporada: { desde: "11-01", hasta: "12-31", texto }`: solo se puede pedir en esas fechas (hora de Colombia); fuera de ellas sale como "Próximamente".
   - `disponible: false`: se muestra como "Próximamente" y no se puede pedir.
 
+La tarjeta de cada producto muestra, como el menú impreso, los tamaños con su precio y los toppings.
+
 Recoger en el local está apagado (`recoger: false` en `config.js`): en el checkout sale como **Próximamente** y solo se puede pedir a domicilio. Cuando haya local, pon `recoger: true` y la dirección en `puntoRecogida`.
 
-Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario, los métodos de pago y `diasEncargo` (anticipación mínima para tortas, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp. Los precios, tamaños y horario actuales son de referencia.
+Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario, los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
 
 ## Cómo funciona el pedido
 
-1. El cliente elige producto, tamaño, adiciones, notas y cantidad.
+1. El cliente elige producto, tamaño, toppings, notas y cantidad.
 2. El carrito se guarda en el navegador (`localStorage`), así no se pierde si recarga la página.
 3. En "Finalizar pedido" llena nombre, celular, dirección, barrio, ciudad, fecha de entrega y método de pago. Si el carrito tiene productos por encargo, la fecha es obligatoria y no deja elegir antes de `diasEncargo` días ni días cerrados.
-4. Se abre `https://wa.me/<número>?text=...` con el pedido formateado: código de pedido, datos del cliente, fecha, productos con tamaño/adiciones/notas, subtotal, total (sin domicilio, que queda "por confirmar") y forma de pago.
+4. Se abre `https://wa.me/<número>?text=...` con el pedido formateado: código de pedido, datos del cliente, fecha, productos con tamaño/topping/adiciones/notas, subtotal, total (sin domicilio, que queda "por confirmar") y forma de pago.
 
 ## Ver en local
 
