@@ -295,6 +295,37 @@ h1, h2, h3, h4, .hm-display {
 .hm-card-sizes strong { font-weight: 800; font-size: 1.05rem; letter-spacing: 0; white-space: nowrap; }
 .hm-card-extra { font-size: .9rem; color: var(--hm-plum-soft); margin-bottom: 1rem; }
 .hm-card-extra strong { color: var(--hm-plum); }
+.hm-card-desc { color: var(--hm-plum-soft); font-size: .95rem; margin-bottom: .75rem; }
+
+/* Toppings en la tarjeta: foto redonda y nombre */
+.hm-card-toppings { margin-bottom: 1rem; }
+.hm-card-toppings .hm-card-extra:last-of-type { margin-bottom: .75rem; }
+.hm-topping-chips { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; }
+.hm-topping-chips li { display: flex; flex-direction: column; align-items: center; gap: .3rem; text-align: center; min-width: 0; }
+.hm-topping-chips span:not(.hm-topping-foto) { font-family: var(--hm-font-display); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; overflow-wrap: anywhere; }
+.hm-topping-foto {
+  width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; display: block;
+  border: 2px solid #fff; box-shadow: 0 0 0 2px var(--hm-lilac-light); background: var(--hm-lilac-100);
+}
+.hm-topping-foto.is-inicial {
+  display: grid; place-items: center; background: var(--hm-lilac-deep); color: #fff;
+  font-family: var(--hm-font-display); font-weight: 900; font-size: 1.3rem;
+}
+
+/* Tarjeta destacada (fresas con crema): ocupa todo el ancho y en computador va con la foto al lado */
+.row > .hm-col-destacado { flex: 0 0 100%; width: 100%; max-width: 100%; }
+@media (min-width: 992px) {
+  .hm-card.is-featured { flex-direction: row; }
+  .hm-card.is-featured .hm-card-media { flex: 0 0 42%; aspect-ratio: auto; min-height: 380px; }
+  .hm-card.is-featured .hm-card-media img { position: absolute; inset: 0; } /* la foto no estira la tarjeta */
+  .hm-card.is-featured .hm-card-body { padding: 1.75rem 2rem 1.75rem; }
+  .hm-card.is-featured .hm-card-title { margin: 0 0 .9rem; }
+  .hm-card.is-featured .hm-card-desc { font-size: 1.05rem; }
+  .hm-card.is-featured .hm-card-sizes { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.5rem; }
+  .hm-card.is-featured .hm-topping-foto { width: 72px; height: 72px; }
+  .hm-card.is-featured .hm-topping-chips span:not(.hm-topping-foto) { font-size: .8rem; }
+  .hm-card.is-featured .hm-card-foot { max-width: 340px; }
+}
 .hm-card-foot { margin-top: auto; }
 .hm-card .btn-hm { --bs-btn-padding-y: .55rem; }
 .hm-card.is-disabled { cursor: default; }
@@ -311,6 +342,23 @@ h1, h2, h3, h4, .hm-display {
 }
 .hm-notice i { font-size: 1.1rem; color: var(--hm-lilac-deep); }
 .hm-option-detail { font-weight: 600; font-size: .75rem; color: var(--hm-plum-soft); }
+
+/* Toppings en el modal: foto, nombre y cantidad */
+.hm-group-intro { color: var(--hm-plum-soft); font-size: .92rem; margin: -.2rem 0 .75rem; }
+.hm-topping {
+  display: flex; align-items: center; gap: .65rem; height: 100%;
+  border: 2px solid var(--hm-lilac-deep); border-radius: 16px; background: #fff; padding: .45rem .55rem;
+  transition: background .12s, box-shadow .12s;
+}
+.hm-topping.is-on { background: var(--hm-lilac); border-color: var(--hm-plum); box-shadow: 0 3px 0 var(--hm-plum); }
+.hm-topping .hm-topping-foto { width: 52px; height: 52px; }
+.hm-topping-info { flex: 1; min-width: 0; line-height: 1.2; }
+.hm-topping-info strong { display: block; font-family: var(--hm-font-display); font-weight: 800; }
+.hm-topping-info small { color: var(--hm-plum-soft); font-weight: 700; font-size: .78rem; }
+.hm-topping.is-on .hm-topping-info small { color: var(--hm-plum); }
+.hm-topping .hm-qty { flex-shrink: 0; background: #fff; }
+.hm-topping-aviso { min-height: 1.4em; margin: .6rem 0 0; font-weight: 800; font-size: .88rem; color: var(--hm-lilac-deep); }
+.hm-topping-reglas { font-size: .8rem; color: var(--hm-plum-soft); margin: .1rem 0 0; }
 
 /* ---------- Info ---------- */
 .hm-info-card {
@@ -403,7 +451,8 @@ h1, h2, h3, h4, .hm-display {
 }
 .hm-qty button { border: 0; background: transparent; width: 2.4rem; height: 2.4rem; font-size: 1.1rem; color: var(--hm-plum); }
 .hm-qty button:hover { background: var(--hm-lilac-100); }
-.hm-qty button:disabled { opacity: .35; }
+.hm-qty button:disabled, .hm-qty button[aria-disabled="true"] { opacity: .35; }
+.hm-qty button[aria-disabled="true"] { cursor: not-allowed; }
 .hm-qty output { min-width: 2rem; text-align: center; font-weight: 800; }
 .hm-qty.hm-qty-sm button { width: 2rem; height: 2rem; font-size: .95rem; }
 

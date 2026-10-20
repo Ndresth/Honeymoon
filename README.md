@@ -1,6 +1,6 @@
 # Honeymoon · Repostería en Barranquilla
 
-Sitio web estático (HTML + Bootstrap 5.3 + JavaScript puro) para una repostería: fresas con crema, pavé, galletas y mini donas, con carrito y envío del pedido por WhatsApp.
+Sitio web estático (HTML + Bootstrap 5.3 + JavaScript puro) para una repostería: fresas con crema, paveé, galletas y mini donas, con carrito y envío del pedido por WhatsApp.
 
 Branding lila: el lila del logo (`#c48ebf`), blanco y ciruela (`#4a1f48`) para textos y contornos, con el fondo de ondas del menú impreso. Tipografías Montserrat (títulos y etiquetas) y Nunito (texto).
 
@@ -34,11 +34,16 @@ En `assets/js/config.js`, la lista `redes` alimenta los botones de "Síguenos" (
 
 En `assets/js/menu.js`:
 
-- `HM_ADICIONES`: grupos de toppings con precio. Hoy `fresas`: Queso, Chocoramo, Piazza y Oreo a $2.000 cada uno.
-- `HM_MENU`: productos (Fresas con crema, Pavé, Galletas y Mini donas). Campos principales:
+- `HM_ADICIONES`: grupos de toppings. Cada grupo tiene `texto` (la frase que sale arriba de los toppings) e `items`. Cada topping lleva `precio` por porción, `max` (porciones máximas por vaso), opcional `soloDesde` (desde esa cantidad ese topping va solo, sin otros) y opcional `foto`. Hoy `fresas`, a $2.000 la porción:
+  - Queso: hasta 2, se puede combinar con los demás.
+  - Chocoramo y Piazza: hasta 2; con 2, van solos.
+  - Oreo: hasta 3; con 2 o más, va solo.
+  - Se pueden pedir los 4 toppings a la vez (una porción de cada uno).
+- `HM_MENU`: productos (Fresas con crema, Paveé, Galletas y Mini donas). Campos principales:
   - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "7 mini donitas") y `encargo: true`.
-  - `adiciones`: nombre del grupo de toppings que acepta (se eligen varios y suman al precio).
-  - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del pavé (Galleta Oreo, Galleta Milo o Leche Klim). Si la opción trae `ilustracion`, el dibujo cambia al elegirla.
+  - `adiciones`: nombre del grupo de toppings que acepta (el cliente suma porciones con + y −; el modal bloquea lo que no cumple los límites y explica por qué).
+  - `destacado: true`: tarjeta ancha, con la foto al lado en computador (hoy, Fresas con crema).
+  - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Galleta Oreo, Galleta Milo o Leche Klim). Si la opción trae `ilustracion`, el dibujo cambia al elegirla.
   - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
   - `encargo: true`: todo el producto se hace por encargo.
   - `nombreCompleto` (opcional): nombre para el carrito y WhatsApp si el de la tarjeta es corto.
@@ -50,7 +55,7 @@ La tarjeta de cada producto muestra, como el menú impreso, los tamaños con su 
 
 Recoger en el local está apagado (`recoger: false` en `config.js`): en el checkout sale como **Próximamente** y solo se puede pedir a domicilio. Cuando haya local, pon `recoger: true` y la dirección en `puntoRecogida`.
 
-Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario, los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
+Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy todos los días de 1:30 a 7:15 p. m.; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
 
 ## Cómo funciona el pedido
 

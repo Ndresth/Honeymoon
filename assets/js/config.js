@@ -19,19 +19,18 @@ window.HM_CONFIG = {
   preciosConfirmados: true,
 
   // Horario de atención (hora de Colombia). 0 = domingo ... 6 = sábado. null = cerrado.
+  // Horas en decimal: 13.5 = 1:30 p. m., 19.25 = 7:15 p. m.
   horario: {
-    0: [14, 22],
-    1: null,
-    2: [14, 21],
-    3: [14, 21],
-    4: [14, 21],
-    5: [14, 22],
-    6: [14, 22]
+    0: [13.5, 19.25],
+    1: [13.5, 19.25],
+    2: [13.5, 19.25],
+    3: [13.5, 19.25],
+    4: [13.5, 19.25],
+    5: [13.5, 19.25],
+    6: [13.5, 19.25]
   },
   horarioTexto: [
-    "Martes a jueves · 2:00 p. m. – 9:00 p. m.",
-    "Viernes a domingo · 2:00 p. m. – 10:00 p. m.",
-    "Lunes · descansamos"
+    "Todos los días · 1:30 p. m. – 7:15 p. m."
   ],
 
   // Ciudades a las que llegan los domicilios (sección Domicilios y campo "Ciudad" del pedido).

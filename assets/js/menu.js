@@ -5,25 +5,32 @@
    Campos de cada producto:
    - tamanos: lista de tamaños con precio (si hay uno solo, no se muestra selector).
               Un tamaño puede llevar `detalle` (ej. "Pequeña") y `encargo: true`.
-   - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio, se eligen varios)
+   - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio y cantidad;
+                cada topping tiene `max` y, opcional, `soloDesde` y `foto`)
    - eleccion: { titulo, detalle, opciones: [{ id, nombre, ilustracion? }] } → el cliente elige
-               una opción incluida en el precio (ej. el topping del pavé). Si la opción trae
+               una opción incluida en el precio (ej. el topping del paveé). Si la opción trae
                `ilustracion`, el dibujo cambia al elegirla.
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
    - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
    - fotoReferencia: true muestra la etiqueta "Foto de referencia" sobre la imagen
    - notaPlaceholder: texto de ejemplo para la nota del producto
+   - destacado: true para mostrarlo en una tarjeta ancha (foto a un lado)
    - disponible: false para mostrarlo como "Próximamente"
    ========================================================= */
 window.HM_ADICIONES = {
-  // Toppings de las fresas con crema: cada uno suma $2.000
-  fresas: [
-    { id: "f-queso", nombre: "Queso", precio: 2000 },
-    { id: "f-chocoramo", nombre: "Chocoramo", precio: 2000 },
-    { id: "f-piazza", nombre: "Piazza", precio: 2000 },
-    { id: "f-oreo", nombre: "Oreo", precio: 2000 }
-  ]
+  // Toppings de las fresas con crema: cada porción suma $2.000.
+  // max: porciones máximas de ese topping en un vaso.
+  // soloDesde: desde esa cantidad, ese topping va solo (no se combina con otros).
+  fresas: {
+    texto: "✨ ¡Llévalo al siguiente nivel! Añade tus toppings favoritos y crea una combinación deliciosa, crujiente y llena de sabor.💜",
+    items: [
+      { id: "f-queso", nombre: "Queso", precio: 2000, max: 2 },
+      { id: "f-chocoramo", nombre: "Chocoramo", precio: 2000, max: 2, soloDesde: 2 },
+      { id: "f-piazza", nombre: "Piazza", precio: 2000, max: 2, soloDesde: 2 },
+      { id: "f-oreo", nombre: "Oreo", precio: 2000, max: 3, soloDesde: 2 }
+    ]
+  }
 };
 
 (function () {
@@ -34,20 +41,21 @@ window.HM_ADICIONES = {
     {
       id: "fresas-con-crema",
       nombre: "Fresas con crema",
-      descripcion: "Fresas con crema en vaso. Elige tu tamaño y agrégale los toppings que quieras.",
+      descripcion: "🍓Capas de nuestra crema suave y cremosa, fresas frescas, glaseado de fresa, dulce de leche y leche condensada. ¡Una combinación dulce e irresistible que puedes personalizar con tu topping favorito!",
       tamanos: [
         { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000 },
         { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000 }
       ],
       adiciones: "fresas",
+      destacado: true, // tarjeta ancha, primera del menú
       imagen: "assets/img/fresas-con-crema.webp", // foto real, con toppings de queso y Oreo
       fotoReferencia: true,
       fondo: FONDO
     },
     {
       id: "pave",
-      nombre: "Pavé",
-      descripcion: "Pavé en vaso de 12 onz, coronado con el topping que elijas.",
+      nombre: "Paveé",
+      descripcion: "Paveé en vaso de 12 onz, coronado con el topping que elijas.",
       tamanos: [{ id: "12oz", nombre: "12 onz", detalle: "Mediano", precio: 16000 }],
       eleccion: {
         titulo: "Topping",

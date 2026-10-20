@@ -39,7 +39,7 @@
       <path d="M30 70 l-10 -6"/>
     </g>`;
 
-  /* ---------- Pavé en vaso: capas de crema y galleta, con el topping elegido ---------- */
+  /* ---------- Paveé en vaso: capas de crema y galleta, con el topping elegido ---------- */
   function pave(c, uid) {
     const vasoPath = "M68 62 L172 62 L164 184 Q120 191 76 184 Z";
     const banda = (y, h) => {
