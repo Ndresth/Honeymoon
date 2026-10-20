@@ -375,10 +375,13 @@
     return precios.length === 1 ? `+${money(precios[0])} c/u` : `desde +${money(Math.min(...precios))}`;
   }
 
-  // Foto del topping o, si aún no hay, su inicial
-  const fotoTopping = (a) => (a.foto
-    ? `<img class="hm-topping-foto" src="${esc(a.foto)}" alt="" loading="lazy" width="96" height="96">`
-    : `<span class="hm-topping-foto is-inicial" aria-hidden="true">${esc(a.nombre.charAt(0))}</span>`);
+  // Foto del topping; si no hay, su ícono dibujado y, en último caso, la inicial
+  function fotoTopping(a) {
+    if (a.foto) return `<img class="hm-topping-foto" src="${esc(a.foto)}" alt="" loading="lazy" width="96" height="96">`;
+    const icono = a.icono && window.HM_ICONO_TOPPING ? window.HM_ICONO_TOPPING(a.icono) : "";
+    if (icono) return `<span class="hm-topping-foto is-icono" aria-hidden="true">${icono}</span>`;
+    return `<span class="hm-topping-foto is-inicial" aria-hidden="true">${esc(a.nombre.charAt(0))}</span>`;
+  }
 
   function tarjeta(p) {
     const ok = disponible(p);

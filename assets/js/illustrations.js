@@ -135,6 +135,48 @@
       <rect x="58" y="82" width="124" height="9" rx="4.5" fill="#fffdf7" stroke="${K}" stroke-width="3.4"/>`;
   }
 
+  /* ---------- Íconos de toppings (para la tarjeta y el modal) ---------- */
+  const ICONOS = {
+    // Queso blanco rallado en montoncito
+    queso: `<g transform="translate(0 -5)">
+      <path d="M12 46 C14 34 24 26 32 26 C40 26 50 34 52 46 Z" fill="#fffdf4" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
+      ${[[20, 40, -30], [27, 34, 20], [35, 31, -10], [42, 37, 35], [30, 42, 70], [38, 43, -40], [24, 46, 10], [44, 45, 0]]
+        .map(([x, y, r]) => `<rect x="${x - 4}" y="${y - 1.4}" width="8" height="2.8" rx="1.4" fill="#f3e6c4" transform="rotate(${r} ${x} ${y})"/>`).join("")}
+      <path d="M8 47 H56" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>
+      ${[[16, 52, 20], [47, 51, -25], [29, 53, 60]].map(([x, y, r]) => `<rect x="${x - 3.5}" y="${y - 1.2}" width="7" height="2.4" rx="1.2" fill="#fffdf4" stroke="${K}" stroke-width="1" transform="rotate(${r} ${x} ${y})"/>`).join("")}</g>`,
+    // Ponquecito cubierto de chocolate, con el corte que muestra el bizcocho
+    chocoramo: `
+      <path d="M10 24 L44 18 L54 26 L54 42 L20 48 L10 40 Z" fill="#4a2414" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M10 24 L44 18 L54 26 L20 32 Z" fill="#6b3a22" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M20 32 L20 48 L10 40 L10 24 Z" fill="#f2c46d" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M11.5 25.5 L18.5 31.5 L18.5 46 L11.5 40 Z" fill="none" stroke="#4a2414" stroke-width="2"/>
+      <circle cx="14" cy="34" r=".9" fill="#c98a3c"/><circle cx="16" cy="39" r=".9" fill="#c98a3c"/><circle cx="13" cy="42" r=".8" fill="#c98a3c"/>
+      <path d="M24 26 Q32 23 40 22" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".45" fill="none"/>`,
+    // Barquillos enrollados
+    piazza: `
+      ${[[0, 0], [7, 9]].map(([dx, dy]) => `<g transform="translate(${dx} ${dy}) rotate(-28 32 32)">
+        <rect x="8" y="22" width="44" height="11" rx="5.5" fill="#e8c27a" stroke="${K}" stroke-width="2.4"/>
+        <path d="M16 22 l-4 11 M24 22 l-4 11 M32 22 l-4 11 M40 22 l-4 11 M48 22 l-4 11" stroke="#b9852f" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="51" cy="27.5" rx="3.2" ry="5" fill="#6b3a22" stroke="${K}" stroke-width="1.8"/>
+      </g>`).join("")}`,
+    // Galletas Oreo: una de frente y otra de lado con la crema
+    oreo: `
+      <g transform="translate(38 43)">
+        <rect x="-17" y="-9" width="34" height="5.5" rx="2.7" fill="#2b2422" stroke="${K}" stroke-width="2"/>
+        <rect x="-15.5" y="-3.8" width="31" height="4" fill="#fbf7ef" stroke="${K}" stroke-width="1.6"/>
+        <rect x="-17" y=".2" width="34" height="5.5" rx="2.7" fill="#2b2422" stroke="${K}" stroke-width="2"/>
+      </g>
+      <g transform="translate(27 28)">
+        <circle r="15" fill="#2b2422" stroke="${K}" stroke-width="2.4"/>
+        <circle r="11" fill="none" stroke="#5a4a44" stroke-width="1.4"/>
+        ${[0, 45, 90, 135, 180, 225, 270, 315].map((g) => `<circle cx="${(7 * Math.cos(g * Math.PI / 180)).toFixed(1)}" cy="${(7 * Math.sin(g * Math.PI / 180)).toFixed(1)}" r="1.3" fill="#5a4a44"/>`).join("")}
+        <circle r="3" fill="#5a4a44"/>
+      </g>`
+  };
+  window.HM_ICONO_TOPPING = (tipo) => ICONOS[tipo]
+    ? `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><circle cx="32" cy="32" r="32" fill="#f7ecf5"/>${ICONOS[tipo]}</svg>`
+    : "";
+
   let contador = 0;
   window.HM_ILUSTRACION = function (cfg) {
     cfg = cfg || {};

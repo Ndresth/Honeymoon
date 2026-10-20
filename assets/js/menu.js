@@ -6,7 +6,7 @@
    - tamanos: lista de tamaños con precio (si hay uno solo, no se muestra selector).
               Un tamaño puede llevar `detalle` (ej. "Pequeña") y `encargo: true`.
    - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio y cantidad;
-                cada topping tiene `max` y, opcional, `limite` y `foto`)
+                cada topping tiene `max` y, opcional, `limite`, `icono` y `foto`)
    - eleccion: { titulo, detalle, opciones: [{ id, nombre, ilustracion? }] } → el cliente elige
                una opción incluida en el precio (ej. el topping del paveé). Si la opción trae
                `ilustracion`, el dibujo cambia al elegirla.
@@ -26,10 +26,10 @@ window.HM_ADICIONES = {
   fresas: {
     texto: "✨ ¡Llévalo al siguiente nivel! Añade tus toppings favoritos y crea una combinación deliciosa, crujiente y llena de sabor.💜",
     items: [
-      { id: "f-queso", nombre: "Queso", precio: 2000, max: 2, limite: { desde: 2, otros: 1 } },
-      { id: "f-chocoramo", nombre: "Chocoramo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
-      { id: "f-piazza", nombre: "Piazza", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
-      { id: "f-oreo", nombre: "Oreo", precio: 2000, max: 3, limite: { desde: 2, otros: 0 } }
+      { id: "f-queso", nombre: "Queso", icono: "queso", precio: 2000, max: 2, limite: { desde: 2, otros: 1 } },
+      { id: "f-chocoramo", nombre: "Chocoramo", icono: "chocoramo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
+      { id: "f-piazza", nombre: "Piazza", icono: "piazza", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
+      { id: "f-oreo", nombre: "Oreo", icono: "oreo", precio: 2000, max: 3, limite: { desde: 2, otros: 0 } }
     ]
   }
 };
