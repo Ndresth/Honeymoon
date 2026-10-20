@@ -40,7 +40,8 @@ window.HM_ADICIONES = {
         { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000 }
       ],
       adiciones: "fresas",
-      imagen: "assets/img/fresas-con-crema.webp", // foto real
+      imagen: "assets/img/fresas-con-crema.webp", // foto real, con toppings de queso y Oreo
+      fotoReferencia: true,
       fondo: FONDO
     },
     {
@@ -69,8 +70,8 @@ window.HM_ADICIONES = {
     {
       id: "mini-donas",
       nombre: "Mini donas",
-      descripcion: "Vaso de 12 onz con 9 mini donitas.",
-      tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "9 mini donitas", precio: 15000 }],
+      descripcion: "Vaso de 12 onz con 7 mini donitas.",
+      tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
       ilustracion: { tipo: "donas", fondo: "#e9d2e6" }
     }
   ];

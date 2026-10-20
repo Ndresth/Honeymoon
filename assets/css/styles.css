@@ -83,6 +83,9 @@ h1, h2, h3, h4, .hm-display {
   outline: 3px solid var(--hm-plum); outline-offset: 3px;
 }
 .hm-footer a:focus-visible, .hm-footer .hm-social:focus-visible { outline: 3px solid var(--hm-lilac-light); outline-offset: 3px; }
+.hm-navbar .nav-link:focus-visible, .btn-close:focus-visible, .btn-link:focus-visible { box-shadow: none; outline: 3px solid var(--hm-plum); outline-offset: 2px; }
+/* "Saltar al menú" por encima de la barra fija (1020) y por debajo de modales (1040+) */
+.hm-skip { z-index: 1035; }
 
 .btn-hm-primary {
   --bs-btn-color: #fff; --bs-btn-bg: var(--hm-plum);
@@ -272,6 +275,7 @@ h1, h2, h3, h4, .hm-display {
   padding: .15rem .5rem; border-radius: 999px; letter-spacing: .02em;
 }
 .hm-card-media img, .hm-product-media img { object-position: center 30%; }
+.hm-card .hm-ref { top: .6rem; bottom: auto; } /* abajo la tapa la etiqueta del nombre */
 .hm-card-body { padding: 0 1.15rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
 /* Nombre como etiqueta del menú impreso, montada sobre la foto */
 .hm-card-title { margin: -1.05rem 0 .6rem; position: relative; z-index: 1; line-height: 1; }
@@ -406,7 +410,7 @@ h1, h2, h3, h4, .hm-display {
 .form-control, .form-select {
   border: 2px solid var(--hm-lilac-deep); border-radius: 12px; background-color: #fff; color: var(--hm-plum);
 }
-.form-control::placeholder { color: #8a7088; }
+.form-control::placeholder { color: #7a6077; }
 .form-control:focus, .form-select:focus { border-color: var(--hm-plum); box-shadow: 0 0 0 .25rem rgba(141, 80, 136, .35); }
 .form-label { font-weight: 800; margin-bottom: .3rem; }
 .was-validated .form-control:invalid, .form-control.is-invalid,
@@ -504,14 +508,23 @@ body.has-cart .hm-fab-wa { bottom: 5.25rem; }
   .hm-card:focus-visible { outline: 3px solid var(--hm-plum); outline-offset: 3px; }
   .hm-product-media { aspect-ratio: 16 / 9; }
   .hm-card-note { font-size: .72rem; margin: -.2rem 0 .5rem; }
-  #checkoutFoot .btn-lg { --bs-btn-padding-x: 1rem; --bs-btn-padding-y: .55rem; --bs-btn-font-size: 1rem; }
   #productoAgregar { white-space: nowrap; }
+}
+@media (max-width: 991.98px) {
+  #checkoutFoot .btn-lg { --bs-btn-padding-x: 1rem; --bs-btn-padding-y: .55rem; --bs-btn-font-size: 1rem; }
+}
+@media (max-width: 359.98px) {
+  #checkoutFoot .btn-hm { --bs-btn-padding-x: .75rem; }
 }
 @media (max-width: 399.98px) {
   .hm-navbar .navbar-brand { margin-right: .25rem; gap: .4rem; }
   .hm-brand-badge { width: 40px; height: 40px; border-radius: 12px; }
   .hm-brand-badge img { width: 33px; }
   .hm-navbar .navbar-brand > span:last-child { font-size: 1.1rem; }
+  #productoModal .modal-footer { gap: .5rem !important; }
+  #productoModal .modal-footer .hm-qty { flex-shrink: 0; }
+  #productoModal .modal-footer .hm-qty button { width: 2rem; }
+  #productoAgregar { --bs-btn-padding-x: .75rem; --bs-btn-font-size: .875rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

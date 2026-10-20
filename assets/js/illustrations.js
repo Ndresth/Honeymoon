@@ -109,7 +109,7 @@
       </g>`;
   }
 
-  /* ---------- Vaso de 12 onz con 9 mini donitas ---------- */
+  /* ---------- Vaso de 12 onz con 7 mini donitas ---------- */
   function donas(c, uid) {
     const vasoPath = "M62 84 L178 84 L166 184 Q120 192 74 184 Z";
     const dona = (x, y, s, rot = 0) => `
@@ -119,8 +119,8 @@
         <ellipse rx="5.5" ry="3.2" cy="-3.5" fill="#e6a861" stroke="${K}" stroke-width="2"/>
         <ellipse rx="3.4" ry="1.6" cy="-3" fill="#c98a3c"/>
       </g>`;
-    // 3 arriba asomadas + 6 dentro del vaso transparente = 9
-    const dentro = [[94, 160, -6], [121, 163, 4], [148, 159, -3], [96, 121, 5], [122, 125, -5], [147, 120, 8]];
+    // 3 arriba asomadas + 4 dentro del vaso transparente = 7
+    const dentro = [[100, 161, -6], [141, 160, 4], [102, 122, 5], [139, 121, -6]];
     const arriba = [[94, 78, -14], [146, 78, 14], [120, 66, 0]];
     return `
       ${decoracion()}

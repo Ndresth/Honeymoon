@@ -392,7 +392,7 @@
       <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional</small></div>
       <div class="row g-2" role="group" aria-labelledby="lblAdic">
         ${grupo.map((a) => `
-          <div class="col-6 hm-opt-wrap">
+          <div class="col-sm-6 hm-opt-wrap">
             <input type="checkbox" class="btn-check" name="adicion" id="a-${a.id}" value="${a.id}">
             <label class="hm-option" for="a-${a.id}">
               <span class="hm-option-name d-flex align-items-center"><span class="hm-check" aria-hidden="true"></span>${esc(a.nombre)}</span>

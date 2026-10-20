@@ -36,7 +36,7 @@ En `assets/js/menu.js`:
 
 - `HM_ADICIONES`: grupos de toppings con precio. Hoy `fresas`: Queso, Chocoramo, Piazza y Oreo a $2.000 cada uno.
 - `HM_MENU`: productos (Fresas con crema, Pavé, Galletas y Mini donas). Campos principales:
-  - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "9 mini donitas") y `encargo: true`.
+  - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "7 mini donitas") y `encargo: true`.
   - `adiciones`: nombre del grupo de toppings que acepta (se eligen varios y suman al precio).
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del pavé (Galleta Oreo, Galleta Milo o Leche Klim). Si la opción trae `ilustracion`, el dibujo cambia al elegirla.
   - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
