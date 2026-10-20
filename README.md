@@ -59,7 +59,7 @@ Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy
 
 ## Tratamiento de datos
 
-`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`) y llegan al negocio únicamente por WhatsApp. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
+`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`) y llegan al negocio únicamente por WhatsApp. No usa cookies (ni de rastreo ni de publicidad), así que no necesita aviso de cookies; si se agrega Google Analytics o un píxel de publicidad, habría que agregar ese aviso. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
 
 ## Cómo funciona el pedido
 
