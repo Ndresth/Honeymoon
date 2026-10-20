@@ -211,7 +211,7 @@
     if (!carrito.length) {
       cont.innerHTML = `
         <div class="hm-empty">
-          <img src="assets/img/mascota-hoy.webp" alt="">
+          <div class="hm-empty-art"><img src="assets/img/logo-honeymoon.svg" alt="" width="456" height="393"></div>
           <h3 class="fs-4">Tu carrito está vacío</h3>
           <p class="text-plum-soft">Hony te espera con algo dulce.</p>
           <button type="button" class="btn btn-hm btn-hm-primary" data-ver-menu>Ver el menú</button>

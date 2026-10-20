@@ -13,7 +13,7 @@ assets/js/config.js        WhatsApp, horario, zonas de domicilio, pagos, días d
 assets/js/menu.js          Categorías, productos, tamaños y adiciones
 assets/js/illustrations.js Ilustraciones SVG de los productos
 assets/js/app.js           Lógica: menú, carrito, checkout y mensaje de WhatsApp
-assets/img/                Logo (SVG blanco), favicon, imagen para compartir, foto de las fresas y Hony
+assets/img/                Logo (SVG blanco), favicon, imagen para compartir y foto de las fresas
 assets/vendor/             Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 (copias locales, licencia MIT)
 ```
 

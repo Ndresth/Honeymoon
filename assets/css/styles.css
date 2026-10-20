@@ -449,7 +449,11 @@ h1, h2, h3, h4, .hm-display {
 .hm-cart-remove { border: 0; background: none; color: var(--hm-plum-soft); padding: .25rem; }
 .hm-cart-remove:hover { color: #b3261e; }
 .hm-empty { text-align: center; padding: 2rem 1rem; }
-.hm-empty img { width: 180px; border-radius: 18px; border: 3px solid var(--hm-lilac); margin-bottom: 1rem; }
+.hm-empty-art {
+  width: 170px; margin: 0 auto 1rem; padding: 1.1rem 1.25rem; border-radius: 22px;
+  background: var(--hm-lilac); box-shadow: 0 6px 0 var(--hm-lilac-light);
+}
+.hm-empty-art img { display: block; width: 100%; height: auto; }
 .hm-totals { width: 100%; }
 .hm-totals > div { display: flex; justify-content: space-between; padding: .2rem 0; }
 .hm-totals .hm-grand { font-family: var(--hm-font-display); font-weight: 900; font-size: 1.3rem; border-top: 2px solid var(--hm-plum); margin-top: .35rem; padding-top: .5rem; }
@@ -459,9 +463,14 @@ h1, h2, h3, h4, .hm-display {
 .hm-summary-line span:first-child { color: var(--hm-plum); }
 
 .hm-success { text-align: center; padding: 1.5rem .5rem; }
-.hm-success img {
-  display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto 1.25rem;
-  border-radius: 22px; border: 3px solid var(--hm-plum); box-shadow: 0 8px 0 var(--hm-lilac);
+/* Hony en grande: el logo sobre el fondo de ondas */
+.hm-success-art {
+  max-width: 440px; margin: 0 auto 1.5rem; padding: clamp(1.5rem, 6vw, 2.5rem) clamp(1.75rem, 8vw, 3.5rem);
+  border-radius: 26px; border: 3px solid var(--hm-plum); box-shadow: 0 8px 0 var(--hm-lilac-deep);
+}
+.hm-success-art img {
+  display: block; width: 100%; height: auto;
+  filter: drop-shadow(0 5px 0 rgba(74, 31, 72, .35));
 }
 
 /* ---------- Flotantes ---------- */
