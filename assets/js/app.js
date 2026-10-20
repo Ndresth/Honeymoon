@@ -675,6 +675,8 @@
     const encargo = carritoTieneEncargo();
     const hoy = hoyBogota();
     const hoyNo = !encargo && !atiendeHoyAun();
+    // Día de descanso (ej. lunes) o ya pasó la hora de cierre
+    const motivoHoy = abreEl(hoy) ? "Hoy ya cerramos" : "Hoy no abrimos";
     const min = proximoAbierto(encargo ? sumarDias(hoy, CFG.diasEncargo) : hoyNo ? sumarDias(hoy, 1) : hoy);
     const obligatoria = encargo || hoyNo;
     const max = carrito.map((it) => getProducto(it.id).temporada).filter(Boolean).map((t) => finTemporada(t, hoy)).sort()[0] || "";
@@ -685,13 +687,13 @@
     $("#fechaOpcional").classList.toggle("d-none", obligatoria);
     $("#fechaAyuda").textContent = encargo
       ? `Tu pedido tiene productos por encargo: la fecha más cercana es el ${fechaLarga(min)}.`
-      : hoyNo ? `Hoy ya no atendemos: elige una fecha desde el ${fechaLarga(min)}.`
+      : hoyNo ? `${motivoHoy}: elige una fecha desde el ${fechaLarga(min)}.`
       : "Déjala vacía si lo quieres para hoy.";
     let error = "";
     if (f.value) {
       if (f.value < min) {
         error = encargo ? `Para productos por encargo elige desde el ${fechaLarga(min)}.`
-          : hoyNo ? `Hoy ya no atendemos: elige desde el ${fechaLarga(min)}.`
+          : hoyNo ? `${motivoHoy}: elige desde el ${fechaLarga(min)}.`
           : "Elige una fecha desde hoy.";
       } else if (max && f.value > max) {
         error = `Los productos de temporada se entregan hasta el ${fechaLarga(max)}.`;
