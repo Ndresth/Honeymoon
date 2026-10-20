@@ -965,7 +965,7 @@
     });
   }
 
-  // Datos estructurados (schema.org) para buscadores: negocio, horario y perfiles sociales
+  // Datos estructurados (schema.org) para buscadores: negocio, logo, horario y perfiles sociales
   function renderDatosEstructurados() {
     const dias = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const hh = (h) => `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}`;
@@ -978,6 +978,7 @@
       description: $('meta[name="description"]').content,
       url: canonical ? canonical.href : location.href,
       image: imagen ? imagen.content : undefined,
+      logo: new URL("assets/img/icono-512.png", canonical ? canonical.href : location.href).href,
       servesCuisine: "Repostería",
       priceRange: "$$",
       address: { "@type": "PostalAddress", addressLocality: CFG.ciudad, addressRegion: "Atlántico", addressCountry: "CO" },
@@ -987,10 +988,14 @@
       }))
     };
     if (TEL !== NUMERO_PRUEBA) datos.telephone = `+${TEL}`;
-    const s = document.createElement("script");
-    s.type = "application/ld+json";
-    s.textContent = JSON.stringify(datos);
-    document.head.appendChild(s);
+    // El nombre del sitio que muestra Google
+    const sitio = { "@context": "https://schema.org", "@type": "WebSite", name: CFG.negocio, url: datos.url };
+    [datos, sitio].forEach((d) => {
+      const s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.textContent = JSON.stringify(d);
+      document.head.appendChild(s);
+    });
   }
 
   let toastInst;

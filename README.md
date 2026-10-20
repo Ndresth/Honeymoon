@@ -77,6 +77,11 @@ Es 100 % estático: no necesita servidor, base de datos ni comando de build. Se 
 
 - `CNAME` (raíz del repo) contiene el dominio; no lo borres o GitHub Pages deja de servir el dominio propio.
 - `canonical`, `og:url` y `og:image` en `index.html` apuntan al dominio (vista previa al compartir por WhatsApp y buscadores).
+- Íconos: `favicon.ico` (raíz), `assets/img/icono.svg`, `icono-192.png`, `icono-180.png` (Apple) e `icono-512.png` (logo en los datos para Google). Si cambias el logo, usa nombres de archivo nuevos: Google y WhatsApp guardan la imagen por su dirección.
+
+### Google
+
+Google actualiza el logo y la vista previa cuando vuelve a rastrear la página, y puede tardar días o semanas. Para pedírselo antes: [Google Search Console](https://search.google.com/search-console) → agregar propiedad **Dominio** `honeymoonreposteria.com` → verificar con el registro `TXT` que da Google (en Hostinger, igual que el de GitHub) → **Inspección de URLs** → `https://honeymoonreposteria.com/` → **Solicitar indexación**.
 
 DNS en Hostinger (*hPanel → Dominios → Portafolio de dominios → el dominio → DNS / Nameservers → Registros DNS*). Antes, borrar los registros `A` de `@` y el `CNAME` de `www` que Hostinger crea por defecto:
 
