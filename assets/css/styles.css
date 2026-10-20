@@ -302,7 +302,8 @@ h1, h2, h3, h4, .hm-display {
 .hm-card-toppings .hm-card-extra:last-of-type { margin-bottom: .75rem; }
 .hm-topping-chips { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; }
 .hm-topping-chips li { display: flex; flex-direction: column; align-items: center; gap: .3rem; text-align: center; min-width: 0; }
-.hm-topping-chips span:not(.hm-topping-foto) { font-family: var(--hm-font-display); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; overflow-wrap: anywhere; }
+.hm-topping-chips span:not(.hm-topping-foto) { font-family: var(--hm-font-display); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; overflow-wrap: normal; }
+@media (max-width: 479.98px) { .hm-topping-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: .75rem; } }
 .hm-topping-foto {
   width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; display: block;
   border: 2px solid #fff; box-shadow: 0 0 0 2px var(--hm-lilac-light); background: var(--hm-lilac-100);
@@ -314,6 +315,9 @@ h1, h2, h3, h4, .hm-display {
 
 /* Tarjeta destacada (fresas con crema): ocupa todo el ancho y en computador va con la foto al lado */
 .row > .hm-col-destacado { flex: 0 0 100%; width: 100%; max-width: 100%; }
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .hm-card.is-featured .hm-card-media { aspect-ratio: 2 / 1; }
+}
 @media (min-width: 992px) {
   .hm-card.is-featured { flex-direction: row; }
   .hm-card.is-featured .hm-card-media { flex: 0 0 42%; aspect-ratio: auto; min-height: 380px; }
@@ -354,7 +358,11 @@ h1, h2, h3, h4, .hm-display {
 .hm-topping .hm-topping-foto { width: 52px; height: 52px; }
 .hm-topping-info { flex: 1; min-width: 0; line-height: 1.2; }
 .hm-topping-info strong { display: block; font-family: var(--hm-font-display); font-weight: 800; }
-.hm-topping-info small { color: var(--hm-plum-soft); font-weight: 700; font-size: .78rem; }
+.hm-topping-info small { color: var(--hm-plum-soft); font-weight: 700; font-size: .78rem; white-space: nowrap; }
+@media (max-width: 359.98px) {
+  .hm-topping { gap: .5rem; }
+  .hm-topping .hm-topping-foto { width: 44px; height: 44px; }
+}
 .hm-topping.is-on .hm-topping-info small { color: var(--hm-plum); }
 .hm-topping .hm-qty { flex-shrink: 0; background: #fff; }
 .hm-topping-aviso { min-height: 1.4em; margin: .6rem 0 0; font-weight: 800; font-size: .88rem; color: var(--hm-lilac-deep); }
@@ -453,6 +461,8 @@ h1, h2, h3, h4, .hm-display {
 .hm-qty button:hover { background: var(--hm-lilac-100); }
 .hm-qty button:disabled, .hm-qty button[aria-disabled="true"] { opacity: .35; }
 .hm-qty button[aria-disabled="true"] { cursor: not-allowed; }
+/* El anillo de foco va por dentro: la píldora recorta lo que sale (overflow: hidden) */
+.hm-qty button:focus-visible { outline-offset: -3px; border-radius: 999px; }
 .hm-qty output { min-width: 2rem; text-align: center; font-weight: 800; }
 .hm-qty.hm-qty-sm button { width: 2rem; height: 2rem; font-size: .95rem; }
 

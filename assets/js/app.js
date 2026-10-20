@@ -458,13 +458,14 @@
               <span class="hm-topping-info"><strong>${esc(a.nombre)}</strong><small>+${money(a.precio)} · máx. ${maxDe(a)}</small></span>
               <div class="hm-qty hm-qty-sm" role="group" aria-label="Porciones de ${esc(a.nombre)}">
                 <button type="button" data-topping-paso="-1" aria-label="Quitar una porción de ${esc(a.nombre)}"><i class="bi bi-dash-lg"></i></button>
-                <output>0</output>
+                <output aria-live="off">0</output>
                 <button type="button" data-topping-paso="1" aria-label="Agregar una porción de ${esc(a.nombre)}"><i class="bi bi-plus-lg"></i></button>
               </div>
             </div>
           </div>`).join("")}
       </div>
       <p class="hm-topping-aviso" id="toppingAviso" role="status" aria-live="polite"></p>
+      <span class="visually-hidden" id="toppingAnuncio" role="status" aria-live="polite"></span>
       <p class="hm-topping-reglas">${esc(reglasTexto(grupo))}</p>` : "";
 
     pintarMedia();
@@ -501,7 +502,8 @@
     grupo.items.forEach((a) => {
       const fila = $(`[data-topping="${a.id}"]`, form);
       const n = conteoToppings[a.id] || 0;
-      $("output", fila).textContent = n;
+      const out = $("output", fila);
+      if (out.textContent !== String(n)) out.textContent = n;
       fila.classList.toggle("is-on", n > 0);
       const menos = $('[data-topping-paso="-1"]', fila);
       const mas = $('[data-topping-paso="1"]', fila);
@@ -509,8 +511,8 @@
       mas.setAttribute("aria-disabled", String(!!bloqueoTopping(grupo, conteoToppings, a.id)));
     });
     const solo = toppingSolo(grupo, conteoToppings);
-    $("#toppingAviso").textContent = aviso ||
-      (solo ? `Con ${conteoToppings[solo.id]} de ${solo.nombre}, ese topping va solo.` : "");
+    const texto = aviso || (solo ? `Con ${conteoToppings[solo.id]} de ${solo.nombre}, ese topping va solo.` : "");
+    if ($("#toppingAviso").textContent !== texto) $("#toppingAviso").textContent = texto;
   }
 
   function seleccionActual() {
@@ -530,7 +532,7 @@
     const menos = $('[data-qty="-1"]', form);
     const mas = $('[data-qty="1"]', form);
     const enfocado = document.activeElement;
-    $("#productoCantidad").textContent = cantidad;
+    if ($("#productoCantidad").textContent !== String(cantidad)) $("#productoCantidad").textContent = cantidad;
     menos.disabled = cantidad <= 1;
     mas.disabled = cantidad >= MAX_CANTIDAD;
     // Si el botón enfocado se deshabilitó, el foco pasa al otro
@@ -569,6 +571,12 @@
       }
       pintarToppings(aviso);
       actualizarTotalProducto();
+      // Un solo anuncio para lectores de pantalla, con el nombre del topping
+      const t = grupo.items.find((x) => x.id === id);
+      const m = conteoToppings[id] || 0;
+      if (!aviso && m !== n) $("#toppingAnuncio").textContent = `${t.nombre}: ${m} ${m === 1 ? "porción" : "porciones"}. Total ${$("#productoTotal").textContent}.`;
+      // En pantallas pequeñas el aviso puede quedar fuera de la vista
+      if (aviso) $("#toppingAviso").scrollIntoView({ block: "nearest" });
       return;
     }
     const b = e.target.closest("[data-qty]");
