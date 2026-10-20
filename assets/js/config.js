@@ -14,9 +14,9 @@ window.HM_CONFIG = {
   // WhatsApp del negocio: código de país (57) + número, sin espacios ni "+".
   whatsapp: "573001233575",
 
-  // Pon true cuando los precios y tamaños de menu.js sean los reales:
-  // quita el aviso "Precios de referencia" y la nota en el mensaje de WhatsApp.
-  preciosConfirmados: false,
+  // true: los precios de menu.js son los del menú oficial. Con false sale el aviso
+  // "Precios de referencia" y una nota en el mensaje de WhatsApp.
+  preciosConfirmados: true,
 
   // Horario de atención (hora de Colombia). 0 = domingo ... 6 = sábado. null = cerrado.
   horario: {
@@ -48,6 +48,6 @@ window.HM_CONFIG = {
 
   metodosPago: ["Efectivo", "Nequi", "Daviplata", "Transferencia Bancolombia"],
 
-  // Días de anticipación para productos por encargo (tortas, cheesecake entero...).
+  // Días de anticipación para productos por encargo (hoy ningún producto del menú lo es).
   diasEncargo: 2
 };
