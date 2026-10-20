@@ -22,7 +22,7 @@ window.HM_CONFIG = {
   // Horas en decimal: 13.5 = 1:30 p. m., 19.25 = 7:15 p. m.
   horario: {
     0: [13.5, 19.25],
-    1: [13.5, 19.25],
+    1: null,
     2: [13.5, 19.25],
     3: [13.5, 19.25],
     4: [13.5, 19.25],
@@ -30,7 +30,8 @@ window.HM_CONFIG = {
     6: [13.5, 19.25]
   },
   horarioTexto: [
-    "Todos los días · 1:30 p. m. – 7:15 p. m."
+    "Martes a domingo · 1:30 p. m. – 7:15 p. m.",
+    "Lunes · descansamos"
   ],
 
   // Ciudades a las que llegan los domicilios (sección Domicilios y campo "Ciudad" del pedido).

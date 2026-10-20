@@ -8,6 +8,7 @@ Branding lila: el lila del logo (`#c48ebf`), blanco y ciruela (`#4a1f48`) para t
 
 ```
 index.html                 Página principal
+tratamiento-de-datos.html  Política de tratamiento de datos personales (Ley 1581 de 2012)
 assets/css/styles.css      Estilos y paleta de marca
 assets/js/config.js        WhatsApp, horario, zonas de domicilio, pagos, días de encargo
 assets/js/menu.js          Categorías, productos, tamaños y adiciones
@@ -54,7 +55,11 @@ La tarjeta de cada producto muestra, como el menú impreso, los tamaños con su 
 
 Recoger en el local está apagado (`recoger: false` en `config.js`): en el checkout sale como **Próximamente** y solo se puede pedir a domicilio. Cuando haya local, pon `recoger: true` y la dirección en `puntoRecogida`.
 
-Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy todos los días de 1:30 a 7:15 p. m.; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
+Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy martes a domingo de 1:30 a 7:15 p. m. y lunes de descanso, `1: null`; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
+
+## Tratamiento de datos
+
+`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`) y llegan al negocio únicamente por WhatsApp. No usa cookies (ni de rastreo ni de publicidad), así que no necesita aviso de cookies; si se agrega Google Analytics o un píxel de publicidad, habría que agregar ese aviso. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
 
 ## Cómo funciona el pedido
 

@@ -388,6 +388,32 @@ h1, h2, h3, h4, .hm-display {
   padding: .25rem .75rem; font-weight: 700; font-size: .9rem; background: var(--hm-lilac-50); margin: 0 .35rem .5rem 0;
 }
 
+.hm-legal { font-size: .85rem; color: var(--hm-plum-soft); display: flex; gap: .4rem; align-items: baseline; }
+.hm-legal i { color: var(--hm-lilac-deep); }
+.hm-legal a { color: var(--hm-plum); font-weight: 700; }
+
+/* ---------- Página de Tratamiento de datos ---------- */
+.hm-doc { min-height: 100vh; padding: clamp(1.25rem, 5vw, 3rem) 0; }
+.hm-doc-card {
+  max-width: 760px; margin: 0 auto; background: #fff; border-radius: 28px;
+  box-shadow: var(--hm-shadow-soft), 0 0 0 2px #fff; outline: 2px solid var(--hm-lilac-light); outline-offset: 6px;
+  padding: clamp(1.5rem, 5vw, 3rem);
+}
+.hm-doc-logo {
+  width: clamp(130px, 34vw, 190px); aspect-ratio: 1; margin: 0 auto 1.5rem; border-radius: 26px;
+  display: grid; place-items: center; background: var(--hm-lilac);
+}
+.hm-doc-logo img { width: 80%; height: auto; }
+.hm-doc h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 900; letter-spacing: -.03em; text-align: center; margin-bottom: .35rem; }
+.hm-doc .hm-doc-sub { text-align: center; color: var(--hm-plum-soft); font-weight: 700; margin-bottom: 2rem; }
+.hm-doc h2 { font-size: clamp(1.2rem, 4vw, 1.45rem); font-weight: 800; margin: 2rem 0 .6rem; }
+.hm-doc p, .hm-doc li { font-size: 1.05rem; line-height: 1.65; color: var(--hm-plum); }
+.hm-doc .hm-doc-resp { background: var(--hm-lilac-50); border: var(--hm-line); border-radius: 18px; padding: 1rem 1.15rem; }
+.hm-doc .hm-doc-resp p { margin: 0; font-size: .98rem; }
+.hm-doc .hm-doc-fecha { color: var(--hm-plum-soft); font-size: .9rem; margin-top: 2rem; }
+.hm-doc-borrado { min-height: 1.5em; font-weight: 800; color: var(--hm-lilac-deep); margin: .75rem 0 0; }
+@media (max-width: 575.98px) { .hm-doc-card { outline: 0; border-radius: 22px; } }
+
 /* ---------- Footer ---------- */
 .hm-footer { background: var(--hm-plum); color: #fff; padding-bottom: 5.5rem !important; }
 @media (max-width: 991.98px) { body.has-cart .hm-footer { padding-bottom: 9.5rem !important; } }

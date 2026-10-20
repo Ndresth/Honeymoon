@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tratamiento de datos personales · Honeymoon</title>
+  <meta name="description" content="Cómo trata Honeymoon Repostería los datos de sus clientes, según la Ley 1581 de 2012.">
+  <meta name="theme-color" content="#c48ebf">
+  <link rel="canonical" href="https://honeymoonreposteria.com/tratamiento-de-datos.html">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="assets/img/icono.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/img/icono-192.png">
+  <link rel="apple-touch-icon" href="assets/img/icono-180.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body class="hm-waves">
+  <main class="hm-doc">
+    <div class="container">
+      <article class="hm-doc-card">
+        <a class="btn btn-hm btn-hm-paper btn-sm mb-4" href="./"><i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver al menú</a>
+
+        <div class="hm-doc-logo"><img src="assets/img/logo-honeymoon.svg" alt="Logo de Honeymoon" width="456" height="393"></div>
+        <h1>Tratamiento de Datos Personales</h1>
+        <p class="hm-doc-sub">Honeymoon Repostería</p>
+
+        <p>En cumplimiento de la Ley 1581 de 2012 y demás normas concordantes sobre protección de datos personales, Honeymoon informa a sus clientes el tratamiento que se le da a sus datos.</p>
+
+        <div class="hm-doc-resp">
+          <p><strong>Responsable:</strong> Honeymoon Repostería · Barranquilla, Atlántico.</p>
+          <p><strong>Contacto:</strong> WhatsApp <a href="https://wa.me/573001233575" data-wa-datos target="_blank" rel="noopener"><span data-wa-numero>300 123 3575</span></a>.</p>
+        </div>
+
+        <h2>1. Finalidad del tratamiento</h2>
+        <p>Los datos solicitados en nuestro menú digital (nombre, celular, dirección, barrio y ciudad) tienen como única finalidad gestionar la entrega de tu pedido, confirmar el costo del domicilio y permitir la comunicación directa vía WhatsApp para coordinar la entrega.</p>
+
+        <h2>2. Uso de la información</h2>
+        <p>Tus datos no serán vendidos, compartidos ni cedidos a terceros con fines publicitarios. Solo serán utilizados por nuestro equipo para asegurar que tu postre llegue a tiempo y en perfectas condiciones.</p>
+
+        <h2>3. Dónde quedan tus datos</h2>
+        <p>Nuestra página no guarda tus datos en ningún servidor. Para que no tengas que escribirlos en tu próximo pedido, tu nombre, celular, dirección, barrio y ciudad quedan guardados solo en el navegador de tu celular o computador. Los recibimos únicamente cuando envías el pedido por WhatsApp; desde ese momento la conversación también se rige por las políticas de WhatsApp.</p>
+        <p>Nuestra página no usa cookies de rastreo ni de publicidad; solo guarda en tu navegador el carrito y tus datos de entrega.</p>
+        <p class="mb-2">Puedes borrarlos de este dispositivo cuando quieras:</p>
+        <button type="button" class="btn btn-hm btn-hm-paper" id="borrarDatos"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Borrar mis datos de este dispositivo</button>
+        <p class="hm-doc-borrado" id="borradoEstado" role="status" aria-live="polite"></p>
+
+        <h2>4. Tus derechos</h2>
+        <p>Como titular de los datos, tienes derecho a conocer, actualizar, rectificar o solicitar la eliminación de tu información personal en cualquier momento, comunicándote directamente a nuestra línea de atención por WhatsApp: <a href="https://wa.me/573001233575" data-wa-datos target="_blank" rel="noopener"><span data-wa-numero>300 123 3575</span></a>.</p>
+
+        <h2>5. Aceptación</h2>
+        <p>Al realizar un pedido a través de nuestra página, manifiestas tu autorización expresa para que Honeymoon haga uso de los datos suministrados exclusivamente para la gestión de dicho pedido.</p>
+
+        <p class="hm-doc-fecha">Última actualización: 20 de octubre de 2026.</p>
+      </article>
+    </div>
+  </main>
+
+  <script src="assets/js/config.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      // Número de WhatsApp desde config.js (si cambia allá, cambia aquí)
+      var tel = String((window.HM_CONFIG || {}).whatsapp || "").replace(/\D/g, "");
+      if (tel) {
+        var local = tel.indexOf("57") === 0 ? tel.slice(2) : tel;
+        var texto = local.length === 10 ? local.slice(0, 3) + " " + local.slice(3, 6) + " " + local.slice(6) : local;
+        var saludo = encodeURIComponent("¡Hola Honeymoon! Quiero consultar sobre mis datos personales.");
+        document.querySelectorAll("[data-wa-datos]").forEach(function (a) { a.href = "https://wa.me/" + tel + "?text=" + saludo; });
+        document.querySelectorAll("[data-wa-numero]").forEach(function (s) { s.textContent = texto; });
+      }
+      // Borra lo que la página guardó en este navegador: datos de entrega y carrito
+      document.getElementById("borrarDatos").addEventListener("click", function () {
+        var estado = document.getElementById("borradoEstado");
+        try {
+          localStorage.removeItem("hm_cliente");
+          localStorage.removeItem("hm_carrito");
+          estado.textContent = "Listo: borramos de este dispositivo tus datos y tu carrito guardados.";
+        } catch (e) {
+          estado.textContent = "Tu navegador no permite guardar datos, así que no hay nada guardado.";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
