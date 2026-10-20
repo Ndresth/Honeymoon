@@ -29,7 +29,7 @@ window.HM_ADICIONES = {
       { id: "f-queso", nombre: "Queso", icono: "queso", precio: 2000, max: 2, limite: { desde: 2, otros: 1 } },
       { id: "f-chocoramo", nombre: "Chocoramo", icono: "chocoramo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
       { id: "f-piazza", nombre: "Piazza", icono: "piazza", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
-      { id: "f-oreo", nombre: "Oreo", icono: "oreo", precio: 2000, max: 3, limite: { desde: 2, otros: 0 } }
+      { id: "f-oreo", nombre: "Oreo", icono: "oreo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } } // ya viene en la base
     ]
   }
 };
@@ -42,7 +42,7 @@ window.HM_ADICIONES = {
     {
       id: "fresas-con-crema",
       nombre: "Fresas con crema",
-      descripcion: "🍓Capas de nuestra crema suave y cremosa, fresas frescas, glaseado de fresa, dulce de leche y leche condensada. ¡Una combinación dulce e irresistible que puedes personalizar con tu topping favorito!",
+      descripcion: "🍓Capas de nuestra crema suave y cremosa, fresas frescas, glaseado de fresa, dulce de leche, leche condensada y galleta Oreo. ¡Una combinación dulce e irresistible que puedes personalizar con tu topping favorito!",
       tamanos: [
         { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000 },
         { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000 }
