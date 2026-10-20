@@ -25,18 +25,37 @@
   const contar = (ids) => ids.reduce((c, id) => ((c[id] = (c[id] || 0) + 1), c), {});
   const expandir = (grupo, c) => (grupo ? grupo.items.flatMap((a) => Array(c[a.id] || 0).fill(a.id)) : []);
   const maxDe = (a) => a.max || 1;
-  // Topping que, por su cantidad, debe ir solo (ej. 2 porciones de Oreo)
-  const toppingSolo = (grupo, c) => grupo.items.find((a) => a.soloDesde && (c[a.id] || 0) >= a.soloDesde);
-  const otrosToppings = (c, id) => Object.keys(c).filter((k) => k !== id && c[k] > 0).length;
+  // Porciones de los demás toppings
+  const sumaOtros = (c, id) => Object.entries(c).reduce((s, [k, v]) => s + (k === id ? 0 : v), 0);
+  // Toppings cuyo límite está activo (ej. 2 de Oreo: nada más; 2 de Queso: solo 1 topping más)
+  const limitesActivos = (grupo, c) => grupo.items.filter((a) => a.limite && (c[a.id] || 0) >= a.limite.desde);
+  const limiteRoto = (grupo, c) => limitesActivos(grupo, c).find((a) => sumaOtros(c, a.id) > a.limite.otros);
+  const toppingsMas = (n) => (n === 1 ? "1 topping más" : `${n} toppings más`);
   // Por qué no se puede sumar otra porción de un topping ("" si sí se puede)
   function bloqueoTopping(grupo, c, id) {
     const a = grupo.items.find((x) => x.id === id);
     const n = c[id] || 0;
     if (n >= maxDe(a)) return `Máximo ${maxDe(a)} de ${a.nombre}.`;
-    const solo = toppingSolo(grupo, c);
-    if (solo && solo.id !== id) return `Con ${c[solo.id]} de ${solo.nombre} no se pueden agregar otros toppings.`;
-    if (a.soloDesde && n + 1 >= a.soloDesde && otrosToppings(c, id)) return `Para pedir ${n + 1} de ${a.nombre}, quita los demás toppings.`;
-    return "";
+    const nuevo = { ...c, [id]: n + 1 };
+    const roto = limiteRoto(grupo, nuevo);
+    if (!roto) return "";
+    const otros = roto.limite.otros;
+    if (roto.id === id) {
+      return otros === 0
+        ? `Para pedir ${n + 1} de ${a.nombre}, quita los demás toppings.`
+        : `Para pedir ${n + 1} de ${a.nombre}, deja máximo ${toppingsMas(otros)}.`;
+    }
+    return otros === 0
+      ? `Con ${c[roto.id]} de ${roto.nombre} no se pueden agregar otros toppings.`
+      : `Con ${c[roto.id]} de ${roto.nombre} solo se puede agregar ${toppingsMas(otros)}.`;
+  }
+  // Aviso fijo mientras un límite esté activo
+  function avisoLimite(grupo, c) {
+    const a = limitesActivos(grupo, c)[0];
+    if (!a) return "";
+    return a.limite.otros === 0
+      ? `Con ${c[a.id]} de ${a.nombre}, ese topping va solo.`
+      : `Con ${c[a.id]} de ${a.nombre} puedes agregar solo ${toppingsMas(a.limite.otros)}.`;
   }
   // Ajusta un pedido guardado a los límites actuales
   function sanearToppings(grupo, c) {
@@ -45,12 +64,13 @@
       const n = Math.min(c[a.id] || 0, maxDe(a));
       if (n > 0) r[a.id] = n;
     });
-    grupo.items.forEach((a) => {
-      if (a.soloDesde && r[a.id] >= a.soloDesde && otrosToppings(r, a.id)) {
-        r[a.id] = a.soloDesde - 1;
-        if (!r[a.id]) delete r[a.id];
-      }
-    });
+    // Si un límite no se cumple, ese topping baja a una porción menos de donde empieza el límite
+    for (let i = 0; i < grupo.items.length; i++) {
+      const roto = limiteRoto(grupo, r);
+      if (!roto) break;
+      r[roto.id] = roto.limite.desde - 1;
+      if (!r[roto.id]) delete r[roto.id];
+    }
     return r;
   }
   // "Queso, Oreo x2"
@@ -95,7 +115,13 @@
   }
   const etiquetaFoto = (p) => (p.imagen && p.fotoReferencia ? `<span class="hm-ref">Foto de referencia</span>` : "");
   const fondo = (p, opcion) => ilustracionDe(p, opcion).fondo || p.fondo || "var(--hm-lilac-100)";
-  const listaY = (items, y = "y") => (items.length > 1 ? `${items.slice(0, -1).join(", ")} ${y} ${items[items.length - 1]}` : items.join(""));
+  // "a, b y c"; "y" pasa a "e" antes de i- y "o" a "u" antes de o- (Piazza u Oreo)
+  const listaY = (items, y = "y") => {
+    if (items.length < 2) return items.join("");
+    const ult = items[items.length - 1];
+    const conj = y === "o" && /^h?o/i.test(ult) ? "u" : y === "y" && /^h?i(?![aeou])/i.test(ult) ? "e" : y;
+    return `${items.slice(0, -1).join(", ")} ${conj} ${ult}`;
+  };
   const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
   /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
   function ahoraBogota() {
@@ -487,12 +513,14 @@
   // Texto con los límites del grupo, armado desde menu.js
   function reglasTexto(grupo) {
     const max = grupo.items.map((a) => `${a.nombre} ${maxDe(a)}`).join(", ");
-    const solos = grupo.items.filter((a) => a.soloDesde);
-    const desde = [...new Set(solos.map((a) => a.soloDesde))];
+    const conLimite = grupo.items.filter((a) => a.limite);
+    const pocos = conLimite.filter((a) => a.limite.otros > 0).map((a) => ` Con ${a.limite.desde} de ${a.nombre}, solo ${toppingsMas(a.limite.otros)}.`).join("");
+    const solos = conLimite.filter((a) => a.limite.otros === 0);
+    const desde = [...new Set(solos.map((a) => a.limite.desde))];
     const solo = solos.length && desde.length === 1
       ? ` Si pides ${desde[0]} o más de ${listaY(solos.map((a) => a.nombre), "o")}, ese topping va solo.`
-      : solos.map((a) => ` Con ${a.soloDesde} o más de ${a.nombre}, va solo.`).join("");
-    return `Máximo por vaso: ${max}.${solo}`;
+      : solos.map((a) => ` Con ${a.limite.desde} o más de ${a.nombre}, va solo.`).join("");
+    return `Máximo por vaso: ${max}.${pocos}${solo}`;
   }
 
   // Botones + y − de cada topping según los límites; el aviso explica lo que no se puede
@@ -510,8 +538,7 @@
       menos.setAttribute("aria-disabled", String(n === 0));
       mas.setAttribute("aria-disabled", String(!!bloqueoTopping(grupo, conteoToppings, a.id)));
     });
-    const solo = toppingSolo(grupo, conteoToppings);
-    const texto = aviso || (solo ? `Con ${conteoToppings[solo.id]} de ${solo.nombre}, ese topping va solo.` : "");
+    const texto = aviso || avisoLimite(grupo, conteoToppings);
     if ($("#toppingAviso").textContent !== texto) $("#toppingAviso").textContent = texto;
   }
 

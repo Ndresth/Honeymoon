@@ -34,8 +34,8 @@ En `assets/js/config.js`, la lista `redes` alimenta los botones de "Síguenos" (
 
 En `assets/js/menu.js`:
 
-- `HM_ADICIONES`: grupos de toppings. Cada grupo tiene `texto` (la frase que sale arriba de los toppings) e `items`. Cada topping lleva `precio` por porción, `max` (porciones máximas por vaso), opcional `soloDesde` (desde esa cantidad ese topping va solo, sin otros) y opcional `foto`. Hoy `fresas`, a $2.000 la porción:
-  - Queso: hasta 2, se puede combinar con los demás.
+- `HM_ADICIONES`: grupos de toppings. Cada grupo tiene `texto` (la frase que sale arriba de los toppings) e `items`. Cada topping lleva `precio` por porción, `max` (porciones máximas por vaso), opcional `limite: { desde, otros }` (desde esa cantidad de ese topping, como máximo `otros` porciones de los demás; `otros: 0` = va solo) y opcional `foto`. Hoy `fresas`, a $2.000 la porción:
+  - Queso: hasta 2; con 2, solo 1 topping más.
   - Chocoramo y Piazza: hasta 2; con 2, van solos.
   - Oreo: hasta 3; con 2 o más, va solo.
   - Se pueden pedir los 4 toppings a la vez (una porción de cada uno).
