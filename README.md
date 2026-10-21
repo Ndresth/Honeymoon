@@ -59,7 +59,7 @@ Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy
 
 ## Modo "Muy pronto"
 
-En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir).
+En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir). Hoy está **activo**.
 
 ## Tratamiento de datos
 
