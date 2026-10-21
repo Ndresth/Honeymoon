@@ -29,8 +29,33 @@
   <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
+  <script src="assets/js/config.js"></script>
+  <script>
+    // Modo "Muy pronto" (config.js → mantenimiento). Con ?tienda se ve la tienda igual.
+    if (window.HM_CONFIG && HM_CONFIG.mantenimiento && !/[?&]tienda\b/.test(location.search)) {
+      document.documentElement.classList.add("hm-modo-pronto");
+      document.title = "Honeymoon · Muy pronto";
+    }
+  </script>
 </head>
 <body>
+
+  <!-- ================= MUY PRONTO (solo con mantenimiento: true) ================= -->
+  <main class="hm-pronto hm-waves" id="pronto" aria-labelledby="prontoTitulo">
+    <div class="hm-pronto-card">
+      <div class="hm-pronto-logo"><img src="assets/img/logo-honeymoon.svg" alt="Logo de Honeymoon" width="456" height="393"></div>
+      <p class="hm-pronto-kicker">Muy pronto</p>
+      <h1 id="prontoTitulo">Estamos <span>endulzando</span> la tienda</h1>
+      <p class="hm-pronto-texto">Le estamos dando los últimos toques a nuestro menú en línea para que pedir tus postres sea facilísimo. Vuelve pronto.</p>
+      <hr class="hm-pronto-linea">
+      <p class="hm-pronto-texto mb-3">¿Quieres pedir hoy? Escríbenos por WhatsApp o síguenos:</p>
+      <div class="hm-pronto-redes">
+        <span data-redes="iconos"></span>
+        <a href="#" class="hm-pronto-icono" data-wa-general aria-label="Escríbenos por WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+      </div>
+      <p class="hm-pronto-lugar">Barranquilla · Soledad · Atlántico</p>
+    </div>
+  </main>
 
   <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-hm btn-hm-paper hm-skip" href="#menu">Saltar al menú</a>
 
@@ -415,7 +440,6 @@
   </div>
 
   <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/config.js"></script>
   <script src="assets/js/menu.js"></script>
   <script src="assets/js/illustrations.js"></script>
   <script src="assets/js/app.js"></script>

@@ -961,8 +961,13 @@
       <a class="hm-social" href="${esc(r.url)}" target="_blank" rel="noopener" aria-label="${esc(r.nombre)}: @${esc(r.usuario)}">
         <i class="bi bi-${esc(r.id)}" aria-hidden="true"></i><span>@${esc(r.usuario)}</span>
       </a>`).join("");
+    // Solo íconos (pantalla "Muy pronto")
+    const iconos = redes().map((r) => `
+      <a class="hm-pronto-icono" href="${esc(r.url)}" target="_blank" rel="noopener" aria-label="${esc(r.nombre)}: @${esc(r.usuario)}">
+        <i class="bi bi-${esc(r.id)}" aria-hidden="true"></i>
+      </a>`).join("");
     $$("[data-redes]").forEach((el) => {
-      el.innerHTML = html;
+      el.innerHTML = el.dataset.redes === "iconos" ? iconos : html;
       el.closest("[data-redes-wrap]")?.classList.toggle("d-none", !html);
     });
   }

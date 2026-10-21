@@ -392,6 +392,52 @@ h1, h2, h3, h4, .hm-display {
 .hm-legal i { color: var(--hm-lilac-deep); }
 .hm-legal a { color: var(--hm-plum); font-weight: 700; }
 
+/* ---------- Modo "Muy pronto" (config.js → mantenimiento: true) ---------- */
+.hm-pronto { display: none; }
+.hm-modo-pronto body > :not(#pronto):not(script) { display: none !important; }
+.hm-modo-pronto .hm-pronto {
+  display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh;
+  padding: clamp(1.25rem, 5vw, 3rem) 1rem;
+}
+.hm-pronto-card {
+  width: 100%; max-width: 560px; text-align: center; background: #fff; border-radius: 32px;
+  box-shadow: var(--hm-shadow-soft), 0 0 0 2px #fff; outline: 2px solid var(--hm-lilac-light); outline-offset: 7px;
+  padding: clamp(2rem, 7vw, 3.25rem) clamp(1.25rem, 6vw, 3rem);
+}
+.hm-pronto-logo {
+  width: clamp(140px, 40vw, 190px); aspect-ratio: 1; margin: 0 auto 1.75rem; border-radius: 50%;
+  display: grid; place-items: center; background: var(--hm-lilac); box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--hm-lilac-light);
+}
+.hm-pronto-logo img { width: 76%; height: auto; }
+.hm-pronto-kicker {
+  font-family: var(--hm-font-display); font-weight: 700; font-size: .9rem; text-transform: uppercase;
+  letter-spacing: .3em; color: var(--hm-lilac-deep); margin-bottom: .75rem;
+}
+.hm-pronto h1 {
+  font-size: clamp(2.1rem, 9vw, 3.2rem); font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.02;
+  color: var(--hm-plum); margin-bottom: 1.1rem;
+}
+.hm-pronto h1 span { color: var(--hm-lilac-deep); }
+.hm-pronto-texto { font-size: 1.12rem; color: var(--hm-plum-soft); max-width: 26rem; margin-inline: auto; }
+.hm-pronto-linea { border: 0; border-top: 3px dashed var(--hm-lilac-light); opacity: 1; margin: 1.75rem 0; }
+.hm-pronto-redes { display: flex; justify-content: center; gap: .9rem; margin-bottom: 1.75rem; }
+.hm-pronto-redes > [data-redes] { display: contents; }
+.hm-pronto-icono {
+  width: 3.1rem; height: 3.1rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--hm-lilac-50); border: 2px solid var(--hm-lilac-deep); color: var(--hm-plum); font-size: 1.35rem;
+  text-decoration: none; transition: transform .12s, background .12s;
+}
+.hm-pronto-icono:hover { background: var(--hm-lilac); color: var(--hm-plum); transform: translateY(-2px); }
+.hm-pronto-icono:focus-visible { outline: 3px solid var(--hm-plum); outline-offset: 3px; }
+.hm-pronto-lugar {
+  margin: 0; font-family: var(--hm-font-display); font-weight: 700; font-size: .78rem; text-transform: uppercase;
+  letter-spacing: .2em; color: var(--hm-plum-soft);
+}
+@media (max-width: 575.98px) {
+  .hm-pronto-card { outline: 0; border-radius: 26px; }
+  .hm-pronto-lugar { letter-spacing: .08em; font-size: .74rem; }
+}
+
 /* ---------- Página de Tratamiento de datos ---------- */
 .hm-doc { min-height: 100vh; padding: clamp(1.25rem, 5vw, 3rem) 0; }
 .hm-doc-card {
