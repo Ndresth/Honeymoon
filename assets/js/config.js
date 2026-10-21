@@ -11,6 +11,11 @@ window.HM_CONFIG = {
     { id: "tiktok", nombre: "TikTok", usuario: "honeymoonpostres", url: "https://www.tiktok.com/@honeymoonpostres" }
   ],
 
+  // Modo "Muy pronto": true muestra solo la pantalla "Estamos endulzando la tienda".
+  // El menú, el carrito y todo lo demás siguen intactos; con false vuelve la tienda.
+  // Para ver la tienda aunque esté en "Muy pronto": honeymoonreposteria.com/?tienda
+  mantenimiento: true,
+
   // WhatsApp del negocio: código de país (57) + número, sin espacios ni "+".
   whatsapp: "573001233575",
 
