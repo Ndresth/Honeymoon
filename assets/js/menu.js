@@ -49,7 +49,7 @@ window.HM_ADICIONES = {
       ],
       adiciones: "fresas",
       destacado: true, // tarjeta ancha, primera del menú
-      imagen: "assets/img/fresas-con-crema.webp", // foto real, con toppings de queso y Oreo
+      imagen: "assets/img/parfait-oreo.jpeg", // foto real
       fotoReferencia: true,
       fondo: FONDO
     },
@@ -62,26 +62,29 @@ window.HM_ADICIONES = {
         titulo: "Topping",
         detalle: "Incluido · elige uno",
         opciones: [
-          { id: "oreo", nombre: "Galleta Oreo", ilustracion: pave("oreo") },
-          { id: "milo", nombre: "Galleta Milo", ilustracion: pave("milo") },
-          { id: "klim", nombre: "Leche Klim", ilustracion: pave("klim") }
+          { id: "oreo", nombre: "Galleta Oreo" },
+          { id: "milo", nombre: "Galleta Milo" },
+          { id: "klim", nombre: "Leche Klim" }
         ]
       },
-      ilustracion: pave("oreo")
+      imagen: "assets/img/postre-napoleon.jpeg",
+      fotoReferencia: true
     },
     {
       id: "galletas",
       nombre: "Galletas",
       descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g.",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
-      ilustracion: { tipo: "bolsita", fondo: "#f3e4f1" }
+      imagen: "assets/img/mini-cookies.jpeg",
+      fotoReferencia: true
     },
     {
       id: "mini-donas",
       nombre: "Mini donas",
       descripcion: "Vaso de 12 onz con 7 mini donitas.",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
-      ilustracion: { tipo: "donas", fondo: "#e9d2e6" }
+      imagen: "assets/img/mini-donitas.jpeg",
+      fotoReferencia: true
     }
   ];
 })();
