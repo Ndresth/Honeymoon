@@ -258,7 +258,7 @@ h1, h2, h3, h4, .hm-display {
 .hm-card:hover { transform: translateY(-3px); box-shadow: 0 20px 34px -18px rgba(74, 31, 72, .6); }
 .hm-card:focus-visible { outline-offset: 5px; }
 
-.hm-card-media { position: relative; aspect-ratio: 6 / 5; overflow: hidden; }
+.hm-card-media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background-color: #C593F8; }
 .hm-card-media svg, .hm-card-media img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .hm-card:hover .hm-card-media svg { transform: scale(1.03) rotate(-.5deg); }
 .hm-card-media svg { transition: transform .3s ease; }
@@ -499,7 +499,7 @@ h1, h2, h3, h4, .hm-display {
   .modal-fullscreen-sm-down .modal-content { border-radius: 0; box-shadow: none; }
 }
 
-.hm-product-media { position: relative; border-radius: var(--hm-radius); overflow: hidden; aspect-ratio: 6 / 5; }
+.hm-product-media { position: relative; border-radius: var(--hm-radius); overflow: hidden; aspect-ratio: 4 / 5; background-color: #C593F8; }
 .hm-product-media svg, .hm-product-media img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .hm-group-title {
   font-family: var(--hm-font-display); font-weight: 800; font-size: .8rem; text-transform: uppercase; letter-spacing: .1em;
@@ -645,10 +645,10 @@ body.has-cart .hm-fab-wa { bottom: 5.25rem; }
   .hm-sticker { font-size: .76rem; padding: .35rem .6rem; }
   .hm-sticker.s1 { left: -10%; }
   .hm-sticker.s2 { right: -10%; }
-  .hm-card-media { aspect-ratio: 16 / 11; }
+  .hm-card-media { aspect-ratio: 4 / 5; }
   .hm-card { outline: 0; }
   .hm-card:focus-visible { outline: 3px solid var(--hm-plum); outline-offset: 3px; }
-  .hm-product-media { aspect-ratio: 16 / 9; }
+  .hm-product-media { aspect-ratio: 4 / 5; }
   .hm-card-note { font-size: .72rem; margin: -.2rem 0 .5rem; }
   #productoAgregar { white-space: nowrap; }
 }
