@@ -55,7 +55,7 @@ window.HM_ADICIONES = {
     {
       id: "pave",
       nombre: "Paveé",
-      descripcion: "Paveé en cuchareable de 9 Onz con nuestra crema suave, tapas de galletas Ducales, leche Klim y coronado con el topping de tu preferencia.",
+      descripcion: "Paveé en cuchareable de 9 Onz con nuestra crema suave, Capas de galleta Ducales, leche Klim y coronado con el topping de tu preferencia.",
       tamanos: [{ id: "9oz", nombre: "9 Onz", detalle: "Cuchareable", precio: 16000 }],
       eleccion: {
         titulo: "Topping",

@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Sitio web estático (HTML + Bootstrap 5.3 + JavaScript puro) para una repostería: fresas con crema, paveé, galletas y mini donas, con carrito y envío del pedido por WhatsApp.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ndresth/Honeymoon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ndresth/Honeymoon/issues"
+  },
+  "homepage": "https://github.com/Ndresth/Honeymoon#readme",
+  "dependencies": {
+    "playwright": "^1.64.1"
+  }
+}
