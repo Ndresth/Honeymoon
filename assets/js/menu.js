@@ -50,41 +50,37 @@ window.HM_ADICIONES = {
       adiciones: "fresas",
       destacado: true, // tarjeta ancha, primera del menú
       imagen: "assets/img/parfait-oreo.jpeg", // foto real
-      fotoReferencia: true,
       fondo: FONDO
     },
     {
       id: "pave",
       nombre: "Paveé",
-      descripcion: "Paveé en vaso de 12 onz, coronado con el topping que elijas.",
-      tamanos: [{ id: "12oz", nombre: "12 onz", detalle: "Mediano", precio: 16000 }],
+      descripcion: "Paveé en cuchareable de 9 Onz con nuestra crema suave, tapas de galletas Ducales, leche Klim y coronado con el topping de tu preferencia.",
+      tamanos: [{ id: "9oz", nombre: "9 Onz", detalle: "Cuchareable", precio: 16000 }],
       eleccion: {
         titulo: "Topping",
-        detalle: "Incluido · elige uno",
+        detalle: "Topping incluido: Oreo, Untable de Milo o Leche Klim",
         opciones: [
-          { id: "oreo", nombre: "Galleta Oreo" },
-          { id: "milo", nombre: "Galleta Milo" },
+          { id: "oreo", nombre: "Oreo" },
+          { id: "milo", nombre: "Untable de Milo" },
           { id: "klim", nombre: "Leche Klim" }
         ]
       },
-      imagen: "assets/img/postre-napoleon.jpeg",
-      fotoReferencia: true
+      imagen: "assets/img/postre-napoleon.jpeg"
     },
     {
       id: "galletas",
       nombre: "Galletas",
       descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g.",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
-      imagen: "assets/img/mini-cookies.jpeg",
-      fotoReferencia: true
+      imagen: "assets/img/mini-cookies.jpeg"
     },
     {
       id: "mini-donas",
       nombre: "Mini donas",
       descripcion: "Vaso de 12 onz con 7 mini donitas.",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
-      imagen: "assets/img/mini-donitas.jpeg",
-      fotoReferencia: true
+      imagen: "assets/img/mini-donitas.jpeg"
     }
   ];
 })();
