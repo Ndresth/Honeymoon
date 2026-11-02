@@ -14,7 +14,7 @@ assets/js/config.js        WhatsApp, horario, zonas de domicilio, pagos, días d
 assets/js/menu.js          Categorías, productos, tamaños y adiciones
 assets/js/illustrations.js Ilustraciones SVG de los productos
 assets/js/app.js           Lógica: menú, carrito, checkout y mensaje de WhatsApp
-assets/img/                Logo (SVG blanco), favicon, imagen para compartir y foto de las fresas
+assets/img/                Logo (SVG blanco), íconos, imagen para compartir y fotos de los productos (WebP)
 assets/vendor/             Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 (copias locales, licencia MIT)
 ```
 
@@ -44,7 +44,9 @@ En `assets/js/menu.js`:
   - `adiciones`: nombre del grupo de toppings que acepta (el cliente suma porciones con + y −; el modal bloquea lo que no cumple los límites y explica por qué).
   - `destacado: true`: tarjeta ancha, con la foto al lado en computador (hoy, Fresas con crema).
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Galleta Oreo, Galleta Milo o Leche Klim). Si la opción trae `ilustracion`, el dibujo cambia al elegirla.
-  - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`.
+  - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`. Las fotos de producto son verticales (3:4, fondo lila) y van en WebP de 1200 px de ancho para que carguen rápido; las originales quedan en `assets/img/originales/`.
+  - Un tamaño puede tener su propia `imagen`: en el detalle la foto cambia al elegirlo (Fresas con crema: 9 onz y 12 onz).
+  - `fotoNota` (opcional): texto sobre la foto, por ejemplo qué topping sale (Paveé: "Foto: con topping de leche Klim").
   - `encargo: true`: todo el producto se hace por encargo.
   - `nombreCompleto` (opcional): nombre para el carrito y WhatsApp si el de la tarjeta es corto.
   - `notaPlaceholder`: texto de ejemplo para la nota del producto.
@@ -59,7 +61,7 @@ Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy
 
 ## Modo "Muy pronto"
 
-En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir). Hoy está **activo**.
+En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir). Hoy está **apagado** (tienda abierta).
 
 ## Tratamiento de datos
 

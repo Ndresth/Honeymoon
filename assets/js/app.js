@@ -109,11 +109,22 @@
     const o = getOpcion(p, opcion);
     return (o && o.ilustracion) || p.ilustracion || {};
   };
-  function media(p, opcion) {
-    if (p.imagen) return `<img src="${esc(p.imagen)}" alt="" loading="lazy">`;
-    return window.HM_ILUSTRACION(ilustracionDe(p, opcion));
+  // Lo que se ve de un producto: la foto del tamaño elegido (si tiene), la del producto
+  // o, sin foto, el dibujo (el de la opción elegida, si la hay)
+  function imagenDe(p, opcion, tamano) {
+    const t = tamano ? p.tamanos.find((x) => x.id === tamano) : null;
+    if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "" };
+    if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : "") };
+    return { ilustracion: ilustracionDe(p, opcion) };
   }
-  const etiquetaFoto = (p) => (p.imagen && p.fotoReferencia ? `<span class="hm-ref">Foto de referencia</span>` : "");
+  function media(p, opcion, tamano) {
+    const v = imagenDe(p, opcion, tamano);
+    return v.imagen ? `<img src="${esc(v.imagen)}" alt="" loading="lazy">` : window.HM_ILUSTRACION(v.ilustracion);
+  }
+  function etiquetaFoto(p, opcion, tamano) {
+    const v = imagenDe(p, opcion, tamano);
+    return v.imagen && v.nota ? `<span class="hm-ref">${esc(v.nota)}</span>` : "";
+  }
   const fondo = (p, opcion) => ilustracionDe(p, opcion).fondo || p.fondo || "var(--hm-lilac-100)";
   // "a, b y c"; "y" pasa a "e" antes de i- y "o" a "u" antes de o- (Piazza u Oreo)
   const listaY = (items, y = "y") => {
@@ -297,7 +308,7 @@
       const meta = [d.tamano, d.opcion, d.adic.length ? "+ " + d.adic.join(", ") : ""].filter(Boolean).join(" · ");
       return `
         <div class="hm-cart-item">
-          <div class="hm-cart-thumb" style="background:${fondo(d.p, it.opcion)}">${media(d.p, it.opcion)}</div>
+          <div class="hm-cart-thumb" style="background:${fondo(d.p, it.opcion)}">${media(d.p, it.opcion, it.tamano)}</div>
           <div class="flex-grow-1 min-w-0">
             <div class="d-flex justify-content-between gap-2">
               <div class="hm-cart-name">${esc(nombreLargo(d.p))}</div>
@@ -498,6 +509,8 @@
       <p class="hm-topping-reglas">${esc(reglasTexto(grupo))}</p>` : "";
 
     pintarMedia();
+    // Precarga las fotos de los otros tamaños: al cambiar de tamaño la foto cambia sin espera
+    p.tamanos.forEach((t) => { if (t.imagen) new Image().src = t.imagen; });
     pintarToppings();
     $("#productoNota").value = "";
     $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";
@@ -505,12 +518,13 @@
     productoModal.show();
   }
 
-  // Foto o dibujo del producto; con "eleccion", el de la opción marcada
+  // Foto o dibujo del producto: el del tamaño y la opción marcados
   function pintarMedia() {
     const opcion = (form.querySelector('input[name="opcion"]:checked') || {}).value;
+    const tamano = (form.querySelector('input[name="tamano"]:checked') || form.querySelector('input[name="tamano"]') || {}).value;
     const m = $("#productoMedia");
     m.style.background = fondo(actual, opcion);
-    m.innerHTML = media(actual, opcion) + etiquetaFoto(actual);
+    m.innerHTML = media(actual, opcion, tamano) + etiquetaFoto(actual, opcion, tamano);
   }
 
   // Texto con los límites del grupo, armado desde menu.js
@@ -576,7 +590,7 @@
   }
 
   form.addEventListener("change", (e) => {
-    if (e.target.name === "opcion") pintarMedia();
+    if (e.target.name === "opcion" || e.target.name === "tamano") pintarMedia();
     actualizarTotalProducto();
   });
   form.addEventListener("keydown", (e) => {
