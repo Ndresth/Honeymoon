@@ -8,9 +8,10 @@
               (foto de ese tamaño: en el detalle, la foto cambia al elegirlo).
    - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio y cantidad;
                 cada topping tiene `max` y, opcional, `limite`, `icono` y `foto`)
-   - eleccion: { titulo, detalle, opciones: [{ id, nombre, ilustracion? }] } → el cliente elige
-               una opción incluida en el precio (ej. el topping del paveé). Si la opción trae
-               `ilustracion`, el dibujo cambia al elegirla.
+   - eleccion: { titulo, detalle, opciones: [{ id, nombre, imagen?, fotoNota?, posicion?, ilustracion? }] }
+               → el cliente elige una opción incluida en el precio (ej. el topping del paveé).
+               Si la opción trae `imagen`, la foto del detalle cambia al elegirla (si no, se usa
+               la foto del producto).
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
    - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
@@ -66,20 +67,22 @@ window.HM_ADICIONES = {
         detalle: "Topping incluido: Oreo, Untable de Milo o Leche Klim",
         opciones: [
           { id: "oreo", nombre: "Oreo" },
-          { id: "milo", nombre: "Untable de Milo" },
-          { id: "klim", nombre: "Leche Klim" }
+          { id: "milo", nombre: "Untable de Milo", imagen: "assets/img/pave-milo.webp", fotoNota: "Foto: con topping de Untable de Milo", posicion: "center 62%" },
+          { id: "klim", nombre: "Leche Klim", imagen: "assets/img/pave-klim.webp", fotoNota: "Foto: con topping de leche Klim" }
         ]
       },
-      imagen: "assets/img/pave-klim.webp",
-      fotoNota: "Foto: con topping de leche Klim"
+      // Foto de la tarjeta y de las opciones sin foto propia (Oreo)
+      imagen: "assets/img/pave-milo.webp",
+      fotoNota: "Foto: con topping de Untable de Milo",
+      posicion: "center 62%"
     },
     {
       id: "galletas",
       nombre: "Galletas",
       descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g, con un vasito de chocolate tipo Nutella.",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
-      imagen: "assets/img/galletas-mini.webp",
-      posicion: "center 54%"
+      imagen: "assets/img/galletas-mini.webp", // bolsitas con el sticker y galletas mini
+      posicion: "center 62%"
     },
     {
       id: "mini-donas",

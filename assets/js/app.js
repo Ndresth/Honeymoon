@@ -114,6 +114,8 @@
   function imagenDe(p, opcion, tamano) {
     const t = tamano ? p.tamanos.find((x) => x.id === tamano) : null;
     if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "", pos: t.posicion };
+    const o = getOpcion(p, opcion);
+    if (o && o.imagen) return { imagen: o.imagen, nota: o.fotoNota || "", pos: o.posicion };
     if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : ""), pos: p.posicion };
     return { ilustracion: ilustracionDe(p, opcion) };
   }
@@ -512,6 +514,7 @@
     pintarMedia();
     // Precarga las fotos de los otros tamaños: al cambiar de tamaño la foto cambia sin espera
     p.tamanos.forEach((t) => { if (t.imagen) new Image().src = t.imagen; });
+    if (p.eleccion) p.eleccion.opciones.forEach((o) => { if (o.imagen) new Image().src = o.imagen; });
     pintarToppings();
     $("#productoNota").value = "";
     $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";
