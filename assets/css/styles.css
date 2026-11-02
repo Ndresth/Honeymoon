@@ -274,7 +274,8 @@ h1, h2, h3, h4, .hm-display {
   background: rgba(74, 31, 72, .8); color: #fff; font-weight: 700; font-size: .68rem;
   padding: .15rem .5rem; border-radius: 999px; letter-spacing: .02em;
 }
-.hm-card-media img, .hm-product-media img { object-position: center 30%; }
+/* Fotos verticales de producto: el producto queda en la mitad baja, así nunca se corta el vaso */
+.hm-card-media img, .hm-product-media img, .hm-cart-thumb img { object-position: center 72%; }
 .hm-card .hm-ref { top: .6rem; bottom: auto; } /* abajo la tapa la etiqueta del nombre */
 .hm-card-body { padding: 0 1.15rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
 /* Nombre como etiqueta del menú impreso, montada sobre la foto */
@@ -318,7 +319,7 @@ h1, h2, h3, h4, .hm-display {
 /* Tarjeta destacada (fresas con crema): ocupa todo el ancho y en computador va con la foto al lado */
 .row > .hm-col-destacado { flex: 0 0 100%; width: 100%; max-width: 100%; }
 @media (min-width: 576px) and (max-width: 991.98px) {
-  .hm-card.is-featured .hm-card-media { aspect-ratio: 2 / 1; }
+  .hm-card.is-featured .hm-card-media { aspect-ratio: 5 / 4; }
 }
 @media (min-width: 992px) {
   .hm-card.is-featured { flex-direction: row; }

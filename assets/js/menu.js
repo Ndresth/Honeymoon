@@ -4,7 +4,8 @@
 
    Campos de cada producto:
    - tamanos: lista de tamaños con precio (si hay uno solo, no se muestra selector).
-              Un tamaño puede llevar `detalle` (ej. "Pequeña") y `encargo: true`.
+              Un tamaño puede llevar `detalle` (ej. "Pequeña"), `encargo: true` e `imagen`
+              (foto de ese tamaño: en el detalle, la foto cambia al elegirlo).
    - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio y cantidad;
                 cada topping tiene `max` y, opcional, `limite`, `icono` y `foto`)
    - eleccion: { titulo, detalle, opciones: [{ id, nombre, ilustracion? }] } → el cliente elige
@@ -13,7 +14,8 @@
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
    - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
-   - fotoReferencia: true muestra la etiqueta "Foto de referencia" sobre la imagen
+   - fotoReferencia: true muestra la etiqueta "Foto de referencia" sobre la imagen;
+     fotoNota: "texto" muestra ese texto en su lugar (ej. qué topping sale en la foto)
    - notaPlaceholder: texto de ejemplo para la nota del producto
    - destacado: true para mostrarlo en una tarjeta ancha (foto a un lado)
    - disponible: false para mostrarlo como "Próximamente"
@@ -36,7 +38,6 @@ window.HM_ADICIONES = {
 
 (function () {
   const FONDO = "#f1e1ef";
-  const pave = (topping) => ({ tipo: "pave", capa: "galleta", topping, fondo: "#ecd6e9" });
 
   window.HM_MENU = [
     {
@@ -44,12 +45,12 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema",
       descripcion: "🍓Capas de nuestra crema suave y cremosa, fresas frescas, glaseado de fresa, dulce de leche, leche condensada y galleta Oreo. ¡Una combinación dulce e irresistible que puedes personalizar con tu topping favorito!",
       tamanos: [
-        { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000 },
-        { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000 }
+        { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000, imagen: "assets/img/fresas-9onz.webp" },
+        { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000, imagen: "assets/img/fresas-12onz.webp" }
       ],
       adiciones: "fresas",
       destacado: true, // tarjeta ancha, primera del menú
-      imagen: "assets/img/parfait-oreo.jpeg", // foto real
+      imagen: "assets/img/fresas-9onz.webp", // foto real (vaso de 9 onz)
       fondo: FONDO
     },
     {
@@ -66,21 +67,22 @@ window.HM_ADICIONES = {
           { id: "klim", nombre: "Leche Klim" }
         ]
       },
-      imagen: "assets/img/postre-napoleon.jpeg"
+      imagen: "assets/img/pave-klim.webp",
+      fotoNota: "Foto: con topping de leche Klim"
     },
     {
       id: "galletas",
       nombre: "Galletas",
       descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g.",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
-      imagen: "assets/img/mini-cookies.jpeg"
+      imagen: "assets/img/galletas-mini.webp"
     },
     {
       id: "mini-donas",
       nombre: "Mini donas",
       descripcion: "Vaso de 12 onz con 7 mini donitas.",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
-      imagen: "assets/img/mini-donitas.jpeg"
+      imagen: "assets/img/mini-donas.webp"
     }
   ];
 })();
