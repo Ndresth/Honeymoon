@@ -275,7 +275,7 @@ h1, h2, h3, h4, .hm-display {
   padding: .15rem .5rem; border-radius: 999px; letter-spacing: .02em;
 }
 /* Fotos verticales de producto: el producto queda en la mitad baja, así nunca se corta el vaso */
-.hm-card-media img, .hm-product-media img, .hm-cart-thumb img { object-position: center 72%; }
+.hm-card-media img, .hm-product-media img, .hm-cart-thumb img { object-position: center 60%; }
 .hm-card .hm-ref { top: .6rem; bottom: auto; } /* abajo la tapa la etiqueta del nombre */
 .hm-card-body { padding: 0 1.15rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
 /* Nombre como etiqueta del menú impreso, montada sobre la foto */
@@ -646,10 +646,10 @@ body.has-cart .hm-fab-wa { bottom: 5.25rem; }
   .hm-sticker { font-size: .76rem; padding: .35rem .6rem; }
   .hm-sticker.s1 { left: -10%; }
   .hm-sticker.s2 { right: -10%; }
-  .hm-card-media { aspect-ratio: 4 / 5; }
+  .hm-card-media { aspect-ratio: 1 / 1; } /* en celular, cuadrada: el producto completo sin tarjetas tan largas */
   .hm-card { outline: 0; }
   .hm-card:focus-visible { outline: 3px solid var(--hm-plum); outline-offset: 3px; }
-  .hm-product-media { aspect-ratio: 4 / 5; }
+  .hm-product-media { aspect-ratio: 1 / 1; max-width: 280px; margin-inline: auto; } /* deja ver tamaños y toppings */
   .hm-card-note { font-size: .72rem; margin: -.2rem 0 .5rem; }
   #productoAgregar { white-space: nowrap; }
 }

@@ -113,13 +113,16 @@
   // o, sin foto, el dibujo (el de la opción elegida, si la hay)
   function imagenDe(p, opcion, tamano) {
     const t = tamano ? p.tamanos.find((x) => x.id === tamano) : null;
-    if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "" };
-    if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : "") };
+    if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "", pos: t.posicion };
+    const o = getOpcion(p, opcion);
+    if (o && o.imagen) return { imagen: o.imagen, nota: o.fotoNota || "", pos: o.posicion };
+    if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : ""), pos: p.posicion };
     return { ilustracion: ilustracionDe(p, opcion) };
   }
   function media(p, opcion, tamano) {
     const v = imagenDe(p, opcion, tamano);
-    return v.imagen ? `<img src="${esc(v.imagen)}" alt="" loading="lazy">` : window.HM_ILUSTRACION(v.ilustracion);
+    if (!v.imagen) return window.HM_ILUSTRACION(v.ilustracion);
+    return `<img src="${esc(v.imagen)}" alt="" loading="lazy"${v.pos ? ` style="object-position:${esc(v.pos)}"` : ""}>`;
   }
   function etiquetaFoto(p, opcion, tamano) {
     const v = imagenDe(p, opcion, tamano);
@@ -511,6 +514,7 @@
     pintarMedia();
     // Precarga las fotos de los otros tamaños: al cambiar de tamaño la foto cambia sin espera
     p.tamanos.forEach((t) => { if (t.imagen) new Image().src = t.imagen; });
+    if (p.eleccion) p.eleccion.opciones.forEach((o) => { if (o.imagen) new Image().src = o.imagen; });
     pintarToppings();
     $("#productoNota").value = "";
     $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";

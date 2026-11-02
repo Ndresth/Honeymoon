@@ -8,14 +8,17 @@
               (foto de ese tamaño: en el detalle, la foto cambia al elegirlo).
    - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio y cantidad;
                 cada topping tiene `max` y, opcional, `limite`, `icono` y `foto`)
-   - eleccion: { titulo, detalle, opciones: [{ id, nombre, ilustracion? }] } → el cliente elige
-               una opción incluida en el precio (ej. el topping del paveé). Si la opción trae
-               `ilustracion`, el dibujo cambia al elegirla.
+   - eleccion: { titulo, detalle, opciones: [{ id, nombre, imagen?, fotoNota?, posicion?, ilustracion? }] }
+               → el cliente elige una opción incluida en el precio (ej. el topping del paveé).
+               Si la opción trae `imagen`, la foto del detalle cambia al elegirla (si no, se usa
+               la foto del producto).
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
    - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
    - fotoReferencia: true muestra la etiqueta "Foto de referencia" sobre la imagen;
      fotoNota: "texto" muestra ese texto en su lugar (ej. qué topping sale en la foto)
+   - posicion (producto o tamaño): encuadre de la foto si el producto no queda centrado,
+     ej. "center 70%" (por defecto "center 60%")
    - notaPlaceholder: texto de ejemplo para la nota del producto
    - destacado: true para mostrarlo en una tarjeta ancha (foto a un lado)
    - disponible: false para mostrarlo como "Próximamente"
@@ -45,12 +48,13 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema",
       descripcion: "🍓Capas de nuestra crema suave y cremosa, fresas frescas, glaseado de fresa, dulce de leche, leche condensada y galleta Oreo. ¡Una combinación dulce e irresistible que puedes personalizar con tu topping favorito!",
       tamanos: [
-        { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000, imagen: "assets/img/fresas-9onz.webp" },
-        { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000, imagen: "assets/img/fresas-12onz.webp" }
+        { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000, imagen: "assets/img/fresas-9onz.webp", posicion: "center 70%" },
+        { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000, imagen: "assets/img/fresas-12onz.webp", posicion: "center 70%" }
       ],
       adiciones: "fresas",
       destacado: true, // tarjeta ancha, primera del menú
       imagen: "assets/img/fresas-9onz.webp", // foto real (vaso de 9 onz)
+      posicion: "center 70%",
       fondo: FONDO
     },
     {
@@ -63,26 +67,29 @@ window.HM_ADICIONES = {
         detalle: "Topping incluido: Oreo, Untable de Milo o Leche Klim",
         opciones: [
           { id: "oreo", nombre: "Oreo" },
-          { id: "milo", nombre: "Untable de Milo" },
-          { id: "klim", nombre: "Leche Klim" }
+          { id: "milo", nombre: "Untable de Milo", imagen: "assets/img/pave-milo.webp", fotoNota: "Foto: con topping de Untable de Milo", posicion: "center 62%" },
+          { id: "klim", nombre: "Leche Klim", imagen: "assets/img/pave-klim.webp", fotoNota: "Foto: con topping de leche Klim" }
         ]
       },
-      imagen: "assets/img/pave-klim.webp",
-      fotoNota: "Foto: con topping de leche Klim"
+      // Foto de la tarjeta y de las opciones sin foto propia (Oreo)
+      imagen: "assets/img/pave-milo.webp",
+      fotoNota: "Foto: con topping de Untable de Milo",
+      posicion: "center 62%"
     },
     {
       id: "galletas",
       nombre: "Galletas",
-      descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g.",
+      descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g, con un vasito de chocolate tipo Nutella.",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
-      imagen: "assets/img/galletas-mini.webp"
+      imagen: "assets/img/galletas-mini.webp", // bolsitas con el sticker y galletas mini
+      posicion: "center 62%"
     },
     {
       id: "mini-donas",
       nombre: "Mini donas",
       descripcion: "Vaso de 12 onz con 7 mini donitas.",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
-      imagen: "assets/img/mini-donas.webp"
+      ilustracion: { tipo: "donas", fondo: "#cdaee8" } // dibujo del vaso con las 7 donitas (sin foto real aún)
     }
   ];
 })();

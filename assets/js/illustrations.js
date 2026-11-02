@@ -109,30 +109,57 @@
       </g>`;
   }
 
-  /* ---------- Vaso de 12 onz con 7 mini donitas ---------- */
-  function donas(c, uid) {
-    const vasoPath = "M62 84 L178 84 L166 184 Q120 192 74 184 Z";
-    const dona = (x, y, s, rot = 0) => `
-      <g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">
-        <ellipse rx="20" ry="13" fill="#e6a861" stroke="${K}" stroke-width="3.4"/>
-        <path d="M-16 -2 C-17 -11 17 -11 16 -2 C15 2 12 1 10 3 C8 6 6 2 3 4 C0 7 -2 3 -5 5 C-8 7 -10 2 -12 3 C-15 4 -16 1 -16 -2Z" fill="#fff4f1" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>
-        <ellipse rx="5.5" ry="3.2" cy="-3.5" fill="#e6a861" stroke="${K}" stroke-width="2"/>
-        <ellipse rx="3.4" ry="1.6" cy="-3" fill="#c98a3c"/>
-      </g>`;
-    // 3 arriba asomadas + 4 dentro del vaso transparente = 7
-    const dentro = [[100, 161, -6], [141, 160, 4], [102, 122, 5], [139, 121, -6]];
-    const arriba = [[94, 78, -14], [146, 78, 14], [120, 66, 0]];
+  /* ---------- Vaso de 12 onz con 7 mini donitas (vertical 4:5, como las fotos) ---------- */
+  // Mini donitas glaseadas como las de Honeymoon: rosado, blanco y chocolate,
+  // con chispas de colores, chispas de chocolate o confites
+  const GLASEADOS = { rosa: "#f48fb1", blanco: "#fff6ef", choco: "#6b3a22" };
+  const CHISPAS = ["#ff5252", "#ffd740", "#40c4ff", "#69f0ae", "#ff80ab", "#b388ff"];
+  const PUNTOS_DONA = [[-13, -6, 20], [-8, -10, -30], [-1, -11, 60], [6, -10, 10], [12, -7, -45], [15, -3, 30], [-15, -1, 70], [-10, 2, -15], [9, 2, 40], [3, 3, -60]];
+  function donita(x, y, s, r, glaseado, adorno) {
+    const chispas = PUNTOS_DONA.map(([a, b, g], i) => {
+      if (adorno === "confites") return i % 2 ? "" : `<circle cx="${a}" cy="${b}" r="2.4" fill="${CHISPAS[i % CHISPAS.length]}" stroke="${K}" stroke-width=".6"/>`;
+      const color = adorno === "choco" ? "#3b1f12" : CHISPAS[i % CHISPAS.length];
+      return `<rect x="${a - 2.4}" y="${b - .8}" width="4.8" height="1.6" rx=".8" fill="${color}" transform="rotate(${g} ${a} ${b})"/>`;
+    }).join("");
     return `
-      ${decoracion()}
-      <defs><clipPath id="cp-${uid}"><path d="${vasoPath}"/></clipPath></defs>
+      <g data-dona transform="translate(${x} ${y}) rotate(${r}) scale(${s})">
+        <ellipse rx="22" ry="14" fill="#e3ad6c" stroke="${K}" stroke-width="2.6"/>
+        <path d="M-19 -3 C-20 -13 20 -13 19 -3 C18 2 14 1 12 4 C10 7 7 2 4 5 C1 8 -2 3 -5 5 C-8 8 -11 2 -14 4 C-17 4 -19 1 -19 -3Z"
+          fill="${GLASEADOS[glaseado]}" stroke="${K}" stroke-width="1.8" stroke-linejoin="round"/>
+        ${chispas}
+        <ellipse cy="-3" rx="6.5" ry="3.8" fill="#c98a4c" stroke="${K}" stroke-width="1.8"/>
+        <path d="M-12 -8 q4 -3 9 -3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".6"/>
+      </g>`;
+  }
+  function donas(c, uid) {
+    const vaso = "M56 136 L184 136 L168 262 Q120 271 72 262 Z";
+    // 4 dentro del vaso transparente + 3 asomadas arriba = 7
+    const dentro = [[98, 228, -6, "rosa", "chispas"], [142, 226, 5, "blanco", "choco"], [96, 182, 4, "blanco", "chispas"], [144, 181, -5, "rosa", "confites"]];
+    const arriba = [[86, 126, -18, "blanco", "chispas"], [154, 126, 17, "blanco", "confites"], [120, 108, 0, "rosa", "chispas"]];
+    return `
+      <defs>
+        <linearGradient id="fondo-${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c09cdd"/><stop offset="1" stop-color="#dcc1f4"/></linearGradient>
+        <clipPath id="cp-${uid}"><path d="${vaso}"/></clipPath>
+      </defs>
+      <rect width="240" height="300" fill="url(#fondo-${uid})"/>
+      <g transform="translate(-18 -54) scale(1.15)">
+      <ellipse cx="122" cy="268" rx="66" ry="9" fill="#4a1f48" opacity=".16"/>
       <g clip-path="url(#cp-${uid})">
-        <rect x="56" y="84" width="130" height="108" fill="#fff" fill-opacity=".6"/>
-        ${dentro.map(([x, y, r]) => dona(x, y, 1.05, r)).join("")}
-        <path d="M80 96 L88 176" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".75"/>
+        <rect x="50" y="136" width="140" height="140" fill="#fff" fill-opacity=".45"/>
+        ${dentro.map(([x, y, r, g, d]) => donita(x, y, 1.15, r, g, d)).join("")}
       </g>
-      ${arriba.map(([x, y, r]) => dona(x, y, 1, r)).join("")}
-      <path d="${vasoPath}" fill="none" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
-      <rect x="58" y="82" width="124" height="9" rx="4.5" fill="#fffdf7" stroke="${K}" stroke-width="3.4"/>`;
+      ${arriba.map(([x, y, r, g, d]) => donita(x, y, 1.12, r, g, d)).join("")}
+      <path d="${vaso}" fill="#fff" fill-opacity=".14" stroke="${K}" stroke-width="3.4" stroke-linejoin="round"/>
+      <path d="M74 152 L86 252" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+      <rect x="52" y="131" width="136" height="10" rx="5" fill="#fffdf7" fill-opacity=".92" stroke="${K}" stroke-width="3"/>
+      <g transform="translate(120 206)">
+        <circle r="23" fill="#c48ebf" stroke="#fff" stroke-width="2.5"/>
+        <path d="M-14 1 C-14 -14 14 -14 14 1 Z" fill="#fff"/>
+        <circle cx="-6" cy="-7" r="2.4" fill="#c48ebf"/><circle cx="4" cy="-9" r="2" fill="#c48ebf"/><circle cx="9" cy="-3" r="1.8" fill="#c48ebf"/>
+        <rect x="-8" y="0" width="16" height="12" rx="5" fill="#fff"/>
+        <path d="M-4.5 4.5 q1.5 -1.6 3 0 M1.5 4.5 q1.5 -1.6 3 0 M-2 8 q2 2 4 0" stroke="#c48ebf" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      </g>
+      </g>`;
   }
 
   /* ---------- Íconos de toppings (para la tarjeta y el modal) ---------- */
@@ -187,6 +214,9 @@
       donas: () => donas(cfg, uid)
     };
     const cuerpo = (dibujos[cfg.tipo] || dibujos.pave)();
-    return `<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false">${cuerpo}</svg>`;
+    const vista = cfg.tipo === "donas" ? "0 0 240 300" : "0 0 240 200"; // las donas, en vertical como las fotos
+    // Las donas traen su propio fondo: recortan en vez de dejar franjas si el marco es más bajo
+    const ajuste = cfg.tipo === "donas" ? ' preserveAspectRatio="xMidYMid slice"' : "";
+    return `<svg viewBox="${vista}"${ajuste} xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false">${cuerpo}</svg>`;
   };
 })();
