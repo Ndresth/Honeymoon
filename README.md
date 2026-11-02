@@ -46,6 +46,7 @@ En `assets/js/menu.js`:
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Galleta Oreo, Galleta Milo o Leche Klim). Si la opción trae `ilustracion`, el dibujo cambia al elegirla.
   - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`. Las fotos de producto son verticales (3:4, fondo lila) y van en WebP de 1200 px de ancho para que carguen rápido; las originales quedan en `assets/img/originales/`.
   - Un tamaño puede tener su propia `imagen`: en el detalle la foto cambia al elegirlo (Fresas con crema: 9 onz y 12 onz).
+  - `posicion` (opcional, producto o tamaño): encuadre de la foto, ej. `"center 70%"`, para que el producto no se corte en los marcos más bajos (en celular las fotos van cuadradas).
   - `fotoNota` (opcional): texto sobre la foto, por ejemplo qué topping sale (Paveé: "Foto: con topping de leche Klim").
   - Mini donas usan el dibujo `donas` (vaso de 12 onz con 7 mini donitas, vertical como las fotos) hasta tener una foto real del vaso; la foto de las donitas sueltas está en `assets/img/originales/`.
   - `encargo: true`: todo el producto se hace por encargo.

@@ -113,13 +113,14 @@
   // o, sin foto, el dibujo (el de la opción elegida, si la hay)
   function imagenDe(p, opcion, tamano) {
     const t = tamano ? p.tamanos.find((x) => x.id === tamano) : null;
-    if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "" };
-    if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : "") };
+    if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "", pos: t.posicion };
+    if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : ""), pos: p.posicion };
     return { ilustracion: ilustracionDe(p, opcion) };
   }
   function media(p, opcion, tamano) {
     const v = imagenDe(p, opcion, tamano);
-    return v.imagen ? `<img src="${esc(v.imagen)}" alt="" loading="lazy">` : window.HM_ILUSTRACION(v.ilustracion);
+    if (!v.imagen) return window.HM_ILUSTRACION(v.ilustracion);
+    return `<img src="${esc(v.imagen)}" alt="" loading="lazy"${v.pos ? ` style="object-position:${esc(v.pos)}"` : ""}>`;
   }
   function etiquetaFoto(p, opcion, tamano) {
     const v = imagenDe(p, opcion, tamano);

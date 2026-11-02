@@ -215,6 +215,8 @@
     };
     const cuerpo = (dibujos[cfg.tipo] || dibujos.pave)();
     const vista = cfg.tipo === "donas" ? "0 0 240 300" : "0 0 240 200"; // las donas, en vertical como las fotos
-    return `<svg viewBox="${vista}" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false">${cuerpo}</svg>`;
+    // Las donas traen su propio fondo: recortan en vez de dejar franjas si el marco es más bajo
+    const ajuste = cfg.tipo === "donas" ? ' preserveAspectRatio="xMidYMid slice"' : "";
+    return `<svg viewBox="${vista}"${ajuste} xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" focusable="false">${cuerpo}</svg>`;
   };
 })();
