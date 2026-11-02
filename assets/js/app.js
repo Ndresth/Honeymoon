@@ -450,8 +450,10 @@
   let cantidad = 1;
   let disparador = null;
   let conteoToppings = {};
+  let vasoArmar = null;
 
-  function abrirProducto(id) {
+  // pre (opcional): { tamano, adiciones } para abrir el producto ya armado (ej. desde el juego)
+  function abrirProducto(id, pre) {
     const p = getProducto(id);
     if (!p || !disponible(p)) return;
     actual = p;
@@ -467,7 +469,7 @@
       <div class="row g-2" role="radiogroup" aria-labelledby="lblTamano">
         ${p.tamanos.map((t, i) => `
           <div class="col-${p.tamanos.length === 2 ? 6 : 4} hm-opt-wrap">
-            <input type="radio" class="btn-check" name="tamano" id="t-${t.id}" value="${t.id}" ${i === 0 ? "checked" : ""}>
+            <input type="radio" class="btn-check" name="tamano" id="t-${t.id}" value="${t.id}" ${t.id === tamanoInicial(p, pre) ? "checked" : ""}>
             <label class="hm-option flex-column text-center gap-0 h-100" for="t-${t.id}">
               <span>${esc(t.nombre)}</span>
               ${t.detalle ? `<small class="hm-option-detail">${esc(t.detalle)}</small>` : ""}
@@ -488,8 +490,22 @@
           </div>`).join("")}
       </div>` : "";
 
+    // "Así va tu vaso": dibujo que se llena con lo que el cliente elige
+    const ar = p.armar && window.HM_VASO ? p.armar : null;
+    $("#productoArmar").innerHTML = ar ? `
+      <div class="hm-armar">
+        <div class="hm-armar-vaso" id="vasoArmar"></div>
+        <div class="hm-armar-info">
+          <div class="hm-group-title">${esc(ar.titulo || "Así va tu vaso")}</div>
+          <p class="hm-armar-tam" id="armarTam"></p>
+          ${ar.base ? `<p class="hm-armar-base">${esc(ar.base)}</p>` : ""}
+          <p class="hm-armar-tops" id="armarTops"></p>
+        </div>
+      </div>` : "";
+    vasoArmar = ar ? window.HM_VASO.montar($("#vasoArmar"), { receta: ar.receta }) : null;
+
     const grupo = grupoDe(p);
-    conteoToppings = {};
+    conteoToppings = pre && grupo ? contar(adicionesValidas(p, pre.adiciones)) : {};
     $("#productoAdiciones").innerHTML = grupo ? `
       <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional · ${esc(precioToppings(grupo))}</small></div>
       ${grupo.texto ? `<p class="hm-group-intro">${esc(grupo.texto)}</p>` : ""}
@@ -516,10 +532,28 @@
     p.tamanos.forEach((t) => { if (t.imagen) new Image().src = t.imagen; });
     if (p.eleccion) p.eleccion.opciones.forEach((o) => { if (o.imagen) new Image().src = o.imagen; });
     pintarToppings();
+    pintarVaso();
     $("#productoNota").value = "";
     $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";
     actualizarTotalProducto();
     productoModal.show();
+  }
+
+  const tamanoInicial = (p, pre) => (pre && p.tamanos.some((t) => t.id === pre.tamano) ? pre.tamano : p.tamanos[0].id);
+
+  // Vaso de "Así va tu vaso": tamaño marcado y toppings elegidos
+  function pintarVaso(llenar) {
+    if (!vasoArmar) return;
+    const grupo = grupoDe(actual);
+    const fd = new FormData(form);
+    const t = getTamano(actual, fd.get("tamano"));
+    const toppings = {};
+    if (grupo) grupo.items.forEach((a) => { if (conteoToppings[a.id]) toppings[a.icono || a.id] = conteoToppings[a.id]; });
+    vasoArmar.pintar({ grande: actual.tamanos.indexOf(t) > 0, capas: actual.armar.receta, toppings }, { llenar: !!llenar });
+    $("#armarTam").textContent = `Vaso de ${t.nombre}`;
+    const tops = nombresToppings(actual, expandir(grupo, conteoToppings));
+    $("#armarTops").textContent = tops.length ? `+ ${tops.join(", ")}` : "Agrega toppings y míralos caer en tu vaso.";
+    $("#armarTops").classList.toggle("is-vacio", !tops.length);
   }
 
   // Foto o dibujo del producto: el del tamaño y la opción marcados
@@ -595,6 +629,7 @@
 
   form.addEventListener("change", (e) => {
     if (e.target.name === "opcion" || e.target.name === "tamano") pintarMedia();
+    if (e.target.name === "tamano") pintarVaso();
     actualizarTotalProducto();
   });
   form.addEventListener("keydown", (e) => {
@@ -618,6 +653,7 @@
         if (!conteoToppings[id]) delete conteoToppings[id];
       }
       pintarToppings(aviso);
+      pintarVaso();
       actualizarTotalProducto();
       // Un solo anuncio para lectores de pantalla, con el nombre del topping
       const t = grupo.items.find((x) => x.id === id);
@@ -642,6 +678,8 @@
     else toast(`Agregado al carrito: ${n > 1 ? n + "× " : ""}${nombreLargo(actual)}${n < cantidad ? ` (máximo ${MAX_CANTIDAD})` : ""}`);
   });
 
+  // Al terminar de abrir, el vaso se llena capa por capa
+  $("#productoModal").addEventListener("shown.bs.modal", () => pintarVaso(true));
   $("#productoModal").addEventListener("hidden.bs.modal", () => {
     if (disparador && document.contains(disparador)) disparador.focus();
     else if (!document.activeElement || document.activeElement === document.body) enfocarBotonCarrito();
@@ -1024,8 +1062,14 @@
   }
 
   let toastInst;
+  // Hony salta en el aviso
+  if (window.HM_VASO) $("#toastHony").innerHTML = `<svg viewBox="-26 -26 52 52" aria-hidden="true" focusable="false">${window.HM_VASO.hony(0, 0, 23)}</svg>`;
   function toast(msg) {
     $("#toastMsg").textContent = msg;
+    const h = $("#toastHony");
+    h.classList.remove("is-salta");
+    void h.offsetWidth;
+    h.classList.add("is-salta");
     toastInst = toastInst || bootstrap.Toast.getOrCreateInstance("#toast");
     toastInst.show();
   }
@@ -1033,7 +1077,8 @@
   // En el menú móvil: cerrar primero y luego desplazarse, para no caer más abajo de la sección
   $$("#navLinks .nav-link").forEach((a) => a.addEventListener("click", (e) => {
     const nav = $("#navLinks");
-    if (!nav.classList.contains("show")) return;
+    // Los enlaces a otra página (ej. el juego) navegan normal
+    if (!nav.classList.contains("show") || !a.getAttribute("href").startsWith("#")) return;
     e.preventDefault();
     const destino = document.querySelector(a.hash);
     nav.addEventListener("hidden.bs.collapse", () => {
@@ -1051,6 +1096,22 @@
     if ($("#checkoutModal").classList.contains("show")) actualizarCheckout();
   });
 
+  // Enlace que abre un producto ya armado: #pedir=fresas-con-crema&tamano=12oz&t=f-queso,f-oreo
+  function abrirDesdeEnlace() {
+    if (!/^#pedir=/.test(location.hash) || document.documentElement.classList.contains("hm-modo-pronto")) return;
+    const q = new URLSearchParams(location.hash.slice(1));
+    history.replaceState(null, "", location.pathname + location.search);
+    const p = getProducto(q.get("pedir"));
+    if (!p || !disponible(p)) return;
+    $("#menu").scrollIntoView();
+    abrirProducto(p.id, { tamano: q.get("tamano"), adiciones: (q.get("t") || "").split(",").filter(Boolean) });
+  }
+
+  // Vasito de la invitación al juego
+  if (window.HM_VASO && $("#promoVaso")) {
+    $("#promoVaso").innerHTML = window.HM_VASO.svg({ grande: true, capas: window.HM_VASO.RECETA, toppings: { oreo: 1 }, orden: ["oreo-0"] }, {});
+  }
+
   /* Init */
   renderProductos();
   renderInfo();
@@ -1058,4 +1119,6 @@
   renderCarrito();
   estadoTienda();
   setInterval(estadoTienda, 60 * 1000);
+  abrirDesdeEnlace();
+  window.addEventListener("hashchange", abrirDesdeEnlace);
 })();

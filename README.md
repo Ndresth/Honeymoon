@@ -9,10 +9,13 @@ Branding lila: el lila del logo (`#c48ebf`), blanco y ciruela (`#4a1f48`) para t
 ```
 index.html                 Página principal
 tratamiento-de-datos.html  Política de tratamiento de datos personales (Ley 1581 de 2012)
+juego.html                 Juego "Hony en la cocina" (arma vasos de fresas con crema)
 assets/css/styles.css      Estilos y paleta de marca
 assets/js/config.js        WhatsApp, horario, zonas de domicilio, pagos, días de encargo
 assets/js/menu.js          Categorías, productos, tamaños y adiciones
 assets/js/illustrations.js Ilustraciones SVG de los productos
+assets/js/vaso.js          Vaso animado de fresas con crema ("Así va tu vaso" y el juego)
+assets/js/juego.js         Lógica del juego
 assets/js/app.js           Lógica: menú, carrito, checkout y mensaje de WhatsApp
 assets/img/                Logo (SVG blanco), íconos, imagen para compartir y fotos de los productos (WebP)
 assets/vendor/             Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 (copias locales, licencia MIT)
@@ -61,13 +64,23 @@ Recoger en el local está apagado (`recoger: false` en `config.js`): en el check
 
 Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy martes a domingo de 1:30 a 7:15 p. m. y lunes de descanso, `1: null`; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
 
+## Así va tu vaso
+
+Un producto con `armar` (hoy Fresas con crema) muestra en el detalle un vaso dibujado (`vaso.js`) que se llena capa por capa al abrir (`armar.receta`), crece al pasar de 9 a 12 onz y recibe cada topping que el cliente agrega (se dibuja con el `icono` del topping). En celulares altos se queda fijo arriba mientras se eligen los toppings. Al agregar al carrito, Hony salta en el aviso.
+
+Un enlace como `./#pedir=fresas-con-crema&tamano=12oz&t=f-queso,f-oreo` abre ese producto ya armado (el tamaño y los toppings se validan con los límites del menú). Lo usa el juego.
+
+## Juego "Hony en la cocina"
+
+`juego.html`, enlazado desde el menú, la barra de navegación y el pie de página. Llegan clientes con pedidos de fresas con crema; el jugador pone el vaso del tamaño pedido, arma las capas en orden (crema → fresas → salsas → Oreo), agrega los toppings y entrega antes de que se acabe la paciencia. Tiene 3 vidas, racha, niveles que suben cada 3 pedidos y récord guardado en el navegador (`hm_juego_record`). Los pedidos salen de `menu.js` (tamaños, toppings, precios y límites reales), así que siempre se pueden pedir de verdad: al terminar, "Pedirlo de verdad" abre la tienda con el último vaso entregado.
+
 ## Modo "Muy pronto"
 
 En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir). Hoy está **apagado** (tienda abierta).
 
 ## Tratamiento de datos
 
-`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`) y llegan al negocio únicamente por WhatsApp. No usa cookies (ni de rastreo ni de publicidad), así que no necesita aviso de cookies; si se agrega Google Analytics o un píxel de publicidad, habría que agregar ese aviso. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
+`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`; el juego guarda además el récord en `hm_juego_record`) y llegan al negocio únicamente por WhatsApp. No usa cookies (ni de rastreo ni de publicidad), así que no necesita aviso de cookies; si se agrega Google Analytics o un píxel de publicidad, habría que agregar ese aviso. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
 
 ## Cómo funciona el pedido
 
