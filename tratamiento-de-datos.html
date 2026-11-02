@@ -44,7 +44,7 @@
 
         <h2>3. Dónde quedan tus datos</h2>
         <p>Nuestra página no guarda tus datos en ningún servidor. Para que no tengas que escribirlos en tu próximo pedido, tu nombre, celular, dirección, barrio y ciudad quedan guardados solo en el navegador de tu celular o computador. Los recibimos únicamente cuando envías el pedido por WhatsApp; desde ese momento la conversación también se rige por las políticas de WhatsApp.</p>
-        <p>Nuestra página no usa cookies de rastreo ni de publicidad; solo guarda en tu navegador el carrito y tus datos de entrega.</p>
+        <p>Nuestra página no usa cookies de rastreo ni de publicidad; solo guarda en tu navegador el carrito y tus datos de entrega y, si juegas <a href="juego.html">Hony en la cocina</a>, tu récord del juego (solo un número).</p>
         <p class="mb-2">Puedes borrarlos de este dispositivo cuando quieras:</p>
         <button type="button" class="btn btn-hm btn-hm-paper" id="borrarDatos"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Borrar mis datos de este dispositivo</button>
         <p class="hm-doc-borrado" id="borradoEstado" role="status" aria-live="polite"></p>
@@ -55,7 +55,7 @@
         <h2>5. Aceptación</h2>
         <p>Al realizar un pedido a través de nuestra página, manifiestas tu autorización expresa para que Honeymoon haga uso de los datos suministrados exclusivamente para la gestión de dicho pedido.</p>
 
-        <p class="hm-doc-fecha">Última actualización: 20 de octubre de 2026.</p>
+        <p class="hm-doc-fecha">Última actualización: 2 de noviembre de 2026.</p>
       </article>
     </div>
   </main>
@@ -79,7 +79,8 @@
         try {
           localStorage.removeItem("hm_cliente");
           localStorage.removeItem("hm_carrito");
-          estado.textContent = "Listo: borramos de este dispositivo tus datos y tu carrito guardados.";
+          localStorage.removeItem("hm_juego_record");
+          estado.textContent = "Listo: borramos de este dispositivo tus datos, tu carrito y tu récord del juego.";
         } catch (e) {
           estado.textContent = "Tu navegador no permite guardar datos, así que no hay nada guardado.";
         }

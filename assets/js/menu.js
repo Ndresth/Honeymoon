@@ -12,6 +12,9 @@
                → el cliente elige una opción incluida en el precio (ej. el topping del paveé).
                Si la opción trae `imagen`, la foto del detalle cambia al elegirla (si no, se usa
                la foto del producto).
+   - armar: { titulo, receta, base } → muestra "Así va tu vaso": un vaso dibujado que se llena
+            con las capas de `receta` (ver vaso.js), crece con el tamaño y recibe los toppings
+            que el cliente agrega (se dibujan con el `icono` de cada topping).
    - encargo: true si todo el producto se hace por encargo (ver diasEncargo en config.js)
    - temporada: { desde: "MM-DD", hasta: "MM-DD", texto } → solo se puede pedir en esas fechas
    - ilustracion: dibujo generado (tipo, colores, topping)  ó  imagen: ruta a una foto
@@ -52,6 +55,11 @@ window.HM_ADICIONES = {
         { id: "12oz", nombre: "12 onz", detalle: "Mediana", precio: 18000, imagen: "assets/img/fresas-12onz.webp", posicion: "center 70%" }
       ],
       adiciones: "fresas",
+      armar: {
+        titulo: "Así va tu vaso",
+        receta: ["crema", "fresas", "crema", "fresas", "glaseado", "dulce", "condensada", "oreo"],
+        base: "Crema, fresas, glaseado de fresa, dulce de leche, leche condensada y Oreo"
+      },
       destacado: true, // tarjeta ancha, primera del menú
       imagen: "assets/img/fresas-9onz.webp", // foto real (vaso de 9 onz)
       posicion: "center 70%",

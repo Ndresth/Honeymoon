@@ -88,6 +88,7 @@
           <li class="nav-item"><a class="nav-link" href="#menu">Menú</a></li>
           <li class="nav-item"><a class="nav-link" href="#como-pedir">Cómo pedir</a></li>
           <li class="nav-item"><a class="nav-link" href="#info">Domicilios</a></li>
+          <li class="nav-item"><a class="nav-link" href="juego.html">Juego</a></li>
         </ul>
       </div>
     </div>
@@ -144,6 +145,16 @@
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 justify-content-center" id="productos"></div>
+
+        <!-- Invitación al juego -->
+        <div class="hm-juego-promo">
+          <div class="hm-juego-promo-vaso" id="promoVaso" aria-hidden="true"></div>
+          <div>
+            <h3>¿Jugamos? Hony en la cocina</h3>
+            <p>Arma vasos de fresas con crema antes de que el cliente pierda la paciencia.</p>
+            <a class="btn btn-hm btn-hm-primary btn-sm" href="juego.html"><i class="bi bi-controller me-1" aria-hidden="true"></i>Jugar</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -238,6 +249,7 @@
             <a href="#como-pedir">Cómo pedir</a>
             <a href="#info">Domicilios</a>
             <a href="#" data-wa-general><i class="bi bi-whatsapp"></i> WhatsApp</a>
+            <a href="juego.html">Juego</a>
             <a href="tratamiento-de-datos.html">Tratamiento de datos</a>
           </div>
           <small>© <span id="anio"></span> Honeymoon · Hecho con <i class="bi bi-heart-fill text-lilac"></i> en Barranquilla</small>
@@ -271,6 +283,7 @@
               <div id="productoTamanos"></div>
               <div class="hm-notice d-none mt-3" id="productoEncargo"><i class="bi bi-calendar-heart"></i><span></span></div>
               <div id="productoEleccion"></div>
+              <div id="productoArmar"></div>
               <div id="productoAdiciones"></div>
               <label class="hm-group-title" for="productoNota">Notas <small>Opcional</small></label>
               <textarea class="form-control" id="productoNota" rows="2" maxlength="140" placeholder="Ej: alguna indicación para tu pedido…"></textarea>
@@ -434,7 +447,7 @@
   <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
     <div class="toast hm-toast align-items-center" id="toast" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="2200">
       <div class="d-flex">
-        <div class="toast-body"><i class="bi bi-check-circle-fill me-2 text-lilac"></i><span id="toastMsg">Agregado</span></div>
+        <div class="toast-body"><span class="hm-toast-hony" id="toastHony" aria-hidden="true"><i class="bi bi-check-circle-fill text-lilac"></i></span><span id="toastMsg">Agregado</span></div>
       </div>
     </div>
   </div>
@@ -442,6 +455,7 @@
   <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="assets/js/menu.js"></script>
   <script src="assets/js/illustrations.js"></script>
+  <script src="assets/js/vaso.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
 </html>

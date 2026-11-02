@@ -200,6 +200,8 @@
         <circle r="3" fill="#5a4a44"/>
       </g>`
   };
+  // Dibujo suelto del topping (sin el círculo de fondo), para ponerlo encima del vaso
+  window.HM_ARTE_TOPPING = (tipo) => ICONOS[tipo] || "";
   window.HM_ICONO_TOPPING = (tipo) => ICONOS[tipo]
     ? `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><circle cx="32" cy="32" r="32" fill="#f7ecf5"/>${ICONOS[tipo]}</svg>`
     : "";
