@@ -73,7 +73,7 @@ window.HM_ADICIONES = {
     {
       id: "galletas",
       nombre: "Galletas",
-      descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g.",
+      descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g, con un vasito de chocolate tipo Nutella.",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
       imagen: "assets/img/galletas-mini.webp"
     },
@@ -82,7 +82,7 @@ window.HM_ADICIONES = {
       nombre: "Mini donas",
       descripcion: "Vaso de 12 onz con 7 mini donitas.",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
-      imagen: "assets/img/mini-donas.webp"
+      ilustracion: { tipo: "donas", fondo: "#cdaee8" } // dibujo del vaso con las 7 donitas (sin foto real aún)
     }
   ];
 })();
