@@ -40,22 +40,32 @@
 </head>
 <body>
 
-  <!-- ================= MUY PRONTO (solo con mantenimiento: true) ================= -->
-  <main class="hm-pronto hm-waves" id="pronto" aria-labelledby="prontoTitulo">
-    <div class="hm-pronto-card">
-      <div class="hm-pronto-logo"><img src="assets/img/logo-honeymoon.svg" alt="Logo de Honeymoon" width="456" height="393"></div>
-      <p class="hm-pronto-kicker">Muy pronto</p>
-      <h1 id="prontoTitulo">Estamos <span>endulzando</span> la tienda</h1>
-      <p class="hm-pronto-texto">Le estamos dando los últimos toques a nuestro menú en línea para que pedir tus postres sea facilísimo. Vuelve pronto.</p>
-      <hr class="hm-pronto-linea">
-      <p class="hm-pronto-texto mb-3">¿Quieres pedir hoy? Escríbenos por WhatsApp o síguenos:</p>
-      <div class="hm-pronto-redes">
-        <span data-redes="iconos"></span>
-        <a href="#" class="hm-pronto-icono" data-wa-general aria-label="Escríbenos por WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+  <!-- ================= MUY PRONTO (solo con mantenimiento: true) =================
+       Va en una plantilla: con la tienda abierta no forma parte de la página, así Google
+       no lee "Muy pronto" ni lo muestra en los resultados. -->
+  <template id="prontoPlantilla">
+    <main class="hm-pronto hm-waves" id="pronto" aria-labelledby="prontoTitulo">
+      <div class="hm-pronto-card">
+        <div class="hm-pronto-logo"><img src="assets/img/logo-honeymoon.svg" alt="Logo de Honeymoon" width="456" height="393"></div>
+        <p class="hm-pronto-kicker">Muy pronto</p>
+        <h1 id="prontoTitulo">Estamos <span>endulzando</span> la tienda</h1>
+        <p class="hm-pronto-texto">Le estamos dando los últimos toques a nuestro menú en línea para que pedir tus postres sea facilísimo. Vuelve pronto.</p>
+        <hr class="hm-pronto-linea">
+        <p class="hm-pronto-texto mb-3">¿Quieres pedir hoy? Escríbenos por WhatsApp o síguenos:</p>
+        <div class="hm-pronto-redes">
+          <span data-redes="iconos"></span>
+          <a href="#" class="hm-pronto-icono" data-wa-general aria-label="Escríbenos por WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>
+        </div>
+        <p class="hm-pronto-lugar">Barranquilla · Soledad · Atlántico</p>
       </div>
-      <p class="hm-pronto-lugar">Barranquilla · Soledad · Atlántico</p>
-    </div>
-  </main>
+    </main>
+  </template>
+  <script>
+    if (document.documentElement.classList.contains("hm-modo-pronto")) {
+      var plantilla = document.getElementById("prontoPlantilla");
+      plantilla.parentNode.insertBefore(plantilla.content.cloneNode(true), plantilla);
+    }
+  </script>
 
   <a class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-hm btn-hm-paper hm-skip" href="#menu">Saltar al menú</a>
 
