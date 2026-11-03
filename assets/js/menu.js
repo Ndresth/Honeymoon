@@ -68,7 +68,7 @@ window.HM_ADICIONES = {
     {
       id: "pave",
       nombre: "Paveé",
-      descripcion: "Paveé en cuchareable de 9 Onz con nuestra crema suave, Capas de galleta Ducales, leche Klim y coronado con el topping de tu preferencia.",
+      descripcion: "🥄Capas de galleta Ducales, nuestra crema suave y leche Klim en un cuchareable de 9 onz. ¡Corónalo con tu topping favorito, Oreo, untable de Milo o leche Klim, y disfruta cada cucharada!",
       tamanos: [{ id: "9oz", nombre: "9 Onz", detalle: "Cuchareable", precio: 16000 }],
       eleccion: {
         titulo: "Topping",
@@ -87,7 +87,7 @@ window.HM_ADICIONES = {
     {
       id: "galletas",
       nombre: "Galletas",
-      descripcion: "Galletas mini con chips de chocolate, en bolsita de 150 g, con un vasito de chocolate tipo Nutella.",
+      descripcion: "🍪Galletas mini con chips de chocolate, en bolsita de 150 g y con un vasito de chocolate tipo Nutella para acompañarlas. ¡Pequeñitas, irresistibles y perfectas para compartir… o no!",
       tamanos: [{ id: "bolsita", nombre: "Bolsita 150 g", detalle: "Mini chips de chocolate", precio: 15000 }],
       imagen: "assets/img/galletas-mini.webp", // bolsitas con el sticker y galletas mini
       posicion: "center 62%"
@@ -95,7 +95,7 @@ window.HM_ADICIONES = {
     {
       id: "mini-donas",
       nombre: "Mini donas",
-      descripcion: "Vaso de 12 onz con 7 mini donitas.",
+      descripcion: "🍩Vaso de 12 onz con 7 mini donitas cubiertas de chocolate y chispitas de colores. ¡Un antojo dulce y divertido, perfecto para cualquier momento del día!",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
       imagen: "assets/img/mini-donas.webp", // foto real del vaso de 12 onz con tapa de domo
       posicion: "center 80%"
