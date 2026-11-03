@@ -7,7 +7,8 @@
    - preparar(ctx): arma el escenario y los controles de la partida
    - crearPedido(nivel): { chips[], precio, segundos, extra, lector, tienda: { hash, texto } }
    - iniciar(pedido): deja el escenario listo para ese pedido
-   - pintarControles(), detener(), primerControl(), textoNivel(n)
+   - pintarControles(), detener(), salir(), primerControl()
+   La dificultad sube sola cada 3 pedidos, sin avisar.
    ========================================================= */
 (function () {
   "use strict";
@@ -32,7 +33,7 @@
   const SONIDOS = {
     tap: [[740, .04]], capa: [[523, .06]], pop: [[880, .04], [1175, .05]], aviso: [[440, .1]],
     bien: [[523, .08], [659, .08], [784, .08], [1047, .2]], mal: [[311, .14], [233, .26]],
-    nivel: [[523, .07], [659, .07], [784, .07], [1047, .07], [1319, .24]], tic: [[1400, .025]],
+    tic: [[1400, .025]],
     horno: [[196, .12], [262, .16]], fin: [[392, .12], [330, .12], [262, .32]]
   };
   function sonar(nombre) {
@@ -297,7 +298,6 @@
 
   function pintarHud() {
     $("#jPuntos").textContent = E.puntos.toLocaleString("es-CO");
-    $("#jNivel").textContent = E.nivel;
     $("#jVidas").innerHTML = [0, 1, 2].map((i) => `<i class="bi bi-heart${i < E.vidas ? "-fill" : ""}" aria-hidden="true"></i>`).join("");
     $("#jVidas").setAttribute("aria-label", `${E.vidas} ${E.vidas === 1 ? "vida" : "vidas"}`);
     $("#jRacha").textContent = E.racha > 1 ? `Racha x${E.racha}` : "";
@@ -388,7 +388,7 @@
     flotante(`+${ganados}`);
     sonar("bien");
     $("#jClienteWrap").classList.add("is-se-va");
-    terminar(`${texto || "¡Delicioso!"} ${E.persona.nombre} quedó feliz. +${ganados}`, "bien", 1150);
+    terminar(`${texto || "¡Delicioso!"} ${E.persona.nombre} quedó feliz. +${ganados}`, "bien", 750);
   }
 
   function mal(texto) {
@@ -402,7 +402,7 @@
     v.classList.remove("is-pierde");
     void v.offsetWidth;
     v.classList.add("is-pierde");
-    terminar(`${texto} ${E.vidas ? "Pierdes una vida." : ""}`.trim(), "mal", 1800);
+    terminar(`${texto} ${E.vidas ? "Pierdes una vida." : ""}`.trim(), "mal", 1300);
   }
 
   function terminar(texto, tipo, espera) {
@@ -415,26 +415,10 @@
     setTimeout(() => {
       if (E !== partida) return; // salió del juego mientras tanto
       if (E.vidas <= 0) return finDelJuego();
-      const nv = nivelDe(E.atendidos);
-      if (nv > E.nivel) {
-        E.nivel = nv;
-        pintarHud();
-        subirNivel(() => { if (E === partida) siguientePedido(); });
-      } else siguientePedido();
+      // La dificultad sube sola, sin avisar
+      E.nivel = nivelDe(E.atendidos);
+      siguientePedido();
     }, reducido() ? Math.min(espera, 900) : espera);
-  }
-
-  function subirNivel(luego) {
-    const b = $("#jBanner");
-    $("#jBannerNivel").textContent = `Nivel ${E.nivel}`;
-    $("#jBannerTexto").textContent = J.textoNivel(E.nivel);
-    b.hidden = false;
-    b.classList.remove("is-ve");
-    void b.offsetWidth;
-    b.classList.add("is-ve");
-    sonar("nivel");
-    anunciar(`Nivel ${E.nivel}. ${J.textoNivel(E.nivel)}`);
-    setTimeout(() => { b.hidden = true; luego(); }, reducido() ? 1100 : 1700);
   }
 
   function finDelJuego() {

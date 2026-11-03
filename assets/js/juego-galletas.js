@@ -24,8 +24,8 @@
       paso: nv >= 3 ? 5 : 10,                               // el horno sube de 10 o de 5 grados
       temps: nv >= 6 ? rango(150, 210, 5) : nv >= 3 ? rango(155, 195, 5) : [160, 170, 180, 190],
       ancho: Math.max(.07, .24 - (nv - 1) * .025),          // zona dorada cada vez más angosta
-      dur: Math.max(1300, 4200 * Math.pow(.88, nv - 1)),    // el horno hornea más rápido
-      seg: Math.max(13, 34 * Math.pow(.88, nv - 1)),        // menos paciencia
+      dur: Math.max(1100, 3400 * Math.pow(.86, nv - 1)),    // el horno hornea más rápido
+      seg: Math.max(11, 26 * Math.pow(.88, nv - 1)),        // menos paciencia
       borrar: nv >= 7 ? 1800 : nv >= 5 ? 3000 : 0           // las marcas se borran (hay que memorizarlas)
     };
   }
@@ -143,7 +143,7 @@
       zona: [centro - D.ancho / 2, centro + D.ancho / 2],
       dur: D.dur,
       precio,
-      segundos: D.seg + pts.length * .9,
+      segundos: D.seg + pts.length * .8,
       extra: pts.length * 8 + (nv >= 3 ? 20 : 0) + (D.borrar ? 30 : 0),
       lector: `galletas: ${pts.length} masas en los puntos del papel y el horno a ${objetivo} grados`,
       chips: [
@@ -447,12 +447,6 @@
     detener,
     salir,
     primerControl: () => ctx.controles.querySelector("#gPapel"),
-    textoNivel: (n) => ({
-      3: "Ahora el horno sube de 5 en 5 grados.",
-      5: "¡Las marcas del papel se borran! Memorízalas.",
-      6: "Temperaturas más altas y más bajas.",
-      7: "Las marcas se borran más rápido."
-    })[n] || "Más galletas, menos tiempo y un horno más rápido.",
     tiendaInicial: () => ({ hash: `pedir=${P.id}`, texto: `Galletas mini · ${P.tamanos[0].nombre} · ${ctx.money(P.tamanos[0].precio)}` })
   });
 })();

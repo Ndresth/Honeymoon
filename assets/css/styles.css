@@ -686,7 +686,6 @@ svg.is-crece { transform-origin: 50% 100%; animation: hm-crece .45s cubic-bezier
   padding: .2rem .65rem; box-shadow: var(--hm-shadow); font-family: var(--hm-font-display); font-weight: 900; white-space: nowrap;
 }
 .hm-juego-hud[hidden] { display: none; }
-.hm-hud-nivel { background: var(--hm-lilac); color: #fff; border-radius: 99px; padding: 0 .45rem; font-size: .78rem; line-height: 1.5; }
 .hm-hud-puntos .bi { color: #e8a93a; }
 .hm-hud-vidas { color: #e0364f; letter-spacing: .08em; }
 .hm-hud-vidas.is-pierde { animation: hm-mal .5s ease-in-out; }
@@ -821,14 +820,6 @@ svg.is-crece { transform-origin: 50% 100%; animation: hm-crece .45s cubic-bezier
   color: #e8a93a; text-shadow: 0 2px 0 var(--hm-plum), 0 0 6px #fff; animation: hm-flota 1.2s ease-out forwards;
 }
 @keyframes hm-flota { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.6); } 20% { opacity: 1; transform: translate(-50%, 0) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, -50px); } }
-.hm-nivel-banner {
-  position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3rem;
-  background: rgba(74, 31, 72, .86); color: #fff; text-align: center; padding: 1rem;
-}
-.hm-nivel-banner[hidden] { display: none; }
-.hm-nivel-banner strong { font-family: var(--hm-font-display); font-weight: 900; font-size: 2.2rem; color: #fdd98c; text-shadow: 0 3px 0 var(--hm-plum-deep); }
-.hm-nivel-banner span { font-weight: 800; max-width: 300px; }
-.hm-nivel-banner.is-ve strong { animation: hm-salta .8s cubic-bezier(.3, 1.6, .5, 1); }
 
 /* Fresas: el vaso en el mesón */
 .hm-mesa-vaso { position: relative; width: 140px; height: 168px; margin-bottom: 6px; }
