@@ -87,7 +87,11 @@ Para agregar otro juego: un archivo que llame a `HM_JUEGO.registrar({ id, nombre
 
 ## Modo "Muy pronto"
 
-En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir). Hoy está **apagado** (tienda abierta).
+En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzando la tienda" (logo, Instagram, TikTok y WhatsApp). No se borra nada: el menú, el carrito y el resto siguen en la página, ocultos, y vuelven con `mantenimiento: false`. Mientras está activo, `https://honeymoonreposteria.com/?tienda` muestra la tienda completa (para revisarla antes de abrir). Hoy está **apagado** (tienda abierta). La pantalla "Muy pronto" va en un `<template>`: solo entra en la página con `mantenimiento: true`, así con la tienda abierta Google no lee "Muy pronto" (la página tiene un solo `h1`, el de la tienda).
+
+### Google
+
+`robots.txt` permite leer todo el sitio y apunta a `sitemap.xml` (tienda, juegos y tratamiento de datos). Si Google muestra un texto viejo (por ejemplo "Muy pronto"), en Search Console: Inspección de URLs → `https://honeymoonreposteria.com/` → Probar URL publicada → Solicitar indexación; y en Sitemaps, enviar `sitemap.xml`. Google tarda de unos días a un par de semanas en actualizar el resultado.
 
 ## Tratamiento de datos
 
