@@ -76,8 +76,22 @@
     return { nombre, piel: elegir(PIELES), pelo: elegir(PELOS), ropa: elegir(ROPAS), estilo: azar(5) };
   }
 
-  // Cliente dibujado: el ánimo cambia los ojos, las cejas y la boca
+  // Color más claro u oscuro (para dar volumen con degradados)
+  const tono = (hex, k) => "#" + hex.slice(1).match(/\w\w/g).map((x) => {
+    const v = parseInt(x, 16);
+    return Math.round(k > 0 ? v + (255 - v) * k : v * (1 + k)).toString(16).padStart(2, "0");
+  }).join("");
+  let nPersona = 0;
+
+  // Cliente dibujado con volumen: el ánimo cambia los ojos, las cejas y la boca
   function persona(p, animo) {
+    const id = `per${++nPersona}`;
+    const defs = `<defs>
+      <radialGradient id="${id}c" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="${tono(p.piel, .35)}"/><stop offset=".6" stop-color="${p.piel}"/><stop offset="1" stop-color="${tono(p.piel, -.18)}"/></radialGradient>
+      <radialGradient id="${id}r" cx="35%" cy="20%" r="90%"><stop offset="0" stop-color="${tono(p.ropa, .4)}"/><stop offset=".55" stop-color="${p.ropa}"/><stop offset="1" stop-color="${tono(p.ropa, -.22)}"/></radialGradient>
+      <radialGradient id="${id}p" cx="40%" cy="25%" r="80%"><stop offset="0" stop-color="${tono(p.pelo, .3)}"/><stop offset="1" stop-color="${p.pelo}"/></radialGradient>
+    </defs>`;
+    p = { ...p, piel: `url(#${id}c)`, ropa: `url(#${id}r)`, pelo: `url(#${id}p)` };
     const peinados = [
       { frente: `<path d="M20 36 C18 15 62 15 60 36 C55 26 47 23 40 25 C32 23 25 28 20 36Z" fill="${p.pelo}"/>` },
       { frente: `<circle cx="40" cy="11" r="8.5" fill="${p.pelo}" stroke="${K}" stroke-width="2"/><path d="M20 37 C16 14 64 14 60 37 C54 26 26 26 20 37Z" fill="${p.pelo}"/>` },
@@ -101,12 +115,13 @@
       preocupada: `<path d="M33 51 Q40 45 47 51" stroke="${K}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
       triste: `<path d="M33 52 Q40 45 47 52" stroke="${K}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M50 43 q2 4 0 6 q-2 -2 0 -6Z" fill="#7cc4ef"/>`
     }[animo] || "";
-    return `<svg viewBox="0 0 80 90" aria-hidden="true" focusable="false">
+    return `<svg viewBox="0 0 80 90" aria-hidden="true" focusable="false">${defs}
       ${peinados.atras || ""}
       <path d="M12 92 C12 70 24 61 40 61 C56 61 68 70 68 92 Z" fill="${p.ropa}" stroke="${K}" stroke-width="2.5"/>
       <path d="M33 62 Q40 70 47 62" stroke="${K}" stroke-width="2" fill="none"/>
       <rect x="35" y="53" width="10" height="10" fill="${p.piel}"/>
       <circle cx="40" cy="38" r="20" fill="${p.piel}" stroke="${K}" stroke-width="2.5"/>
+      <ellipse cx="33" cy="27" rx="6" ry="3.5" fill="#fff" opacity=".35"/>
       ${peinados.frente}
       <circle cx="28.5" cy="45" r="3.2" fill="#f49ab0" opacity=".55"/><circle cx="51.5" cy="45" r="3.2" fill="#f49ab0" opacity=".55"/>
       ${cejas}${ojos}${boca}
@@ -183,6 +198,7 @@
   function ruta() {
     cancelAnimationFrame(reloj);
     if (J && J.detener) J.detener();
+    if (J && J.salir) J.salir();
     E = null;
     const id = location.hash.slice(1);
     J = JUEGOS[id] || null;
@@ -204,6 +220,7 @@
     $("#jEscenario").innerHTML = "";
     $("#jControles").innerHTML = "";
     $("#jMesa").dataset.juego = J.id;
+    if (J.salir) J.salir();
     J.preparar(ctx);
     mostrar("jMesa");
     pintarHud();
@@ -424,6 +441,7 @@
     const antes = record.get(J);
     const nuevo = E.puntos > antes;
     if (nuevo) record.set(J, E.puntos);
+    if (J.salir) J.salir();
     sonar("fin");
     mostrar("jFin");
     $("#jFinPuntos").textContent = E.puntos.toLocaleString("es-CO");

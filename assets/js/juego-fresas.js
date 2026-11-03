@@ -49,7 +49,7 @@
   };
   const VASO_ICONO = `<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M10 9 H30 L27 33 Q27 35 25 35 H15 Q13 35 13 33Z" fill="#fff" fill-opacity=".6" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/><path d="M11.5 18 H28.5 L27.4 27 H12.6Z" fill="#f9cdd5"/><path d="M8 9 H32" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/></svg>`;
 
-  let ctx = null, ped = null, vaso = null, vasoUI = null;
+  let ctx = null, ped = null, vaso = null, vasoUI = null, tres = null;
   let ordenCapas = RECETA.slice();
   let ordenTops = G.items.map((a) => a.id);
 
@@ -73,6 +73,12 @@
     ordenCapas = RECETA.slice();
     ordenTops = G.items.map((a) => a.id);
     ctx.escenario.innerHTML = `<div class="hm-mesa-vaso" id="fVaso"></div>`;
+    // En 3D si el navegador puede; si no, el dibujo 2D
+    const el = ctx.escenario.querySelector("#fVaso");
+    salir();
+    try { tres = window.HM_3D && window.HM_3D.soporta() ? window.HM_3D.fresas(el) : null; } catch (e) { tres = null; }
+    el.classList.toggle("is-3d", !!tres);
+    ctx.escenario.closest(".hm-mesa").classList.toggle("is-3d", !!tres);
     ctx.controles.innerHTML = `
       <div class="hm-ctrl-wrap" id="fCtrl">
         <div class="hm-ctrl">
@@ -132,7 +138,7 @@
   function iniciar(p) {
     ped = p;
     vaso = null;
-    ctx.escenario.querySelector("#fVaso").className = "hm-mesa-vaso";
+    ctx.escenario.querySelector("#fVaso").classList.remove("is-sale", "is-mal");
     pintarVaso();
     // En cada pedido las capas cambian de lugar; desde el nivel 3, también los toppings
     ordenCapas = ctx.barajar(RECETA, ordenCapas);
@@ -146,6 +152,15 @@
 
   function pintarVaso() {
     const el = ctx.escenario.querySelector("#fVaso");
+    el.dataset.capas = vaso ? vaso.capas.length : 0;
+    el.dataset.toppings = vaso ? total(vaso.toppings) : 0;
+    if (tres) {
+      tres.pintar(vaso ? { grande: TAMANOS.findIndex((t) => t.id === vaso.tamano) > 0, capas: vaso.capas, toppings: porIcono(vaso.toppings) } : null);
+      let v = el.querySelector(".hm-mesa-vacia");
+      if (!v) { el.insertAdjacentHTML("beforeend", `<div class="hm-mesa-vacia"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i>Pon un vaso</div>`); v = el.querySelector(".hm-mesa-vacia"); }
+      v.hidden = !!vaso;
+      return;
+    }
     if (!vaso) {
       vasoUI = null;
       el.innerHTML = `<div class="hm-mesa-vacia"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i>Pon un vaso</div>`;
@@ -222,10 +237,15 @@
   function entregar() {
     if (ctx.ocupado() || !vaso) return;
     const error = revisar();
-    const el = ctx.escenario.querySelector("#fVaso");
-    el.classList.add(error ? "is-mal" : "is-sale");
+    if (tres) tres.entregar(!error);
+    else ctx.escenario.querySelector("#fVaso").classList.add(error ? "is-mal" : "is-sale");
     if (error) ctx.mal(error);
     else ctx.bien("¡Delicioso!");
+  }
+
+  function salir() {
+    if (tres) tres.destruir();
+    tres = null;
   }
 
   // Portada: vaso lleno con toppings
@@ -249,6 +269,7 @@
     pintarControles,
     primerControl: () => ctx.controles.querySelector("#fTamanos button"),
     detener: () => {},
+    salir,
     textoNivel: (n) => (n === 3 ? "Menos tiempo y ahora también se mueven los toppings." : n === 5 ? "Pedidos más grandes y clientes con mucha prisa." : "Los clientes tienen menos paciencia."),
     tiendaInicial: () => ({ hash: `pedir=${P.id}`, texto: `Fresas con crema desde ${ctx.money(Math.min(...TAMANOS.map((t) => t.precio)))}` })
   });

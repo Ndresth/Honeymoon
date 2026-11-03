@@ -25,6 +25,8 @@
   <link href="assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
+  <link rel="modulepreload" href="assets/js/juego-3d.js">
+  <link rel="modulepreload" href="assets/vendor/three/three.module.min.js">
 </head>
 <body class="hm-waves hm-juego-body">
   <main class="hm-juego">
@@ -121,5 +123,7 @@
   <script src="assets/js/juego.js"></script>
   <script src="assets/js/juego-fresas.js"></script>
   <script src="assets/js/juego-galletas.js"></script>
+  <!-- Escenas 3D (si el navegador tiene WebGL 2; si no, los juegos se ven en 2D) -->
+  <script type="module" src="assets/js/juego-3d.js"></script>
 </body>
 </html>

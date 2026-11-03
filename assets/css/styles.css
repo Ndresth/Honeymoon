@@ -894,6 +894,29 @@ svg.is-crece { transform-origin: 50% 100%; animation: hm-crece .45s cubic-bezier
 .hm-coccion-aguja { position: absolute; top: -8px; bottom: -8px; width: 5px; margin-left: -2.5px; border-radius: 3px; background: var(--hm-plum); box-shadow: 0 0 0 2px #fff; }
 .hm-coccion-etq { display: flex; justify-content: space-between; font-size: .68rem; font-weight: 800; color: var(--hm-plum-soft); margin: .2rem 2px 0; }
 
+/* Escenas 3D (juego-3d.js): la cocina la dibuja el 3D; en pantallas grandes, más alta */
+@media (min-width: 576px) and (min-height: 820px) {
+  .hm-mesa.is-3d { height: 260px; }
+  .hm-mesa.is-3d:has(.hm-hornear) { height: 310px; }
+}
+.hm-mesa.is-3d { background: #fbf2f9; }
+.hm-mesa.is-3d .hm-mesa-fondo, .hm-mesa.is-3d::after { display: none; }
+.hm-3d-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hm-mesa-vaso.is-3d { position: absolute; inset: 0; width: auto; height: auto; margin: 0; }
+.hm-mesa-vaso.is-3d .hm-mesa-vacia, .hm-vacia-3d { position: absolute; inset: 0; z-index: 1; pointer-events: none; text-shadow: 0 1px 0 #fff, 0 0 8px #fff; }
+.hm-vacia-3d { padding-top: 1.5rem; }
+.hm-hornear.is-3d { position: relative; display: block; padding: 0; }
+.hm-papel.hm-papel-3d { position: absolute; z-index: 1; width: auto; height: auto; background: none; box-shadow: none; border-radius: 0; }
+.hm-papel-3d .hm-punto, .hm-papel-3d .hm-punto:hover:not(.is-lleno) { border-color: transparent; background: transparent; }
+.hm-papel-3d .hm-punto:focus-visible { outline: 3px solid var(--hm-lilac-deep); outline-offset: 0; }
+.hm-papel.is-oculto .hm-punto:not(.is-lleno) { border-color: transparent; background: transparent; }
+.hm-coccion-3d {
+  position: absolute; z-index: 1; left: 10%; right: 10%; bottom: 6px; padding: 7px 10px 2px;
+  background: rgba(255, 255, 255, .88); border: 2px solid var(--hm-plum); border-radius: 12px;
+}
+.hm-coccion-3d[hidden] { display: none; }
+.hm-coccion-3d .hm-coccion { margin: .2rem 0 0; }
+
 /* Botones del juego */
 .hm-controles { background: #fff; border: var(--hm-border); border-radius: 20px; padding: .55rem .6rem .7rem; box-shadow: var(--hm-shadow); }
 .hm-ctrl + .hm-ctrl { margin-top: .35rem; }

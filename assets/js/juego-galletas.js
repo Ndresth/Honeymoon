@@ -3,7 +3,10 @@
    1. Pon el papel en la bandeja. 2. Pon una masa en cada punto que marca el papel
    (si tocas fuera, pierdes 2 segundos). 3. Mete la bandeja al horno y ponlo a la temperatura
    del pedido. 4. Hornea y saca las galletas cuando estén doradas: ni crudas ni quemadas.
-   Cada nivel trae más puntos, formas más difíciles, menos tiempo y un horno más rápido.
+   Los puntos salen en lugares al azar. Cada nivel trae más masas, puntos más pequeños, menos
+   tiempo, una zona dorada más angosta y un horno más rápido; desde el nivel 3 el horno va de 5 en
+   5 grados y desde el 5 las marcas del papel se borran (hay que memorizarlas).
+   Se ve en 3D (juego-3d.js) si el navegador tiene WebGL 2; si no, en 2D.
    ========================================================= */
 (function () {
   "use strict";
@@ -12,52 +15,31 @@
   const K = "#4a1f48";
   const TEMP_MIN = 150, TEMP_MAX = 220;
 
-  /* ---------- Formas del papel (puntos en un cuadrado de 0 a 1) ---------- */
-  const FORMAS = {
-    cuadricula: { nombre: "cuadrícula", puntos: (n) => {
-      const cols = n <= 4 ? 2 : n === 8 || n >= 10 ? 4 : 3, filas = Math.ceil(n / cols);
-      return Array.from({ length: n }, (_, i) => [cols === 1 ? .5 : (i % cols) / (cols - 1), filas === 1 ? .5 : Math.floor(i / cols) / (filas - 1)]);
-    } },
-    zigzag: { nombre: "zigzag", puntos: (n) => Array.from({ length: n }, (_, i) => [i / (n - 1), i % 2 ? .85 : .15]) },
-    circulo: { nombre: "círculo", puntos: (n) => Array.from({ length: n }, (_, i) => {
-      const a = (Math.PI * 2 * i) / n - Math.PI / 2;
-      return [.5 + .5 * Math.cos(a), .5 + .5 * Math.sin(a)];
-    }) },
-    corazon: { nombre: "corazón", puntos: (n) => normalizar(Array.from({ length: n }, (_, i) => {
-      const t = (Math.PI * 2 * i) / n;
-      return [16 * Math.pow(Math.sin(t), 3), -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))];
-    })) },
-    // Luna creciente: arco de afuera y arco de adentro
-    luna: { nombre: "luna", puntos: (n) => {
-      const fuera = Math.ceil(n * .6), dentro = n - fuera;
-      const a = Array.from({ length: fuera }, (_, i) => { const g = (70 + (220 * i) / (fuera - 1)) * Math.PI / 180; return [Math.cos(g), Math.sin(g)]; });
-      const b = Array.from({ length: dentro }, (_, i) => { const g = (118 + (124 * (i + 1)) / (dentro + 1)) * Math.PI / 180; return [.42 + .72 * Math.cos(g), .72 * Math.sin(g)]; });
-      return normalizar(a.concat(b));
-    } },
-    equis: { nombre: "X", puntos: (n) => {
-      const lado = Math.ceil((n + 1) / 2);
-      const pts = Array.from({ length: lado }, (_, i) => [i / (lado - 1), i / (lado - 1)]);
-      for (let i = 0; i < lado; i++) { const p = [i / (lado - 1), 1 - i / (lado - 1)]; if (!pts.some((q) => Math.hypot(q[0] - p[0], q[1] - p[1]) < .05)) pts.push(p); }
-      return pts.slice(0, n);
-    } }
-  };
-  function normalizar(pts) {
-    const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
-    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-    return pts.map(([x, y]) => [(x - x0) / (x1 - x0 || 1), (y - y0) / (y1 - y0 || 1)]);
+  /* ---------- Dificultad por nivel ---------- */
+  const rango = (a, b, p) => Array.from({ length: Math.floor((b - a) / p) + 1 }, (_, i) => a + i * p);
+  function dificultad(nv) {
+    return {
+      n: Math.min(14, 3 + nv),                              // masas: 4, 5, 6… hasta 14
+      d: Math.max(11, 17 - (nv - 1) * .8),                  // tamaño del punto (% del ancho del papel)
+      paso: nv >= 3 ? 5 : 10,                               // el horno sube de 10 o de 5 grados
+      temps: nv >= 6 ? rango(150, 210, 5) : nv >= 3 ? rango(155, 195, 5) : [160, 170, 180, 190],
+      ancho: Math.max(.07, .24 - (nv - 1) * .025),          // zona dorada cada vez más angosta
+      dur: Math.max(1300, 4200 * Math.pow(.88, nv - 1)),    // el horno hornea más rápido
+      seg: Math.max(13, 34 * Math.pow(.88, nv - 1)),        // menos paciencia
+      borrar: nv >= 7 ? 1800 : nv >= 5 ? 3000 : 0           // las marcas se borran (hay que memorizarlas)
+    };
   }
-
-  // Formas por nivel y tamaño del punto (% del ancho del papel)
-  const NIVELES = [
-    null,
-    { formas: [["cuadricula", 4]], d: 17 },
-    { formas: [["cuadricula", 6], ["zigzag", 6], ["circulo", 6]], d: 15.5 },
-    { formas: [["cuadricula", 9], ["circulo", 8], ["zigzag", 8]], d: 14 },
-    { formas: [["corazon", 10], ["luna", 9], ["equis", 9], ["circulo", 10]], d: 13 },
-    { formas: [["corazon", 12], ["luna", 11], ["cuadricula", 12], ["equis", 11]], d: 12 }
-  ];
-  // Papel de 4×3: los puntos no se tocan
-  const separados = (pts, d) => pts.every((a, i) => pts.every((b, k) => k <= i || Math.hypot((a[0] - b[0]) * 4, (a[1] - b[1]) * 3) >= (d / 100) * 4 * 1.15));
+  // Puntos en lugares al azar del papel (en % de un papel de 4×3), sin tocarse ni salirse
+  function alAzar(n, d) {
+    const pts = [];
+    const mx = d / 2 + 3, my = (d / 2) * 4 / 3 + 4;
+    const lejos = (d / 100) * 4 * 1.3;
+    for (let k = 0; k < 5000 && pts.length < n; k++) {
+      const x = mx + Math.random() * (100 - 2 * mx), y = my + Math.random() * (100 - 2 * my);
+      if (pts.every(([a, b]) => Math.hypot(((a - x) / 100) * 4, ((b - y) / 100) * 3) >= lejos)) pts.push([x, y]);
+    }
+    return pts;
+  }
 
   /* ---------- Dibujos ---------- */
   const ICONO = {
@@ -79,31 +61,42 @@
   </svg>`;
 
   /* ---------- Estado ---------- */
-  let ctx = null, ped = null;
+  let ctx = null, ped = null, tres = null;
   let fase = "vacia"; // vacia → papel → horno → horneando
   let masas = new Set();
   let temp = TEMP_MIN;
   let horneo = null; // { inicio, dur, f, enZona, raf }
+  let borrarTimer = 0;
 
   const q = (sel) => ctx.escenario.querySelector(sel) || ctx.controles.querySelector(sel);
+  const coccionHTML = `
+    <div class="hm-coccion" id="gCoccion" aria-hidden="true">
+      <span class="hm-coccion-zona" id="gZonaDorada"></span>
+      <span class="hm-coccion-aguja" id="gAguja"></span>
+    </div>
+    <div class="hm-coccion-etq" aria-hidden="true"><span>Crudas</span><span>Doradas</span><span>Quemadas</span></div>`;
 
   function preparar(c) {
     ctx = c;
-    ctx.escenario.innerHTML = `
-      <div class="hm-hornear">
-        <div class="hm-bandeja" id="gBandeja">
-          <div class="hm-papel" id="gPapelZona" hidden></div>
-          <p class="hm-mesa-vacia" id="gVacia"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i>Pon el papel en la bandeja</p>
-        </div>
-        <div class="hm-horno" id="gHorno" hidden>
-          <div class="hm-horno-svg" id="gHornoSvg"></div>
-          <div class="hm-coccion" id="gCoccion" aria-hidden="true">
-            <span class="hm-coccion-zona" id="gZonaDorada"></span>
-            <span class="hm-coccion-aguja" id="gAguja"></span>
-          </div>
-          <div class="hm-coccion-etq" aria-hidden="true"><span>Crudas</span><span>Doradas</span><span>Quemadas</span></div>
-        </div>
-      </div>`;
+    salir();
+    ctx.escenario.innerHTML = `<div class="hm-hornear" id="gEscena"></div>`;
+    const escena = ctx.escenario.querySelector("#gEscena");
+    try { tres = window.HM_3D && window.HM_3D.soporta() ? window.HM_3D.galletas(escena) : null; } catch (e) { tres = null; }
+    escena.classList.toggle("is-3d", !!tres);
+    ctx.escenario.closest(".hm-mesa").classList.toggle("is-3d", !!tres);
+    escena.insertAdjacentHTML("beforeend", tres ? `
+      <div class="hm-papel hm-papel-3d" id="gPapelZona" hidden></div>
+      <p class="hm-mesa-vacia hm-vacia-3d" id="gVacia"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i>Pon el papel en la bandeja</p>
+      <div class="hm-coccion-3d" id="gCoccionWrap" hidden>${coccionHTML}</div>` : `
+      <div class="hm-bandeja" id="gBandeja">
+        <div class="hm-papel" id="gPapelZona" hidden></div>
+        <p class="hm-mesa-vacia" id="gVacia"><i class="bi bi-arrow-down-circle" aria-hidden="true"></i>Pon el papel en la bandeja</p>
+      </div>
+      <div class="hm-horno" id="gHorno" hidden>
+        <div class="hm-horno-svg" id="gHornoSvg"></div>
+        <div id="gCoccionWrap">${coccionHTML}</div>
+      </div>`);
+    if (tres) tres.alCambiar(() => { if (fase === "papel") colocarPuntos(); });
     ctx.controles.innerHTML = `
       <div class="hm-ctrl-wrap" id="gCtrl">
         <div class="hm-ctrl">
@@ -139,30 +132,22 @@
     ctx.escenario.querySelector("#gPapelZona").addEventListener("click", tocarPapel);
   }
 
-  const paso = () => (ctx.nivel() >= 4 ? 5 : 10);
-
   function crearPedido(nv) {
-    const N = NIVELES[Math.min(nv, NIVELES.length - 1)];
-    let [forma, n] = N.formas[ctx.azar(N.formas.length)];
-    let pts = FORMAS[forma].puntos(n);
-    while (!separados(pts, N.d) && n > 4) pts = FORMAS[forma].puntos(--n);
-    // Desde el nivel 6 los puntos se corren un poquito
-    if (nv >= 6) pts = pts.map(([x, y]) => [Math.min(1, Math.max(0, x + (Math.random() - .5) * .06)), Math.min(1, Math.max(0, y + (Math.random() - .5) * .06))]);
-    const temps = nv >= 4 ? [155, 160, 165, 170, 175, 180, 185, 190, 195] : [160, 170, 180, 190];
-    const objetivo = temps[ctx.azar(temps.length)];
-    const ancho = Math.max(.09, .24 - (nv - 1) * .03);
-    const centro = .42 + ancho / 2 + Math.random() * (.4 - ancho);
+    const D = dificultad(nv);
+    const pts = alAzar(D.n, D.d);
+    const objetivo = D.temps[ctx.azar(D.temps.length)];
+    const centro = .42 + D.ancho / 2 + Math.random() * (.4 - D.ancho);
     const precio = P.tamanos[0].precio;
     return {
-      forma, puntos: pts.map(([x, y]) => [12 + x * 76, 14 + y * 72]), d: N.d, temp: objetivo,
-      zona: [centro - ancho / 2, centro + ancho / 2],
-      dur: Math.max(1500, 4200 * Math.pow(.88, nv - 1)),
+      puntos: pts, d: D.d, temp: objetivo, paso: D.paso, borrar: D.borrar,
+      zona: [centro - D.ancho / 2, centro + D.ancho / 2],
+      dur: D.dur,
       precio,
-      segundos: Math.max(14, 34 * Math.pow(.88, nv - 1)) + pts.length * .9,
-      extra: pts.length * 8 + (nv >= 4 ? 20 : 0),
-      lector: `galletas: ${pts.length} masas en forma de ${FORMAS[forma].nombre} y el horno a ${objetivo} grados`,
+      segundos: D.seg + pts.length * .9,
+      extra: pts.length * 8 + (nv >= 3 ? 20 : 0) + (D.borrar ? 30 : 0),
+      lector: `galletas: ${pts.length} masas en los puntos del papel y el horno a ${objetivo} grados`,
       chips: [
-        { texto: `${pts.length} en ${FORMAS[forma].nombre}`, icono: ICONO.puntos },
+        { texto: `${pts.length} galletas`, icono: ICONO.puntos },
         { texto: `Horno ${objetivo} °C`, icono: ICONO.termometro, clase: "is-temp" }
       ],
       tienda: { hash: `pedir=${P.id}`, texto: `Galletas mini · ${P.tamanos[0].nombre} · ${ctx.money(precio)}` }
@@ -175,16 +160,26 @@
     fase = "vacia";
     masas = new Set();
     temp = TEMP_MIN;
-    q("#gPapelZona").hidden = true;
-    q("#gPapelZona").innerHTML = "";
+    const papel = q("#gPapelZona");
+    papel.hidden = true;
+    papel.innerHTML = "";
+    papel.classList.remove("is-oculto");
     q("#gVacia").hidden = false;
-    q("#gBandeja").hidden = false;
-    q("#gBandeja").className = "hm-bandeja";
-    q("#gHorno").hidden = true;
-    q("#gHorno").classList.remove("is-prendido");
+    if (tres) {
+      tres.reiniciar();
+      q("#gCoccionWrap").hidden = true;
+    } else {
+      q("#gBandeja").hidden = false;
+      q("#gHorno").hidden = true;
+      q("#gHorno").classList.remove("is-prendido", "is-mal");
+    }
+    q("#gCoccion").classList.remove("is-zona");
+    vista("bandeja");
     pintarTemp();
     pintarControles();
   }
+
+  const vista = (v) => { const e = q("#gEscena"); e.dataset.vista = v; e.dataset.galletas = v === "horno" ? masas.size : 0; };
 
   function pintarControles() {
     const listo = !ctx.ocupado();
@@ -203,23 +198,46 @@
 
   function pintarTemp() {
     q("#gTemp").textContent = `${temp} °C`;
+    if (tres) tres.temp(temp);
     const t = ctx.escenario.querySelector("#gHornoTxt");
     if (t) t.textContent = `${temp}°`;
   }
 
-  /* ---------- Acciones ---------- */
+  /* ---------- Papel y masas ---------- */
+  const botonesPuntos = () => ped.puntos.map(([x, y], i) => `
+    <button type="button" class="hm-punto" data-punto="${i}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;width:${ped.d.toFixed(2)}%" aria-label="Poner masa en el punto ${i + 1} de ${ped.puntos.length}"></button>`).join("");
+
+  // En 3D los botones van encima de donde se ve cada punto
+  function colocarPuntos() {
+    if (!tres) return;
+    const { puntos, papel } = tres.puntosPantalla();
+    const z = q("#gPapelZona");
+    Object.assign(z.style, { left: `${papel.x0}px`, top: `${papel.y0}px`, width: `${papel.x1 - papel.x0}px`, height: `${papel.y1 - papel.y0}px` });
+    z.querySelectorAll(".hm-punto").forEach((b) => {
+      const p = puntos[+b.dataset.punto];
+      Object.assign(b.style, { left: `${p.x - papel.x0}px`, top: `${p.y - papel.y0}px`, width: `${Math.max(30, p.d)}px` });
+    });
+  }
+
   function ponerPapel() {
     if (ctx.ocupado() || fase !== "vacia") return;
     fase = "papel";
     const papel = q("#gPapelZona");
-    papel.innerHTML = ped.puntos.map(([x, y], i) => `
-      <button type="button" class="hm-punto" data-punto="${i}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;width:${ped.d}%" aria-label="Poner masa en el punto ${i + 1} de ${ped.puntos.length}"></button>`).join("");
+    papel.innerHTML = botonesPuntos();
     papel.hidden = false;
-    papel.classList.remove("is-pone");
-    void papel.offsetWidth;
-    papel.classList.add("is-pone");
+    if (tres) { tres.papel(ped.puntos, ped.d); colocarPuntos(); }
+    else { papel.classList.remove("is-pone"); void papel.offsetWidth; papel.classList.add("is-pone"); }
     q("#gVacia").hidden = true;
     ctx.sonar("tap");
+    // Desde el nivel 5 las marcas se borran: hay que acordarse de dónde estaban
+    if (ped.borrar) {
+      borrarTimer = setTimeout(() => {
+        if (fase !== "papel") return;
+        papel.classList.add("is-oculto");
+        if (tres) tres.ocultarMarcas(450);
+        ctx.anunciar("Las marcas se borraron. ¡Acuérdate de dónde estaban!");
+      }, ped.borrar);
+    }
     pintarControles();
     papel.querySelector(".hm-punto").focus({ preventScroll: true });
   }
@@ -234,7 +252,8 @@
       punto.classList.add("is-lleno");
       punto.setAttribute("aria-disabled", "true");
       punto.setAttribute("aria-label", `Punto ${i + 1}: con masa`);
-      punto.innerHTML = `<span class="hm-masa"></span>`;
+      if (tres) tres.masa(i);
+      else punto.innerHTML = `<span class="hm-masa"></span>`;
       ctx.sonar("pop");
       if (masas.size === ped.puntos.length) {
         ctx.anunciar("¡Todas las masas listas! Ahora al horno.");
@@ -243,29 +262,42 @@
       pintarControles();
       return;
     }
-    // Tocó fuera de un punto: la masa se cae y se pierde tiempo
-    const papel = e.currentTarget, r = papel.getBoundingClientRect();
-    const s = document.createElement("span");
-    s.className = "hm-masa-caida";
-    s.style.left = `${((e.clientX - r.left) / r.width) * 100}%`;
-    s.style.top = `${((e.clientY - r.top) / r.height) * 100}%`;
-    papel.appendChild(s);
-    setTimeout(() => s.remove(), 900);
+    // Tocó el papel fuera de un punto: la masa se cae y se pierde tiempo
+    if (tres) {
+      if (!tres.caida(e.clientX, e.clientY)) return;
+    } else {
+      const papel = e.currentTarget, r = papel.getBoundingClientRect();
+      const s = document.createElement("span");
+      s.className = "hm-masa-caida";
+      s.style.left = `${((e.clientX - r.left) / r.width) * 100}%`;
+      s.style.top = `${((e.clientY - r.top) / r.height) * 100}%`;
+      papel.appendChild(s);
+      setTimeout(() => s.remove(), 900);
+    }
     ctx.penalizar(2, "¡Fuera del punto! Pierdes 2 segundos.");
   }
 
+  /* ---------- Horno ---------- */
   function alHorno() {
     if (ctx.ocupado() || fase !== "papel" || !masas.size) return;
     fase = "horno";
-    q("#gBandeja").hidden = true;
-    const horno = q("#gHorno");
-    q("#gHornoSvg").innerHTML = hornoSVG();
+    clearTimeout(borrarTimer);
+    q("#gPapelZona").hidden = true;
     q("#gZonaDorada").style.left = `${ped.zona[0] * 100}%`;
     q("#gZonaDorada").style.width = `${(ped.zona[1] - ped.zona[0]) * 100}%`;
     q("#gAguja").style.left = "0%";
     q("#gCoccion").classList.remove("is-zona");
-    horno.hidden = false;
-    horno.className = "hm-horno is-entra";
+    if (tres) {
+      tres.alHorno();
+      q("#gCoccionWrap").hidden = false;
+    } else {
+      q("#gBandeja").hidden = true;
+      const horno = q("#gHorno");
+      q("#gHornoSvg").innerHTML = hornoSVG();
+      horno.hidden = false;
+      horno.className = "hm-horno is-entra";
+    }
+    vista("horno");
     ctx.sonar("horno");
     pintarTemp();
     pintarControles();
@@ -274,7 +306,7 @@
 
   function cambiarTemp(dir) {
     if (ctx.ocupado() || fase === "horneando") return;
-    temp = Math.min(TEMP_MAX, Math.max(TEMP_MIN, temp + dir * paso()));
+    temp = Math.min(TEMP_MAX, Math.max(TEMP_MIN, temp + dir * ped.paso));
     ctx.sonar("tic");
     pintarTemp();
     pintarControles();
@@ -285,7 +317,8 @@
     fase = "horneando";
     // Más caliente, se hornea más rápido; más frío, más lento
     horneo = { inicio: performance.now(), dur: ped.dur * (ped.temp / temp), f: 0, enZona: false, raf: 0 };
-    q("#gHorno").classList.add("is-prendido");
+    if (tres) tres.prender(true);
+    else q("#gHorno").classList.add("is-prendido");
     ctx.sonar("horno");
     pintarControles();
     horneo.raf = requestAnimationFrame(cocinar);
@@ -310,7 +343,8 @@
     horneo.f = f;
     q("#gAguja").style.left = `${f * 100}%`;
     const color = colorGalleta(f);
-    ctx.escenario.querySelectorAll(".hm-gh").forEach((g) => g.setAttribute("fill", color));
+    if (tres) tres.hornear(f, color, f / ped.zona[0]);
+    else ctx.escenario.querySelectorAll(".hm-gh").forEach((g) => g.setAttribute("fill", color));
     const enZona = f >= ped.zona[0] && f <= ped.zona[1];
     if (enZona !== horneo.enZona) {
       horneo.enZona = enZona;
@@ -320,9 +354,18 @@
     if (f >= 1) {
       fase = "horno";
       horneo = null;
+      resultado(false);
       return ctx.mal("¡Se quemaron las galletas!");
     }
     horneo.raf = requestAnimationFrame(cocinar);
+  }
+
+  function resultado(ok) {
+    if (tres) tres.entregar(ok);
+    else {
+      q("#gHorno").classList.remove("is-prendido");
+      if (!ok) q("#gHorno").classList.add("is-mal");
+    }
   }
 
   function sacar() {
@@ -330,13 +373,13 @@
     const f = horneo.f;
     detener();
     fase = "horno";
-    q("#gHorno").classList.remove("is-prendido");
     const faltan = ped.puntos.length - masas.size;
     const error = faltan ? `Faltaron ${faltan === 1 ? "1 masa" : faltan + " masas"} en el papel.`
       : temp !== ped.temp ? `El horno debía estar a ${ped.temp} °C (estaba a ${temp} °C).`
       : f < ped.zona[0] ? "Quedaron crudas: sácalas cuando estén doradas."
       : f > ped.zona[1] ? "Se pasaron de horno."
       : "";
+    resultado(!error);
     if (error) ctx.mal(error);
     else ctx.bien("¡Galletas perfectas!");
   }
@@ -355,12 +398,19 @@
   function detener() {
     if (horneo) cancelAnimationFrame(horneo.raf);
     horneo = null;
+    clearTimeout(borrarTimer);
   }
 
-  // Horno de frente: en la ventana se ven las galletas que se pusieron
+  function salir() {
+    detener();
+    if (tres) tres.destruir();
+    tres = null;
+  }
+
+  // Horno 2D (sin WebGL): en la ventana se ven las galletas que se pusieron
   function hornoSVG() {
     const galletas = ped.puntos.map(([x, y], i) => masas.has(i)
-      ? `<ellipse class="hm-gh" cx="${(64 + ((x - 12) / 76) * 172).toFixed(1)}" cy="${(104 + ((y - 14) / 72) * 34).toFixed(1)}" rx="${Math.max(7, ped.d * .62).toFixed(1)}" ry="${Math.max(4, ped.d * .34).toFixed(1)}" fill="#f3d9a4" stroke="${K}" stroke-width="1.6"/>` : "").join("");
+      ? `<ellipse class="hm-gh" cx="${(64 + (x / 100) * 172).toFixed(1)}" cy="${(104 + (y / 100) * 34).toFixed(1)}" rx="${Math.max(6, ped.d * .55).toFixed(1)}" ry="${Math.max(3.5, ped.d * .3).toFixed(1)}" fill="#f3d9a4" stroke="${K}" stroke-width="1.6"/>` : "").join("");
     return `<svg viewBox="0 0 300 200" aria-hidden="true" focusable="false">
       <defs><radialGradient id="gLuz" cx="50%" cy="60%" r="70%"><stop offset="0" stop-color="#ffb347" stop-opacity=".95"/><stop offset="1" stop-color="#ff7a3c" stop-opacity="0"/></radialGradient></defs>
       <ellipse cx="150" cy="194" rx="130" ry="6" fill="${K}" opacity=".12"/>
@@ -374,7 +424,6 @@
       <rect class="hm-horno-luz" x="41" y="71" width="218" height="100" rx="12" fill="url(#gLuz)"/>
       <path d="M52 146 H248 L240 156 H60Z" fill="#9aa0a6" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>
       ${galletas}
-      <path d="M52 80 L76 80" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".25"/>
     </svg>`;
   }
 
@@ -386,7 +435,7 @@
     claveRecord: "hm_juego_galletas_record",
     pasos: [
       "<strong>Pon el papel</strong> en la bandeja.",
-      "<strong>Pon una masa en cada punto</strong> que marca el papel. Si tocas fuera de un punto, pierdes 2 segundos.",
+      "<strong>Pon una masa en cada punto</strong> del papel: salen en lugares al azar. Si tocas fuera de un punto, pierdes 2 segundos.",
       "<strong>Mete la bandeja al horno</strong> y ponlo a la temperatura del pedido.",
       "<strong>Hornea y saca las galletas</strong> cuando la aguja esté en <em>Doradas</em>: ni crudas ni quemadas."
     ],
@@ -396,8 +445,14 @@
     iniciar,
     pintarControles,
     detener,
+    salir,
     primerControl: () => ctx.controles.querySelector("#gPapel"),
-    textoNivel: (n) => (n === 4 ? "Formas nuevas y el horno sube de 5 en 5 grados." : n === 6 ? "Los puntos ya no están derechitos." : "Más galletas, menos tiempo y un horno más rápido."),
+    textoNivel: (n) => ({
+      3: "Ahora el horno sube de 5 en 5 grados.",
+      5: "¡Las marcas del papel se borran! Memorízalas.",
+      6: "Temperaturas más altas y más bajas.",
+      7: "Las marcas se borran más rápido."
+    })[n] || "Más galletas, menos tiempo y un horno más rápido.",
     tiendaInicial: () => ({ hash: `pedir=${P.id}`, texto: `Galletas mini · ${P.tamanos[0].nombre} · ${ctx.money(P.tamanos[0].precio)}` })
   });
 })();
