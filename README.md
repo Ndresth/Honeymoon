@@ -45,6 +45,8 @@ En `assets/js/menu.js`:
 - `HM_ADICIONES`: grupos de toppings. Cada grupo tiene `texto` (la frase que sale arriba de los toppings) e `items`. Cada topping lleva `precio` por porción, `max` (porciones máximas por vaso), opcional `limite: { desde, otros }` (desde esa cantidad de ese topping, como máximo `otros` porciones de los demás; `otros: 0` = va solo), `icono` (dibujo de `illustrations.js`: `queso`, `chocoramo`, `piazza`, `oreo`) y `foto` (si se agrega una foto, reemplaza al ícono). Hoy `fresas`, a $2.000 la porción:
   - Queso: hasta 2; con 2, solo 1 topping más.
   - Chocoramo, Piazza y Oreo: hasta 2; con 2, van solos (la base ya trae galleta Oreo).
+  - Cobertura de chocolate en el vaso: $3.000, máximo 1. Es `independiente: true`: no cuenta para los límites de los demás (se puede pedir con cualquier combinación). En "Así va tu vaso" se dibuja chorreando por las paredes del vaso; en el juego no aparece.
+  - Campos opcionales de cada topping: `corto` (nombre en la tarjeta), `detalle` (texto bajo el nombre en el detalle) e `independiente`.
   - Se pueden pedir los 4 toppings a la vez (una porción de cada uno).
 - `HM_MENU`: productos (Fresas con crema, Paveé, Galletas y Mini donas). Campos principales:
   - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "7 mini donitas") y `encargo: true`.

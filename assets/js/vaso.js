@@ -94,6 +94,12 @@
       return `<g class="hm-v-capa${anima}">${CAPAS[c].dibujo(y0, y1, i)}</g>`;
     }).join("");
     const superficie = Math.min(y, fondo - 4);
+    // Cobertura de chocolate: chorrea desde el borde por las paredes del vaso
+    const chorros = [[22, 34], [44, 22], [63, 40], [86, 26], [108, 44], [128, 24], [150, 36], [172, 28]];
+    const cobertura = estado.cobertura ? `<g class="hm-v-cobertura${op.coberturaNueva ? " is-chorrea" : ""}">
+        <path d="M0 ${m.T - 2} H200 V${m.T + 9} ${chorros.map(([x, l]) => `L${x + 7} ${m.T + 9} Q${x + 5} ${m.T + 9 + l} ${x} ${m.T + 9 + l} Q${x - 5} ${m.T + 9 + l} ${x - 7} ${m.T + 9}`).join(" ")} L0 ${m.T + 9}Z" fill="#4a2414" opacity=".92"/>
+        <path d="M${100 - m.tw + 10} ${m.T + 4} H${100 + m.tw - 10}" stroke="#8a5530" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+      </g>` : "";
     const arte = window.HM_ARTE_TOPPING || (() => "");
     const tops = (estado.orden || []).map((k, i) => {
       const [x, dy] = PUESTOS[i % PUESTOS.length];
@@ -107,7 +113,7 @@
       <ellipse cx="100" cy="${m.B + 4}" rx="64" ry="7" fill="${K}" opacity=".13"/>
       <path d="${contorno(m)}" fill="#fff" fill-opacity=".35"/>
       <path d="${arco(1)}" fill="none" stroke="${K}" stroke-width="2.6" opacity=".55"/>
-      <g clip-path="url(#${uid})">${capas}</g>
+      <g clip-path="url(#${uid})">${capas}${cobertura}</g>
       ${tops}
       <path d="${contorno(m)}" fill="#fff" fill-opacity=".1" stroke="${K}" stroke-width="3.2" stroke-linejoin="round"/>
       <path d="M${100 - m.tw + 14} ${m.T + 14} L${100 - m.bw + 10} ${m.B - 14}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/>
@@ -122,6 +128,7 @@
     let orden = [];
     let capasAntes = 0;
     let grandeAntes = null;
+    let coberturaAntes = false;
     return {
       pintar(estado, { llenar = false } = {}) {
         const claves = [];
@@ -135,8 +142,10 @@
           llenar: llenar || crece,
           crece,
           capasAntes: Math.min(capasAntes, nCapas),
-          nuevas: new Set(orden.filter((k) => !antes.has(k)))
+          nuevas: new Set(orden.filter((k) => !antes.has(k))),
+          coberturaNueva: !!estado.cobertura && !coberturaAntes
         });
+        coberturaAntes = !!estado.cobertura;
         antes = new Set(orden);
         capasAntes = nCapas;
         grandeAntes = !!estado.grande;
