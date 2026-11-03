@@ -125,7 +125,7 @@
     const p = { tamano, toppings: c };
     const ids = G.items.flatMap((a) => Array(c[a.id] || 0).fill(a.id));
     p.precio = precio(p);
-    p.segundos = Math.max(9, 26 * Math.pow(.86, nv - 1)) + total(c) * 1.2;
+    p.segundos = Math.max(7, 20 * Math.pow(.84, nv - 1)) + total(c);
     p.extra = total(c) * 25;
     p.lector = `un vaso de ${nombreTamano(tamano)}${total(c) ? " con " + nombres(c).join(", ") : " sin toppings"}`;
     p.chips = [{ texto: `Vaso ${nombreTamano(tamano)}`, icono: VASO_ICONO }].concat(total(c)
@@ -270,7 +270,6 @@
     primerControl: () => ctx.controles.querySelector("#fTamanos button"),
     detener: () => {},
     salir,
-    textoNivel: (n) => (n === 3 ? "Menos tiempo y ahora también se mueven los toppings." : n === 5 ? "Pedidos más grandes y clientes con mucha prisa." : "Los clientes tienen menos paciencia."),
     tiendaInicial: () => ({ hash: `pedir=${P.id}`, texto: `Fresas con crema desde ${ctx.money(Math.min(...TAMANOS.map((t) => t.precio)))}` })
   });
 })();
