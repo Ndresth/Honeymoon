@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hony en la cocina · Honeymoon</title>
-  <meta name="description" content="Juega con Hony: arma vasos de fresas con crema con sus capas y toppings antes de que el cliente pierda la paciencia. Un juego de Honeymoon Repostería.">
+  <title>Juegos de Hony · Honeymoon</title>
+  <meta name="description" content="Juega con Hony: arma vasos de fresas con crema y hornea mini galletas antes de que el cliente pierda la paciencia. Juegos de Honeymoon Repostería.">
   <meta name="theme-color" content="#c48ebf">
-  <meta property="og:title" content="Hony en la cocina · Honeymoon">
-  <meta property="og:description" content="Arma vasos de fresas con crema a contrarreloj y pide el tuyo de verdad.">
+  <meta property="og:title" content="Juegos de Hony · Honeymoon">
+  <meta property="og:description" content="Arma vasos de fresas con crema y hornea mini galletas a contrarreloj. Luego pide el tuyo de verdad.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_CO">
   <meta property="og:url" content="https://honeymoonreposteria.com/juego.html">
@@ -29,68 +29,70 @@
 <body class="hm-waves hm-juego-body">
   <main class="hm-juego">
     <header class="hm-juego-top">
-      <a class="btn btn-hm btn-hm-paper btn-sm" href="./#menu" aria-label="Volver al menú"><i class="bi bi-arrow-left" aria-hidden="true"></i><span class="d-none d-sm-inline ms-1">Menú</span></a>
-      <h1 class="hm-juego-titulo"><span class="hm-juego-hony" data-hony></span>Hony en la cocina</h1>
-      <div class="hm-juego-hud">
+      <a class="btn btn-hm btn-hm-paper btn-sm hm-juego-volver" href="./#menu" aria-label="Volver a la tienda"><i class="bi bi-shop" aria-hidden="true"></i><span class="d-none d-sm-inline ms-1">Tienda</span></a>
+      <h1 class="hm-juego-titulo"><span class="hm-juego-hony" data-hony></span><span id="jTitulo">Juegos de Hony</span></h1>
+      <div class="hm-juego-hud" id="jHud" hidden>
+        <span class="hm-hud-nivel" title="Nivel"><span class="visually-hidden">Nivel </span><span aria-hidden="true">Nv</span> <span id="jNivel">1</span></span>
         <span class="hm-hud-puntos"><i class="bi bi-star-fill" aria-hidden="true"></i><span class="visually-hidden">Puntos:</span> <span id="jPuntos">0</span></span>
         <span class="hm-hud-vidas" id="jVidas" role="img" aria-label="3 vidas"></span>
       </div>
+      <button type="button" class="hm-juego-sonido" id="jSonido" aria-pressed="true" aria-label="Sonido encendido"></button>
     </header>
 
-    <!-- ===== Portada ===== -->
-    <section class="hm-juego-card" id="jInicio" aria-labelledby="jInicioTitulo">
+    <!-- ===== Lista de juegos ===== -->
+    <section id="jHub" aria-labelledby="jHubTitulo">
+      <div class="hm-hub-intro">
+        <div class="hm-hub-hony" data-hony aria-hidden="true"></div>
+        <div>
+          <h2 id="jHubTitulo">¡Hola! ¿Me ayudas en la cocina?</h2>
+          <p>Atiende a los clientes antes de que pierdan la paciencia. Cada 3 pedidos sube el nivel… y se pone más difícil.</p>
+        </div>
+      </div>
+      <div class="hm-hub-juegos" id="jJuegos"></div>
+    </section>
+
+    <!-- ===== Instrucciones del juego ===== -->
+    <section class="hm-juego-card" id="jIntro" hidden aria-labelledby="jIntroTitulo">
+      <a class="hm-juego-atras" href="#"><i class="bi bi-arrow-left" aria-hidden="true"></i> Otros juegos</a>
       <div class="hm-juego-portada" aria-hidden="true">
-        <div class="hm-juego-portada-vaso" id="jVasoPortada"></div>
+        <div class="hm-juego-portada-arte" id="jIntroArte"></div>
         <div class="hm-juego-portada-hony" data-hony></div>
       </div>
-      <h2 id="jInicioTitulo">¡Ayuda a Hony a atender!</h2>
-      <p class="hm-juego-intro">Los clientes llegan con antojo de fresas con crema. Arma cada vaso antes de que pierdan la paciencia.</p>
-      <ol class="hm-juego-pasos">
-        <li><strong>Pon el vaso</strong> del tamaño que pide el cliente.</li>
-        <li><strong>Arma las capas en orden:</strong> crema, fresas, salsas y Oreo.</li>
-        <li><strong>Agrega los toppings</strong> del pedido y toca <em>Entregar</em>.</li>
-      </ol>
-      <p class="hm-juego-nota">Tienes 3 vidas: se pierde una si el vaso sale mal o se acaba el tiempo.</p>
-      <button type="button" class="btn btn-hm btn-hm-primary btn-lg" data-jugar><i class="bi bi-play-fill me-1" aria-hidden="true"></i>Jugar</button>
+      <span class="hm-hub-kicker" id="jIntroKicker"></span>
+      <h2 id="jIntroTitulo" tabindex="-1"></h2>
+      <ol class="hm-juego-pasos" id="jIntroPasos"></ol>
+      <p class="hm-juego-nota"><i class="bi bi-heart-fill" aria-hidden="true"></i> Tienes 3 vidas: se pierde una si el pedido sale mal o se acaba la paciencia.</p>
+      <button type="button" class="btn btn-hm btn-hm-primary btn-lg" data-jugar><i class="bi bi-play-fill me-1" aria-hidden="true"></i>¡A jugar!</button>
       <p class="hm-juego-record" id="jRecordInicio"></p>
     </section>
 
     <!-- ===== Partida ===== -->
     <section id="jMesa" hidden aria-label="Partida">
-      <div class="hm-pedido" id="jPedido">
-        <div class="hm-pedido-cara" id="jCara"></div>
-        <div class="hm-pedido-info">
-          <div class="hm-pedido-head"><strong id="jCliente">Cliente</strong><span>quiere</span><span class="hm-pedido-precio" id="jPrecio"></span></div>
+      <div class="hm-cliente" id="jClienteWrap">
+        <div class="hm-cliente-fig" id="jCara"></div>
+        <div class="hm-ticket" id="jPedido">
+          <div class="hm-ticket-head"><strong id="jCliente">Cliente</strong><span>quiere</span><span class="hm-pedido-precio" id="jPrecio"></span></div>
           <ul class="hm-pedido-chips" id="jChips"></ul>
-          <div class="hm-paciencia" aria-hidden="true"><span id="jPaciencia"></span></div>
+          <div class="hm-paciencia" aria-hidden="true"><i class="bi bi-hourglass-split"></i><span class="hm-paciencia-barra"><span id="jPaciencia"></span></span></div>
         </div>
       </div>
 
       <div class="hm-mesa">
+        <div class="hm-mesa-fondo" aria-hidden="true">
+          <span class="hm-mesa-repisa"></span>
+          <span class="hm-mesa-frasco f1"></span><span class="hm-mesa-frasco f2"></span><span class="hm-mesa-frasco f3"></span>
+          <img class="hm-mesa-logo" src="assets/img/logo-honeymoon.svg" alt="" width="456" height="393">
+        </div>
         <p class="hm-burbuja" id="jMsg" aria-hidden="true"></p>
-        <div class="hm-mesa-vaso" id="jVaso"></div>
+        <div class="hm-mesa-escenario" id="jEscenario"></div>
+        <div class="hm-mesa-hony" id="jHonyMesa" data-hony aria-hidden="true"></div>
         <span class="hm-racha" id="jRacha"></span>
+        <div class="hm-efectos" id="jEfectos" aria-hidden="true"></div>
+        <div class="hm-nivel-banner" id="jBanner" hidden aria-hidden="true"><strong id="jBannerNivel"></strong><span id="jBannerTexto"></span></div>
       </div>
       <span class="visually-hidden" id="jAnuncio" role="status" aria-live="polite"></span>
 
-      <div class="hm-controles">
-        <div class="hm-ctrl">
-          <h2 class="hm-ctrl-tit">1 · Vaso</h2>
-          <div class="hm-ctrl-btns is-2" id="jTamanos"></div>
-        </div>
-        <div class="hm-ctrl">
-          <h2 class="hm-ctrl-tit">2 · Capas <small>en orden</small></h2>
-          <div class="hm-ctrl-btns is-4" id="jCapas"></div>
-        </div>
-        <div class="hm-ctrl">
-          <h2 class="hm-ctrl-tit">3 · Toppings <small>los del pedido</small></h2>
-          <div class="hm-ctrl-btns is-4" id="jToppings"></div>
-        </div>
-        <div class="hm-ctrl-acciones">
-          <button type="button" class="btn btn-hm btn-hm-paper" id="jBotar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Botar</button>
-          <button type="button" class="btn btn-hm btn-hm-primary" id="jEntregar"><i class="bi bi-bag-check-fill me-1" aria-hidden="true"></i>Entregar</button>
-        </div>
-      </div>
+      <div class="hm-controles" id="jControles"></div>
     </section>
 
     <!-- ===== Fin ===== -->
@@ -98,21 +100,26 @@
       <div class="hm-juego-fin-hony" data-hony aria-hidden="true"></div>
       <h2 id="jFinTitulo" tabindex="-1">¡Se acabó el turno!</h2>
       <p class="hm-juego-fin-puntos"><span id="jFinPuntos">0</span> <small>puntos</small></p>
-      <p class="hm-juego-fin-detalle"><span id="jFinAtendidos"></span> · <span id="jFinRecord"></span></p>
+      <p class="hm-juego-fin-detalle"><span id="jFinAtendidos"></span> · <span id="jFinNivel"></span> · <span id="jFinRecord"></span></p>
       <div class="hm-juego-real">
-        <p class="mb-1"><strong>¿Te dio antojo?</strong> Pide el último vaso que entregaste:</p>
+        <p class="mb-1"><strong>¿Te dio antojo?</strong> <span id="jPedirIntro"></span></p>
         <p class="hm-juego-real-vaso" id="jPedirTexto"></p>
-        <a class="btn btn-hm btn-hm-primary" id="jPedirReal" href="./#pedir=fresas-con-crema"><i class="bi bi-heart-fill me-1" aria-hidden="true"></i>Pedirlo de verdad</a>
+        <a class="btn btn-hm btn-hm-primary" id="jPedirReal" href="./#menu"><i class="bi bi-heart-fill me-1" aria-hidden="true"></i>Pedirlo de verdad</a>
       </div>
-      <button type="button" class="btn btn-hm btn-hm-paper mt-3" data-jugar><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Jugar otra vez</button>
+      <div class="d-flex flex-wrap gap-2 justify-content-center mt-3">
+        <button type="button" class="btn btn-hm btn-hm-paper" data-jugar><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Jugar otra vez</button>
+        <a class="btn btn-hm btn-hm-paper" href="#"><i class="bi bi-grid me-1" aria-hidden="true"></i>Otros juegos</a>
+      </div>
     </section>
 
-    <p class="hm-juego-pie">Juego de <a href="./">Honeymoon Repostería</a> · Barranquilla</p>
+    <p class="hm-juego-pie">Juegos de <a href="./">Honeymoon Repostería</a> · Barranquilla</p>
   </main>
 
   <script src="assets/js/menu.js"></script>
   <script src="assets/js/illustrations.js"></script>
   <script src="assets/js/vaso.js"></script>
   <script src="assets/js/juego.js"></script>
+  <script src="assets/js/juego-fresas.js"></script>
+  <script src="assets/js/juego-galletas.js"></script>
 </body>
 </html>
