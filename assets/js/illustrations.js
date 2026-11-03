@@ -186,6 +186,12 @@
         <path d="M16 22 l-4 11 M24 22 l-4 11 M32 22 l-4 11 M40 22 l-4 11 M48 22 l-4 11" stroke="#b9852f" stroke-width="1.6" stroke-linecap="round"/>
         <ellipse cx="51" cy="27.5" rx="3.2" ry="5" fill="#6b3a22" stroke="${K}" stroke-width="1.8"/>
       </g>`).join("")}`,
+    // Vaso con cobertura de chocolate chorreando por las paredes
+    cobertura: `
+      <path d="M17 14 H47 L42.5 52 Q42 56 38.5 56 H25.5 Q22 56 21.5 52 Z" fill="#fff" fill-opacity=".75" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M17.7 15.5 H46.3 L45.3 24 Q43.5 29 41.5 24.5 Q40 35 36.5 26 Q34 31 31.5 25.5 Q29.5 38 26.5 26 Q24 31 22 25.5 Q20 30 18.8 25 Z" fill="#4a2414"/>
+      <path d="M22 18 Q28 16 34 18" stroke="#8a5530" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M14.5 14 H49.5" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`,
     // Galletas Oreo: una de frente y otra de lado con la crema
     oreo: `
       <g transform="translate(38 43)">

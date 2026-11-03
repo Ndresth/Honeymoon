@@ -9,7 +9,8 @@
   "use strict";
 
   const P = window.HM_MENU.find((p) => p.id === "fresas-con-crema");
-  const G = window.HM_ADICIONES[P.adiciones];
+  // En el juego van los toppings que caen al vaso (la cobertura de chocolate no)
+  const G = { ...window.HM_ADICIONES[P.adiciones], items: window.HM_ADICIONES[P.adiciones].items.filter((a) => !a.independiente) };
   const TAMANOS = P.tamanos;
   const RECETA = ["crema", "fresas", "salsas", "oreo"];
   const CAPAS = { crema: "Crema", fresas: "Fresas", salsas: "Salsas", oreo: "Oreo" };

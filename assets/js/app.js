@@ -25,8 +25,8 @@
   const contar = (ids) => ids.reduce((c, id) => ((c[id] = (c[id] || 0) + 1), c), {});
   const expandir = (grupo, c) => (grupo ? grupo.items.flatMap((a) => Array(c[a.id] || 0).fill(a.id)) : []);
   const maxDe = (a) => a.max || 1;
-  // Porciones de los demás toppings
-  const sumaOtros = (c, id) => Object.entries(c).reduce((s, [k, v]) => s + (k === id ? 0 : v), 0);
+  // Porciones de los demás toppings (los independientes, como la cobertura, no cuentan)
+  const sumaOtros = (c, id) => Object.entries(c).reduce((s, [k, v]) => s + (k === id || (getAdicion(k) || {}).independiente ? 0 : v), 0);
   // Toppings cuyo límite está activo (ej. 2 de Oreo: nada más; 2 de Queso: solo 1 topping más)
   const limitesActivos = (grupo, c) => grupo.items.filter((a) => a.limite && (c[a.id] || 0) >= a.limite.desde);
   const limiteRoto = (grupo, c) => limitesActivos(grupo, c).find((a) => sumaOtros(c, a.id) > a.limite.otros);
@@ -53,9 +53,12 @@
   function avisoLimite(grupo, c) {
     const a = limitesActivos(grupo, c)[0];
     if (!a) return "";
+    // Los independientes (la cobertura) sí se pueden agregar: se aclara
+    const libres = grupo.items.filter((x) => x.independiente && !c[x.id]).map((x) => x.nombre.toLowerCase());
+    const extra = libres.length ? ` (la ${listaY(libres)} sí se puede)` : "";
     return a.limite.otros === 0
-      ? `Con ${c[a.id]} de ${a.nombre}, ese topping va solo.`
-      : `Con ${c[a.id]} de ${a.nombre} puedes agregar solo ${toppingsMas(a.limite.otros)}.`;
+      ? `Con ${c[a.id]} de ${a.nombre}, ese topping va solo${extra}.`
+      : `Con ${c[a.id]} de ${a.nombre} puedes agregar solo ${toppingsMas(a.limite.otros)}${extra}.`;
   }
   // Ajusta un pedido guardado a los límites actuales
   function sanearToppings(grupo, c) {
@@ -383,10 +386,15 @@
   /* =====================================================
      Menú
      ===================================================== */
-  // Precio de los toppings para la tarjeta: "+$2.000 c/u" si todos valen lo mismo
-  function precioToppings(grupo) {
-    const precios = [...new Set(grupo.items.map((a) => a.precio))];
-    return precios.length === 1 ? `+${money(precios[0])} c/u` : `desde +${money(Math.min(...precios))}`;
+  // Precio de los toppings: "+$2.000 c/u" si todos valen lo mismo; si uno vale distinto,
+  // "+$2.000 c/u · Cobertura de chocolate +$3.000" (corto: "desde +$2.000")
+  function precioToppings(grupo, corto) {
+    const precios = grupo.items.map((a) => a.precio);
+    const comun = precios.slice().sort((a, b) => precios.filter((x) => x === b).length - precios.filter((x) => x === a).length)[0];
+    const otros = grupo.items.filter((a) => a.precio !== comun);
+    if (!otros.length) return `+${money(comun)} c/u`;
+    if (corto || otros.length > 1) return `desde +${money(Math.min(...precios))}`;
+    return `+${money(comun)} c/u · ${otros[0].nombre} +${money(otros[0].precio)}`;
   }
 
   // Foto del topping; si no hay, su ícono dibujado y, en último caso, la inicial
@@ -411,7 +419,7 @@
         ? `<div class="hm-card-toppings">
             <p class="hm-card-extra mb-2"><strong>Toppings ${esc(precioToppings(grupo))}</strong></p>
             ${grupo.texto ? `<p class="hm-card-extra">${esc(grupo.texto)}</p>` : ""}
-            <ul class="hm-topping-chips">${grupo.items.map((a) => `<li>${fotoTopping(a)}<span>${esc(a.nombre)}</span></li>`).join("")}</ul>
+            <ul class="hm-topping-chips">${grupo.items.map((a) => `<li>${fotoTopping(a)}<span>${esc(a.corto || a.nombre)}</span></li>`).join("")}</ul>
           </div>`
         : "";
     const boton = ok
@@ -507,14 +515,14 @@
     const grupo = grupoDe(p);
     conteoToppings = pre && grupo ? contar(adicionesValidas(p, pre.adiciones)) : {};
     $("#productoAdiciones").innerHTML = grupo ? `
-      <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional · ${esc(precioToppings(grupo))}</small></div>
+      <div class="hm-group-title" id="lblAdic">Toppings <small>Opcional · ${esc(precioToppings(grupo, true))}</small></div>
       ${grupo.texto ? `<p class="hm-group-intro">${esc(grupo.texto)}</p>` : ""}
       <div class="row g-2" role="group" aria-labelledby="lblAdic">
         ${grupo.items.map((a) => `
           <div class="col-12">
             <div class="hm-topping" data-topping="${a.id}">
               ${fotoTopping(a)}
-              <span class="hm-topping-info"><strong>${esc(a.nombre)}</strong><small>+${money(a.precio)} · máx. ${maxDe(a)}</small></span>
+              <span class="hm-topping-info"><strong>${esc(a.nombre)}</strong><small>${a.detalle ? esc(a.detalle) + " · " : ""}+${money(a.precio)} · máx. ${maxDe(a)}</small></span>
               <div class="hm-qty hm-qty-sm" role="group" aria-label="Porciones de ${esc(a.nombre)}">
                 <button type="button" data-topping-paso="-1" aria-label="Quitar una porción de ${esc(a.nombre)}"><i class="bi bi-dash-lg"></i></button>
                 <output aria-live="off">0</output>
@@ -548,8 +556,13 @@
     const fd = new FormData(form);
     const t = getTamano(actual, fd.get("tamano"));
     const toppings = {};
-    if (grupo) grupo.items.forEach((a) => { if (conteoToppings[a.id]) toppings[a.icono || a.id] = conteoToppings[a.id]; });
-    vasoArmar.pintar({ grande: actual.tamanos.indexOf(t) > 0, capas: actual.armar.receta, toppings }, { llenar: !!llenar });
+    let cobertura = false;
+    if (grupo) grupo.items.forEach((a) => {
+      if (!conteoToppings[a.id]) return;
+      if (a.icono === "cobertura") cobertura = true; // se dibuja en las paredes del vaso
+      else toppings[a.icono || a.id] = conteoToppings[a.id];
+    });
+    vasoArmar.pintar({ grande: actual.tamanos.indexOf(t) > 0, capas: actual.armar.receta, toppings, cobertura }, { llenar: !!llenar });
     $("#armarTam").textContent = `Vaso de ${t.nombre}`;
     const tops = nombresToppings(actual, expandir(grupo, conteoToppings));
     $("#armarTops").textContent = tops.length ? `+ ${tops.join(", ")}` : "Agrega toppings y míralos caer en tu vaso.";
@@ -575,7 +588,9 @@
     const solo = solos.length && desde.length === 1
       ? ` Si pides ${desde[0]} o más de ${listaY(solos.map((a) => a.nombre), "o")}, ese topping va solo.`
       : solos.map((a) => ` Con ${a.limite.desde} o más de ${a.nombre}, va solo.`).join("");
-    return `Máximo por vaso: ${max}.${pocos}${solo}`;
+    const libres = grupo.items.filter((a) => a.independiente).map((a) => a.nombre);
+    const libre = libres.length ? ` ${listaY(libres)} ${libres.length > 1 ? "van" : "va"} con cualquier topping.` : "";
+    return `Máximo por vaso: ${max}.${pocos}${solo}${libre}`;
   }
 
   // Botones + y − de cada topping según los límites; el aviso explica lo que no se puede

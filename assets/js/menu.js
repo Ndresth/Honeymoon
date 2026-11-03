@@ -27,17 +27,20 @@
    - disponible: false para mostrarlo como "Próximamente"
    ========================================================= */
 window.HM_ADICIONES = {
-  // Toppings de las fresas con crema: cada porción suma $2.000.
+  // Toppings de las fresas con crema: cada porción suma su precio ($2.000; la cobertura $3.000).
   // max: porciones máximas de ese topping en un vaso.
   // limite: { desde, otros } → desde esa cantidad de ese topping, se permiten como máximo
   //         `otros` porciones de los demás toppings (otros: 0 = va solo).
+  // independiente: true → no cuenta para los límites de los demás (ej. la cobertura va en el vaso).
+  // corto: nombre corto para la tarjeta; detalle: texto bajo el nombre en el detalle.
   fresas: {
     texto: "✨ ¡Llévalo al siguiente nivel! Añade tus toppings favoritos y crea una combinación deliciosa, crujiente y llena de sabor.💜",
     items: [
       { id: "f-queso", nombre: "Queso", icono: "queso", precio: 2000, max: 2, limite: { desde: 2, otros: 1 } },
       { id: "f-chocoramo", nombre: "Chocoramo", icono: "chocoramo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
       { id: "f-piazza", nombre: "Piazza", icono: "piazza", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
-      { id: "f-oreo", nombre: "Oreo", icono: "oreo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } } // ya viene en la base
+      { id: "f-oreo", nombre: "Oreo", icono: "oreo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } }, // ya viene en la base
+      { id: "f-cobertura", nombre: "Cobertura de chocolate", corto: "Cobertura", detalle: "En el vaso", icono: "cobertura", precio: 3000, max: 1, independiente: true }
     ]
   }
 };

@@ -301,10 +301,10 @@ h1, h2, h3, h4, .hm-display {
 /* Toppings en la tarjeta: foto redonda y nombre */
 .hm-card-toppings { margin-bottom: 1rem; }
 .hm-card-toppings .hm-card-extra:last-of-type { margin-bottom: .75rem; }
-.hm-topping-chips { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; }
+.hm-topping-chips { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .5rem; }
 .hm-topping-chips li { display: flex; flex-direction: column; align-items: center; gap: .3rem; text-align: center; min-width: 0; }
 .hm-topping-chips span:not(.hm-topping-foto) { font-family: var(--hm-font-display); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; overflow-wrap: normal; }
-@media (max-width: 479.98px) { .hm-topping-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: .75rem; } }
+@media (max-width: 479.98px) { .hm-topping-chips { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: .75rem; } }
 .hm-topping-foto {
   width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; display: block;
   border: 2px solid #fff; box-shadow: 0 0 0 2px var(--hm-lilac-light); background: var(--hm-lilac-100);
@@ -369,6 +369,7 @@ h1, h2, h3, h4, .hm-display {
 .hm-topping.is-on .hm-topping-info small { color: var(--hm-plum); }
 .hm-topping .hm-qty { flex-shrink: 0; background: #fff; }
 .hm-topping-aviso { min-height: 1.4em; margin: .6rem 0 0; font-weight: 800; font-size: .88rem; color: var(--hm-lilac-deep); }
+.hm-topping-aviso { scroll-margin: .75rem 0; } /* al mostrarse, no queda pegado al pie del detalle */
 .hm-topping-reglas { font-size: .8rem; color: var(--hm-plum-soft); margin: .1rem 0 0; }
 
 /* ---------- Info ---------- */
@@ -658,6 +659,8 @@ body.has-cart .hm-fab-wa { bottom: 5.25rem; }
 
 /* Capas que se llenan, toppings que caen y vaso que crece */
 .hm-v-capa.is-llena { transform-box: fill-box; transform-origin: 50% 100%; animation: hm-llena .42s ease-out both; animation-delay: var(--d, 0ms); }
+.hm-v-cobertura.is-chorrea { transform-box: fill-box; transform-origin: 50% 0; animation: hm-chorrea .6s ease-out both; }
+@keyframes hm-chorrea { from { transform: scaleY(0); opacity: 0; } to { transform: none; opacity: 1; } }
 .hm-v-top.is-cae { animation: hm-cae .6s cubic-bezier(.3, 1.35, .5, 1) both; }
 svg.is-crece { transform-origin: 50% 100%; animation: hm-crece .45s cubic-bezier(.3, 1.4, .5, 1); }
 @keyframes hm-llena { from { transform: scaleY(0); opacity: 0; } 40% { opacity: 1; } to { transform: none; opacity: 1; } }
