@@ -97,7 +97,8 @@ window.HM_ADICIONES = {
       nombre: "Mini donas",
       descripcion: "Vaso de 12 onz con 7 mini donitas.",
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
-      ilustracion: { tipo: "donas", fondo: "#cdaee8" } // dibujo del vaso con las 7 donitas (sin foto real aún)
+      imagen: "assets/img/mini-donas.webp", // foto real del vaso de 12 onz con tapa de domo
+      posicion: "center 80%"
     }
   ];
 })();

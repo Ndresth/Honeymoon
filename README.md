@@ -9,13 +9,17 @@ Branding lila: el lila del logo (`#c48ebf`), blanco y ciruela (`#4a1f48`) para t
 ```
 index.html                 Página principal
 tratamiento-de-datos.html  Política de tratamiento de datos personales (Ley 1581 de 2012)
-juego.html                 Juego "Hony en la cocina" (arma vasos de fresas con crema)
+juego.html                 Juegos de Hony: "Fresas con crema" y "Galletas al horno"
 assets/css/styles.css      Estilos y paleta de marca
 assets/js/config.js        WhatsApp, horario, zonas de domicilio, pagos, días de encargo
 assets/js/menu.js          Categorías, productos, tamaños y adiciones
 assets/js/illustrations.js Ilustraciones SVG de los productos
-assets/js/vaso.js          Vaso animado de fresas con crema ("Así va tu vaso" y el juego)
-assets/js/juego.js         Lógica del juego
+assets/js/vaso.js          Vaso animado de fresas con crema ("Así va tu vaso" y el juego de fresas)
+assets/js/juego.js         Marco común de los juegos (pantallas, clientes, puntos, vidas, niveles, récords, sonido)
+assets/js/juego-fresas.js  Juego "Fresas con crema"
+assets/js/juego-galletas.js Juego "Galletas al horno"
+assets/js/juego-3d.js      Escenas 3D de los juegos (Three.js): cocina, vaso, bandeja y horno
+assets/vendor/three/       Three.js 0.170.0 (licencia MIT en LICENSE), solo lo carga juego.html
 assets/js/app.js           Lógica: menú, carrito, checkout y mensaje de WhatsApp
 assets/img/                Logo (SVG blanco), íconos, imagen para compartir y fotos de los productos (WebP)
 assets/vendor/             Bootstrap 5.3.3 y Bootstrap Icons 1.11.3 (copias locales, licencia MIT)
@@ -51,7 +55,7 @@ En `assets/js/menu.js`:
   - Un tamaño puede tener su propia `imagen`: en el detalle la foto cambia al elegirlo (Fresas con crema: 9 onz y 12 onz).
   - `posicion` (opcional, producto o tamaño): encuadre de la foto, ej. `"center 70%"`, para que el producto no se corte en los marcos más bajos (en celular las fotos van cuadradas).
   - `fotoNota` (opcional): texto sobre la foto, por ejemplo qué topping sale (Paveé: "Foto: con topping de Untable de Milo"; la opción Leche Klim muestra su propia foto).
-  - Mini donas usan el dibujo `donas` (vaso de 12 onz con 7 mini donitas, vertical como las fotos) hasta tener una foto real del vaso; la foto de las donitas sueltas está en `assets/img/originales/`.
+  - Mini donas usan la foto real del vaso de 12 onz con tapa de domo (`mini-donas.webp`, original en `assets/img/originales/mini-donas-vaso.jpg`). El dibujo `donas` sigue disponible en `illustrations.js` por si se quiere volver a usar.
   - `encargo: true`: todo el producto se hace por encargo.
   - `nombreCompleto` (opcional): nombre para el carrito y WhatsApp si el de la tarjeta es corto.
   - `notaPlaceholder`: texto de ejemplo para la nota del producto.
@@ -70,9 +74,14 @@ Un producto con `armar` (hoy Fresas con crema) muestra en el detalle un vaso dib
 
 Un enlace como `./#pedir=fresas-con-crema&tamano=12oz&t=f-queso,f-oreo` abre ese producto ya armado (el tamaño y los toppings se validan con los límites del menú). Lo usa el juego.
 
-## Juego "Hony en la cocina"
+## Juegos de Hony
 
-`juego.html`, enlazado desde el menú, la barra de navegación y el pie de página. Llegan clientes con pedidos de fresas con crema; el jugador pone el vaso del tamaño pedido, arma las capas en orden (crema → fresas → salsas → Oreo), agrega los toppings y entrega antes de que se acabe la paciencia. Tiene 3 vidas, racha, niveles que suben cada 3 pedidos y récord guardado en el navegador (`hm_juego_record`). Los pedidos salen de `menu.js` (tamaños, toppings, precios y límites reales), así que siempre se pueden pedir de verdad: al terminar, "Pedirlo de verdad" abre la tienda con el último vaso entregado.
+`juego.html`, enlazado desde el menú, la barra de navegación y el pie de página. Abre con la lista de juegos; `juego.html#fresas` y `juego.html#galletas` van directo a cada uno. Se ven en 3D con Three.js (`juego-3d.js`, estilo caricatura con sombreado por escalones y contornos ciruela): cocina con mesón, repisa y logo; el vaso gira, las capas se llenan y los toppings caen; la bandeja entra al horno, la puerta se abre y adentro se prende la luz mientras las galletas se doran. Si el navegador no tiene WebGL 2, los juegos usan sus dibujos 2D y funcionan igual. Los dos comparten el marco de `juego.js`: llegan clientes dibujados (cambian de cara según su paciencia) con un ticket del pedido y su barra de paciencia; hay 3 vidas, racha, puntos (más por rapidez, racha y nivel), confeti, sonido que se puede apagar (`hm_juego_sonido`) y un récord por juego guardado en el navegador. Cada 3 pedidos sube el nivel con un aviso, y cada nivel da menos tiempo. Al terminar, "Pedirlo de verdad" abre la tienda con lo último que entregó.
+
+- **Fresas con crema** (`juego-fresas.js`): poner el vaso del tamaño pedido, armar las capas en orden (1 crema → 2 fresas → 3 salsas → 4 Oreo) y agregar los toppings. En cada pedido los botones de las capas cambian de lugar, pero cada uno conserva su número; desde el nivel 3 también se mueven los toppings. Los pedidos salen de `menu.js` (tamaños, toppings, precios y límites reales). Récord en `hm_juego_record`.
+- **Galletas al horno** (`juego-galletas.js`): poner el papel, una masa en cada punto que marca el papel (los puntos salen en lugares al azar; tocar fuera quita 2 segundos), meter la bandeja al horno, ponerlo a la temperatura del pedido y sacar las galletas cuando la aguja esté en "Doradas". Más caliente hornea más rápido. La dificultad sube en cada nivel (`dificultad(nivel)`): una galleta más (de 4 hasta 14), puntos más pequeños, menos tiempo, zona dorada más angosta y horno más rápido; desde el nivel 3 el horno va de 5 en 5 grados, desde el 5 las marcas del papel se borran a los 3 segundos (hay que memorizarlas), desde el 6 hay temperaturas de 150 a 210 °C y desde el 7 las marcas se borran a los 1,8 segundos. Récord en `hm_juego_galletas_record`.
+
+Para agregar otro juego: un archivo que llame a `HM_JUEGO.registrar({ id, nombre, kicker, descripcion, pasos, claveRecord, portada, preparar, crearPedido, iniciar, pintarControles, detener, primerControl, textoNivel, tiendaInicial })` (ver los dos juegos) y su `<script>` en `juego.html`.
 
 ## Modo "Muy pronto"
 
@@ -80,7 +89,7 @@ En `config.js`, `mantenimiento: true` muestra solo la pantalla "Estamos endulzan
 
 ## Tratamiento de datos
 
-`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`; el juego guarda además el récord en `hm_juego_record`) y llegan al negocio únicamente por WhatsApp. No usa cookies (ni de rastreo ni de publicidad), así que no necesita aviso de cookies; si se agrega Google Analytics o un píxel de publicidad, habría que agregar ese aviso. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
+`tratamiento-de-datos.html` explica, según la Ley 1581 de 2012, para qué se usan los datos del pedido y dónde quedan: la página no tiene servidor, los datos de entrega se guardan solo en el navegador del cliente (`hm_cliente` y `hm_carrito` en `localStorage`; los juegos guardan además sus récords y la preferencia de sonido (`hm_juego_record`, `hm_juego_galletas_record`, `hm_juego_sonido`)) y llegan al negocio únicamente por WhatsApp. No usa cookies (ni de rastreo ni de publicidad), así que no necesita aviso de cookies; si se agrega Google Analytics o un píxel de publicidad, habría que agregar ese aviso. Tiene un botón para borrarlos del dispositivo. Se enlaza desde el pie de página y desde el formulario del pedido ("Al enviar tu pedido aceptas…"). Si cambia lo que se pide o cómo se guarda, actualiza ese texto y la fecha de "Última actualización".
 
 ## Cómo funciona el pedido
 
