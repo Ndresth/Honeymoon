@@ -57,6 +57,7 @@ En `assets/js/menu.js`:
   - Un tamaño puede tener su propia `imagen`: en el detalle la foto cambia al elegirlo (Fresas con crema: 9 onz y 12 onz).
   - `posicion` (opcional, producto o tamaño): encuadre de la foto, ej. `"center 70%"`, para que el producto no se corte en los marcos más bajos (en celular las fotos van cuadradas).
   - `fotoNota` (opcional): texto sobre la foto, por ejemplo qué topping sale (Paveé: "Foto: con topping de Untable de Milo"; la opción Leche Klim muestra su propia foto).
+  - `galeria` (opcional, en el producto, un tamaño o una opción, junto a `imagen`): `[{ imagen, posicion }]` con fotos extra; en el detalle salen miniaturas para pasar de una a otra (ej. Paveé con Oreo: de lado y desde arriba). La tarjeta del menú muestra siempre la foto del producto.
   - Mini donas usan la foto real del vaso de 12 onz con tapa de domo (`mini-donas.webp`, original en `assets/img/originales/mini-donas-vaso.jpg`). El dibujo `donas` sigue disponible en `illustrations.js` por si se quiere volver a usar.
   - `encargo: true`: todo el producto se hace por encargo.
   - `nombreCompleto` (opcional): nombre para el carrito y WhatsApp si el de la tarjeta es corto.

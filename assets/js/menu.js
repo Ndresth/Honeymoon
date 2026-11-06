@@ -11,7 +11,9 @@
    - eleccion: { titulo, detalle, opciones: [{ id, nombre, imagen?, fotoNota?, posicion?, ilustracion? }] }
                → el cliente elige una opción incluida en el precio (ej. el topping del paveé).
                Si la opción trae `imagen`, la foto del detalle cambia al elegirla (si no, se usa
-               la foto del producto).
+               la foto del producto). La tarjeta del menú muestra la foto del producto.
+   - galeria (producto, tamaño u opción, junto a `imagen`): [{ imagen, posicion? }] → fotos extra;
+             en el detalle salen miniaturas para pasar de una foto a otra.
    - armar: { titulo, receta, base } → muestra "Así va tu vaso": un vaso dibujado que se llena
             con las capas de `receta` (ver vaso.js), crece con el tamaño y recibe los toppings
             que el cliente agrega (se dibujan con el `icono` de cada topping).
@@ -77,7 +79,10 @@ window.HM_ADICIONES = {
         titulo: "Topping",
         detalle: "Topping incluido: Oreo, Untable de Milo o Leche Klim",
         opciones: [
-          { id: "oreo", nombre: "Oreo" },
+          {
+            id: "oreo", nombre: "Oreo", imagen: "assets/img/pave-oreo.webp", fotoNota: "Foto: con topping de Oreo", posicion: "center 55%",
+            galeria: [{ imagen: "assets/img/pave-oreo-arriba.webp", posicion: "center 55%" }] // vista desde arriba
+          },
           { id: "milo", nombre: "Untable de Milo", imagen: "assets/img/pave-milo.webp", fotoNota: "Foto: con topping de Untable de Milo", posicion: "center 62%" },
           { id: "klim", nombre: "Leche Klim", imagen: "assets/img/pave-klim.webp", fotoNota: "Foto: con topping de leche Klim" }
         ]
