@@ -114,18 +114,31 @@
   };
   // Lo que se ve de un producto: la foto del tamaño elegido (si tiene), la del producto
   // o, sin foto, el dibujo (el de la opción elegida, si la hay)
+  // `fotos`: la principal y las de su `galeria` (en el detalle se pasa de una a otra).
+  // La tarjeta (sin opción elegida) muestra la foto del producto si la tiene.
   function imagenDe(p, opcion, tamano) {
+    const conFotos = (src, nota) => ({ imagen: src.imagen, nota, pos: src.posicion, fotos: [{ imagen: src.imagen, pos: src.posicion }].concat((src.galeria || []).map((g) => ({ imagen: g.imagen, pos: g.posicion }))) });
     const t = tamano ? p.tamanos.find((x) => x.id === tamano) : null;
-    if (t && t.imagen) return { imagen: t.imagen, nota: t.fotoNota || "", pos: t.posicion };
+    if (t && t.imagen) return conFotos(t, t.fotoNota || "");
     const o = getOpcion(p, opcion);
-    if (o && o.imagen) return { imagen: o.imagen, nota: o.fotoNota || "", pos: o.posicion };
-    if (p.imagen) return { imagen: p.imagen, nota: p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : ""), pos: p.posicion };
+    if (o && o.imagen && (opcion != null || !p.imagen)) return conFotos(o, o.fotoNota || "");
+    if (p.imagen) return conFotos(p, p.fotoNota || (p.fotoReferencia ? "Foto de referencia" : ""));
     return { ilustracion: ilustracionDe(p, opcion) };
   }
-  function media(p, opcion, tamano) {
+  function media(p, opcion, tamano, n = 0) {
     const v = imagenDe(p, opcion, tamano);
     if (!v.imagen) return window.HM_ILUSTRACION(v.ilustracion);
-    return `<img src="${esc(v.imagen)}" alt="" loading="lazy"${v.pos ? ` style="object-position:${esc(v.pos)}"` : ""}>`;
+    const f = v.fotos[n] || v.fotos[0];
+    return `<img src="${esc(f.imagen)}" alt="" loading="lazy"${f.pos ? ` style="object-position:${esc(f.pos)}"` : ""}>`;
+  }
+  // Miniaturas para cambiar de foto en el detalle (solo si hay más de una)
+  function miniaturas(p, opcion, tamano, n = 0) {
+    const v = imagenDe(p, opcion, tamano);
+    if (!v.fotos || v.fotos.length < 2) return "";
+    return `<div class="hm-fotos" role="group" aria-label="Fotos del producto">${v.fotos.map((f, i) => `
+      <button type="button" class="hm-foto-mini${i === n ? " is-on" : ""}" data-foto="${i}" aria-label="Foto ${i + 1} de ${v.fotos.length}" aria-pressed="${i === n}">
+        <img src="${esc(f.imagen)}" alt=""${f.pos ? ` style="object-position:${esc(f.pos)}"` : ""}>
+      </button>`).join("")}</div>`;
   }
   function etiquetaFoto(p, opcion, tamano) {
     const v = imagenDe(p, opcion, tamano);
@@ -538,7 +551,7 @@
     pintarMedia();
     // Precarga las fotos de los otros tamaños: al cambiar de tamaño la foto cambia sin espera
     p.tamanos.forEach((t) => { if (t.imagen) new Image().src = t.imagen; });
-    if (p.eleccion) p.eleccion.opciones.forEach((o) => { if (o.imagen) new Image().src = o.imagen; });
+    if (p.eleccion) p.eleccion.opciones.forEach((o) => [o.imagen].concat((o.galeria || []).map((g) => g.imagen)).forEach((src) => { if (src) new Image().src = src; }));
     pintarToppings();
     pintarVaso();
     $("#productoNota").value = "";
@@ -570,12 +583,12 @@
   }
 
   // Foto o dibujo del producto: el del tamaño y la opción marcados
-  function pintarMedia() {
+  function pintarMedia(n = 0) {
     const opcion = (form.querySelector('input[name="opcion"]:checked') || {}).value;
     const tamano = (form.querySelector('input[name="tamano"]:checked') || form.querySelector('input[name="tamano"]') || {}).value;
     const m = $("#productoMedia");
     m.style.background = fondo(actual, opcion);
-    m.innerHTML = media(actual, opcion, tamano) + etiquetaFoto(actual, opcion, tamano);
+    m.innerHTML = media(actual, opcion, tamano, n) + etiquetaFoto(actual, opcion, tamano) + miniaturas(actual, opcion, tamano, n);
   }
 
   // Texto con los límites del grupo, armado desde menu.js
@@ -654,6 +667,14 @@
     }
   });
   form.addEventListener("click", (e) => {
+    // Miniaturas de las fotos
+    const mini = e.target.closest("[data-foto]");
+    if (mini) {
+      const n = +mini.dataset.foto;
+      pintarMedia(n);
+      $(`#productoMedia [data-foto="${n}"]`).focus();
+      return;
+    }
     const paso = e.target.closest("[data-topping-paso]");
     if (paso) {
       const grupo = grupoDe(actual);

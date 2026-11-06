@@ -277,6 +277,15 @@ h1, h2, h3, h4, .hm-display {
 /* Fotos verticales de producto: el producto queda en la mitad baja, así nunca se corta el vaso */
 .hm-card-media img, .hm-product-media img, .hm-cart-thumb img { object-position: center 60%; }
 .hm-card .hm-ref { top: .6rem; bottom: auto; } /* abajo la tapa la etiqueta del nombre */
+/* Miniaturas para pasar de una foto a otra en el detalle */
+.hm-fotos { position: absolute; z-index: 1; left: .5rem; top: .5rem; display: flex; gap: .4rem; }
+.hm-foto-mini {
+  width: 44px; height: 44px; padding: 0; border-radius: 10px; overflow: hidden; border: 2px solid #fff;
+  background: #fff; box-shadow: 0 2px 6px rgba(74, 31, 72, .35); opacity: .8; cursor: pointer;
+}
+.hm-foto-mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hm-foto-mini.is-on { border-color: var(--hm-plum); opacity: 1; box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(74, 31, 72, .35); }
+.hm-foto-mini:focus-visible { outline: 3px solid var(--hm-lilac-deep); outline-offset: 2px; }
 .hm-card-body { padding: 0 1.15rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
 /* Nombre como etiqueta del menú impreso, montada sobre la foto */
 .hm-card-title { margin: -1.05rem 0 .6rem; position: relative; z-index: 1; line-height: 1; }
