@@ -120,14 +120,18 @@ window.HM_ADICIONES = {
        dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página).
        ½ Lb: fresas con crema $80.000 · dulce de leche u Oreo $75.000.
        10 cm: fresas con crema $45.000 · dulce de leche u Oreo $40.000.
-       Choco Moon (chocolate) solo en 1 Lb: falta su precio de ½ Lb y 10 cm. */
+       Chocolate (Choco Moon): ½ Lb $90.000 · 10 cm $50.000. */
     {
       id: "torta-choco-moon",
       categoria: "tortas",
       nombre: "Choco Moon",
       nombreCompleto: "Torta Choco Moon",
       descripcion: "🍫 Para los verdaderos amantes del chocolate. Esponjoso bizcocho de chocolate, con un delicioso relleno de ganache de chocolate y una irresistible cobertura de chocolate que hace de cada bocado una experiencia llena de sabor. 🤎✨",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 130000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 130000 },
+        { id: "media", nombre: "½ Lb", precio: 90000 },
+        { id: "10cm", nombre: "10 cm", precio: 50000 }
+      ],
       imagen: "assets/img/torta-choco-moon.webp",
       posicion: "center 70%"
     },
