@@ -247,6 +247,9 @@ h1, h2, h3, h4, .hm-display {
 
 /* ---------- Menú ---------- */
 .hm-menu { background-color: var(--hm-lilac-100); background-image: var(--hm-waves-soft); background-size: 360px 150px; }
+/* Subsección dentro del menú (Tortas) */
+.hm-subseccion { margin-top: clamp(3.5rem, 7vw, 5rem); }
+.hm-subseccion .hm-section-title:focus { outline: none; }
 
 .hm-card {
   height: 100%; display: flex; flex-direction: column;

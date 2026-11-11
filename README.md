@@ -48,11 +48,13 @@ En `assets/js/menu.js`:
   - Cobertura de chocolate en el vaso: $3.000, máximo 1. Es `independiente: true`: no cuenta para los límites de los demás (se puede pedir con cualquier combinación). En "Así va tu vaso" se dibuja chorreando por las paredes del vaso; en el juego no aparece.
   - Campos opcionales de cada topping: `corto` (nombre en la tarjeta), `detalle` (texto bajo el nombre en el detalle) e `independiente`.
   - Se pueden pedir los 4 toppings a la vez (una porción de cada uno).
-- `HM_MENU`: productos (Fresas con crema, Paveé, Galletas y Mini donas). Campos principales:
+- `HM_MENU`: productos del menú (Fresas con crema, Paveé, Galletas y Mini donas) y de la sección Tortas (ver abajo). Campos principales:
   - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "7 mini donitas") y `encargo: true`.
   - `adiciones`: nombre del grupo de toppings que acepta (el cliente suma porciones con + y −; el modal bloquea lo que no cumple los límites y explica por qué).
   - `destacado: true`: tarjeta ancha, con la foto al lado en computador (hoy, Fresas con crema).
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Oreo, Untable de Milo o Leche Klim). Si la opción trae `imagen` (y opcional `fotoNota` y `posicion`), la foto del detalle cambia al elegirla; si no, se usa la foto del producto.
+  - Si una opción de `eleccion` trae `precio`, ese es el precio del producto con esa opción (ej. el relleno de Berry Love): la tarjeta lista cada opción con su precio, el detalle lo muestra en cada botón y el total cambia al elegir.
+  - `categoria: "tortas"`: el producto sale en la sección Tortas en vez del menú. `aviso`: texto que se muestra en el detalle (ej. cómo enviar las fotos).
   - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`. Las fotos de producto son verticales (3:4, fondo lila) y van en WebP de 1200 px de ancho para que carguen rápido; las originales quedan en `assets/img/originales/`.
   - Un tamaño puede tener su propia `imagen`: en el detalle la foto cambia al elegirlo (Fresas con crema: 9 onz y 12 onz).
   - `posicion` (opcional, producto o tamaño): encuadre de la foto, ej. `"center 70%"`, para que el producto no se corte en los marcos más bajos (en celular las fotos van cuadradas).
@@ -70,6 +72,17 @@ La tarjeta de cada producto muestra, como el menú impreso, los tamaños con su 
 Recoger en el local está apagado (`recoger: false` en `config.js`): en el checkout sale como **Próximamente** y solo se puede pedir a domicilio. Cuando haya local, pon `recoger: true` y la dirección en `puntoRecogida`.
 
 Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy martes a domingo de 1:30 a 7:15 p. m. y lunes de descanso, `1: null`; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
+
+## Tortas
+
+Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el pie). Muestra los productos con `categoria: "tortas"`: tortas de 1 Lb, todas `encargo: true` (el pedido exige fecha con `diasEncargo` días de anticipación, hoy 2). Precios según el relleno:
+
+- Choco Moon (relleno de chocolate): $130.000.
+- Fresas & Oreo (relleno de dulce de leche): $105.000. **El nombre es provisional**: falta el definitivo.
+- Caramel Crunch (relleno de dulce de leche): $105.000.
+- Berry Love (decorada con las fotos del cliente): el cliente elige el relleno, Fresas con crema $120.000, Dulce de leche $110.000 u Oreo $110.000. El detalle avisa que las fotos se envían por WhatsApp.
+
+La torta de 1 Lb sin relleno vale $90.000, pero no se ofrece en la página. Las fotos están en `assets/img/torta-*.webp` (originales en `assets/img/originales/`).
 
 ## Así va tu vaso
 
