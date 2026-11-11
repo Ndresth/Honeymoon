@@ -108,6 +108,9 @@
 
   // Opción elegida de un producto con "eleccion" (ej. el topping del paveé); la primera por defecto
   const getOpcion = (p, id) => (p.eleccion ? p.eleccion.opciones.find((o) => o.id === id) || p.eleccion.opciones[0] : null);
+  // ¿Se elige la opción en ese tamaño? (eleccion.soloTamanos, ej. el relleno de Berry Love solo en 10 cm)
+  const aplicaEleccion = (p, tamano) => !!p.eleccion && (!p.eleccion.soloTamanos || p.eleccion.soloTamanos.includes(tamano));
+  const opcionDe = (p, it) => (aplicaEleccion(p, it.tamano) ? getOpcion(p, it.opcion) : null);
   const ilustracionDe = (p, opcion) => {
     const o = getOpcion(p, opcion);
     return (o && o.ilustracion) || p.ilustracion || {};
@@ -245,7 +248,7 @@
     return {
       id: p.id,
       tamano: it.tamano,
-      opcion: p.eleccion ? getOpcion(p, it.opcion).id : "",
+      opcion: aplicaEleccion(p, it.tamano) ? getOpcion(p, it.opcion).id : "",
       adiciones: adicionesValidas(p, it.adiciones),
       nota: typeof it.nota === "string" ? it.nota.slice(0, 140) : "",
       cantidad
@@ -268,7 +271,7 @@
   function precioUnitario(it) {
     const p = getProducto(it.id);
     const t = getTamano(p, it.tamano);
-    return precioBase(t, getOpcion(p, it.opcion)) + it.adiciones.reduce((s, id) => s + ((getAdicion(id) || {}).precio || 0), 0);
+    return precioBase(t, opcionDe(p, it)) + it.adiciones.reduce((s, id) => s + ((getAdicion(id) || {}).precio || 0), 0);
   }
 
   const subtotal = () => carrito.reduce((s, it) => s + precioUnitario(it) * it.cantidad, 0);
@@ -303,7 +306,7 @@
     const p = getProducto(it.id);
     const t = getTamano(p, it.tamano);
     const adic = nombresToppings(p, it.adiciones);
-    const o = getOpcion(p, it.opcion);
+    const o = opcionDe(p, it);
     return {
       p, tamano: p.tamanos.length > 1 ? nombreTamano(t) : "", adic, nota: it.nota.trim(), encargo: esEncargo(p, t),
       opcion: o ? `${p.eleccion.titulo}: ${o.nombre}` : ""
@@ -438,7 +441,7 @@
     const grupo = grupoDe(p);
     const encargo = !ok && p.temporada ? p.temporada.texto
       : p.encargo ? textoEncargo()
-      : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
+      : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo · ${CFG.diasEncargo} días antes` : "";
     const conPrecio = opcionesConPrecio(p);
     const detalle = `${varios || conPrecio ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
     // Precios: una fila por tamaño; si el precio depende de la opción (relleno), una fila por opción
@@ -449,7 +452,7 @@
       ? p.tamanos.flatMap((t) => p.eleccion.opciones.map((o) => `<li><span>${esc(t.nombre)} <small>${esc(p.eleccion.titulo)}: ${esc(o.nombre)}</small></span><strong>${money(precioBase(t, o))}</strong></li>`))
       : p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`);
     const extra = conPrecio ? "" : p.eleccion
-      ? `<p class="hm-card-extra"><strong>${esc(p.eleccion.titulo)} incluido:</strong> ${esc(listaY(p.eleccion.opciones.map((o) => o.nombre), "o"))}</p>`
+      ? `<p class="hm-card-extra"><strong>${esc(p.eleccion.titulo)} ${p.eleccion.soloTamanos ? `a elegir (${esc(p.tamanos.filter((t) => p.eleccion.soloTamanos.includes(t.id)).map((t) => t.nombre).join(", "))})` : "incluido"}:</strong> ${esc(listaY(p.eleccion.opciones.map((o) => o.nombre), "o"))}</p>`
       : grupo
         ? `<div class="hm-card-toppings">
             <p class="hm-card-extra mb-2"><strong>Toppings ${esc(precioToppings(grupo))}</strong></p>
@@ -538,6 +541,7 @@
               : `<label class="hm-option justify-content-center text-center h-100" for="o-${o.id}">${esc(o.nombre)}</label>`}
           </div>`).join("")}
       </div>` : "";
+    pintarEleccion();
 
     // "Así va tu vaso": dibujo que se llena con lo que el cliente elige
     const ar = p.armar && window.HM_VASO ? p.armar : null;
@@ -660,7 +664,7 @@
     return {
       id: actual.id,
       tamano: fd.get("tamano"),
-      opcion: fd.get("opcion") || "",
+      opcion: aplicaEleccion(actual, fd.get("tamano")) ? fd.get("opcion") || "" : "",
       adiciones: expandir(grupoDe(actual), conteoToppings),
       nota: ($("#productoNota").value || "").trim(),
       cantidad
@@ -686,7 +690,13 @@
   }
 
   // El precio de cada relleno cambia con el tamaño elegido
+  // La elección (ej. el relleno) se muestra solo en los tamaños donde aplica
+  function pintarEleccion() {
+    $("#productoEleccion").hidden = !aplicaEleccion(actual, new FormData(form).get("tamano"));
+  }
+
   function pintarPreciosOpciones() {
+    if (!actual.eleccion) return;
     const t = getTamano(actual, new FormData(form).get("tamano"));
     $$("[data-precio-opcion]", form).forEach((el) => {
       const o = actual.eleccion.opciones.find((x) => x.id === el.dataset.precioOpcion);
@@ -696,7 +706,7 @@
 
   form.addEventListener("change", (e) => {
     if (e.target.name === "opcion" || e.target.name === "tamano") pintarMedia();
-    if (e.target.name === "tamano") { pintarVaso(); pintarPreciosOpciones(); }
+    if (e.target.name === "tamano") { pintarVaso(); pintarPreciosOpciones(); pintarEleccion(); }
     actualizarTotalProducto();
   });
   form.addEventListener("keydown", (e) => {
