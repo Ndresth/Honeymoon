@@ -304,6 +304,11 @@ h1, h2, h3, h4, .hm-display {
   font-family: var(--hm-font-display); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .08em;
 }
 .hm-card-sizes li > span { min-width: 0; }
+/* Tamaño con precio según la opción (ej. Berry Love): el tamaño arriba y una línea por relleno */
+.hm-card-sizes li.is-grupo { flex-direction: column; align-items: stretch; gap: .15rem; }
+.hm-precio-linea { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.hm-card-sizes .hm-precio-linea small { font-size: .85rem; }
+.hm-card-sizes .hm-precio-linea strong { font-size: .98rem; }
 .hm-card-sizes small { display: block; font-family: var(--hm-font-body); font-weight: 700; font-size: .78rem; text-transform: none; letter-spacing: 0; color: var(--hm-plum-soft); }
 .hm-card-sizes strong { font-weight: 800; font-size: 1.05rem; letter-spacing: 0; white-space: nowrap; }
 .hm-card-extra { font-size: .9rem; color: var(--hm-plum-soft); margin-bottom: 1rem; }

@@ -14,6 +14,8 @@
                la foto del producto). La tarjeta del menú muestra la foto del producto.
                Si una opción trae `precio`, ese es el precio del producto con esa opción
                (ej. el relleno de una torta): la tarjeta lista cada opción con su precio.
+               Con varios tamaños, `precios: { idTamaño: precio }` da el precio de la opción
+               en cada tamaño (ej. Berry Love: 1 Lb, ½ Lb y 10 cm).
    - categoria: "tortas" → el producto sale en esa sección de la página (sin categoría, en el menú).
    - aviso: texto que se muestra en el detalle (ej. cómo enviar las fotos de la torta).
    - galeria (producto, tamaño u opción, junto a `imagen`): [{ imagen, posicion? }] → fotos extra;
@@ -152,13 +154,18 @@ window.HM_ADICIONES = {
       nombre: "Berry Love",
       nombreCompleto: "Torta Berry Love",
       descripcion: "💜 Delicioso bizcocho de vainilla, relleno de fresas frescas con crema y cubierto con suave buttercream. Decorado con fotografías personalizadas para darle un toque único y especial a tu celebración.✨",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 120000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 120000 },
+        { id: "media", nombre: "½ Lb", precio: 80000 },
+        { id: "10cm", nombre: "10 cm", precio: 45000 }
+      ],
+      // Precio según tamaño y relleno
       eleccion: {
         titulo: "Relleno",
         opciones: [
-          { id: "fresas", nombre: "Fresas con crema", precio: 120000 },
-          { id: "dulce", nombre: "Dulce de leche", precio: 110000 },
-          { id: "oreo", nombre: "Oreo", precio: 110000 }
+          { id: "fresas", nombre: "Fresas con crema", precios: { "1lb": 120000, media: 80000, "10cm": 45000 } },
+          { id: "dulce", nombre: "Dulce de leche", precios: { "1lb": 110000, media: 75000, "10cm": 40000 } },
+          { id: "oreo", nombre: "Oreo", precios: { "1lb": 110000, media: 75000, "10cm": 40000 } }
         ]
       },
       aviso: "Esta torta va decorada con tus fotos: envíanoslas por WhatsApp al confirmar el pedido.",

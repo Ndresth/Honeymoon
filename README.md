@@ -80,7 +80,7 @@ Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el p
 - Choco Moon (relleno de chocolate): $130.000.
 - Strawberry Kiss (relleno de dulce de leche): $105.000.
 - Caramel Crunch (relleno de dulce de leche): $105.000.
-- Berry Love (decorada con las fotos del cliente): el cliente elige el relleno, Fresas con crema $120.000, Dulce de leche $110.000 u Oreo $110.000. El detalle avisa que las fotos se envían por WhatsApp. En su foto de ejemplo, la tarjeta con la cara y el nombre de la persona va difuminada.
+- Berry Love (decorada con las fotos del cliente): el cliente elige tamaño y relleno. 1 Lb: Fresas con crema $120.000, Dulce de leche u Oreo $110.000. ½ Lb: $80.000 y $75.000. 10 cm: $45.000 y $40.000. Los precios van en `precios` de cada relleno (`{ "1lb", media, "10cm" }`); la tarjeta muestra cada tamaño con una línea por relleno y en el detalle el precio de cada relleno cambia con el tamaño elegido. El detalle avisa que las fotos se envían por WhatsApp. En su foto de ejemplo, la tarjeta con la cara y el nombre de la persona va difuminada.
 
 La torta de 1 Lb sin relleno vale $90.000, pero no se ofrece en la página. Las fotos están en `assets/img/torta-*.webp` (originales en `assets/img/originales/`).
 
