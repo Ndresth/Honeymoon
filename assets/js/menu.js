@@ -117,7 +117,10 @@ window.HM_ADICIONES = {
 
     /* ===== Tortas de 1 Lb (sección "Tortas") =====
        Precio según el relleno: chocolate $130.000 · fresas con crema $120.000 · Oreo $110.000 ·
-       dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página). */
+       dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página).
+       ½ Lb: fresas con crema $80.000 · dulce de leche u Oreo $75.000.
+       10 cm: fresas con crema $45.000 · dulce de leche u Oreo $40.000.
+       Choco Moon (chocolate) solo en 1 Lb: falta su precio de ½ Lb y 10 cm. */
     {
       id: "torta-choco-moon",
       categoria: "tortas",
@@ -134,7 +137,11 @@ window.HM_ADICIONES = {
       nombre: "Strawberry Kiss",
       nombreCompleto: "Torta Strawberry Kiss",
       descripcion: "🍓 Una combinación irresistible en cada porción. Suave bizcocho de vainilla con un delicioso relleno de dulce de leche, cubierto con cremosa buttercream, fresas frescas y un toque de Oreo triturada. ¡El equilibrio perfecto entre dulzura y textura! 🤍✨",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 105000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 105000 },
+        { id: "media", nombre: "½ Lb", precio: 75000 },
+        { id: "10cm", nombre: "10 cm", precio: 40000 }
+      ],
       imagen: "assets/img/torta-strawberry-kiss.webp",
       posicion: "center 88%"
     },
@@ -144,7 +151,11 @@ window.HM_ADICIONES = {
       nombre: "Caramel Crunch",
       nombreCompleto: "Torta Caramel Crunch",
       descripcion: "🤎 Un delicioso bizcocho de vainilla, relleno y cubierto con una suave capa de dulce de leche, coronado con maní crocante que aporta el toque perfecto de textura y sabor. 🤎✨ ¡Una combinación irresistible para los amantes de lo dulce!",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 105000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 105000 },
+        { id: "media", nombre: "½ Lb", precio: 75000 },
+        { id: "10cm", nombre: "10 cm", precio: 40000 }
+      ],
       imagen: "assets/img/torta-caramel-crunch.webp",
       posicion: "center 62%"
     },
@@ -154,18 +165,13 @@ window.HM_ADICIONES = {
       nombre: "Berry Love",
       nombreCompleto: "Torta Berry Love",
       descripcion: "💜 Delicioso bizcocho de vainilla, relleno de fresas frescas con crema y cubierto con suave buttercream. Decorado con fotografías personalizadas para darle un toque único y especial a tu celebración.✨",
-      tamanos: [
-        { id: "1lb", nombre: "1 Lb", precio: 120000 },
-        { id: "media", nombre: "½ Lb", precio: 80000 },
-        { id: "10cm", nombre: "10 cm", precio: 45000 }
-      ],
-      // Precio según tamaño y relleno
+      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 120000 }],
       eleccion: {
         titulo: "Relleno",
         opciones: [
-          { id: "fresas", nombre: "Fresas con crema", precios: { "1lb": 120000, media: 80000, "10cm": 45000 } },
-          { id: "dulce", nombre: "Dulce de leche", precios: { "1lb": 110000, media: 75000, "10cm": 40000 } },
-          { id: "oreo", nombre: "Oreo", precios: { "1lb": 110000, media: 75000, "10cm": 40000 } }
+          { id: "fresas", nombre: "Fresas con crema", precio: 120000 },
+          { id: "dulce", nombre: "Dulce de leche", precio: 110000 },
+          { id: "oreo", nombre: "Oreo", precio: 110000 }
         ]
       },
       aviso: "Esta torta va decorada con tus fotos: envíanoslas por WhatsApp al confirmar el pedido.",
