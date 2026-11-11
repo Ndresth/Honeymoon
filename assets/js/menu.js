@@ -16,6 +16,8 @@
                (ej. el relleno de una torta): la tarjeta lista cada opción con su precio.
                Con varios tamaños, `precios: { idTamaño: precio }` da el precio de la opción
                en cada tamaño (ej. Berry Love: 1 Lb, ½ Lb y 10 cm).
+   - eleccion.soloTamanos: ["idTamaño"] → la opción solo se elige en esos tamaños
+     (ej. el relleno de Berry Love, solo en la mini torta de 10 cm).
    - categoria: "tortas" → el producto sale en esa sección de la página (sin categoría, en el menú).
    - aviso: texto que se muestra en el detalle (ej. cómo enviar las fotos de la torta).
    - galeria (producto, tamaño u opción, junto a `imagen`): [{ imagen, posicion? }] → fotos extra;
@@ -115,74 +117,61 @@ window.HM_ADICIONES = {
       posicion: "center 80%"
     },
 
-    /* ===== Tortas de 1 Lb (sección "Tortas") =====
-       Precio según el relleno: chocolate $130.000 · fresas con crema $120.000 · Oreo $110.000 ·
-       dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página).
-       ½ Lb: fresas con crema $80.000 · dulce de leche u Oreo $75.000.
-       10 cm: fresas con crema $45.000 · dulce de leche u Oreo $40.000.
-       Chocolate (Choco Moon): ½ Lb $90.000 · 10 cm $50.000. */
+    /* ===== Tortas (sección "Tortas") =====
+       Solo pequeñas y por porción. La mini torta de 10 cm es por encargo (diasEncargo, hoy 2 días);
+       la porción no. */
     {
       id: "torta-choco-moon",
       categoria: "tortas",
       nombre: "Choco Moon",
       nombreCompleto: "Torta Choco Moon",
-      descripcion: "🍫 Para los verdaderos amantes del chocolate. Esponjoso bizcocho de chocolate, con un delicioso relleno de ganache de chocolate y una irresistible cobertura de chocolate que hace de cada bocado una experiencia llena de sabor. 🤎✨",
+      descripcion: "🍫 Torta de chocolate con relleno de ganache de chocolate y cobertura de chocolate. ¡Para los verdaderos amantes del chocolate! 🤎✨",
       tamanos: [
-        { id: "1lb", nombre: "1 Lb", precio: 130000 },
-        { id: "media", nombre: "½ Lb", precio: 90000 },
-        { id: "10cm", nombre: "10 cm", precio: 50000 }
+        { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 50000, encargo: true },
+        { id: "porcion", nombre: "Porción", precio: 18000 }
       ],
       imagen: "assets/img/torta-choco-moon.webp",
-      posicion: "center 70%"
-    },
-    {
-      id: "torta-strawberry-kiss",
-      categoria: "tortas",
-      nombre: "Strawberry Kiss",
-      nombreCompleto: "Torta Strawberry Kiss",
-      descripcion: "🍓 Una combinación irresistible en cada porción. Suave bizcocho de vainilla con un delicioso relleno de dulce de leche, cubierto con cremosa buttercream, fresas frescas y un toque de Oreo triturada. ¡El equilibrio perfecto entre dulzura y textura! 🤍✨",
-      tamanos: [
-        { id: "1lb", nombre: "1 Lb", precio: 105000 },
-        { id: "media", nombre: "½ Lb", precio: 75000 },
-        { id: "10cm", nombre: "10 cm", precio: 40000 }
-      ],
-      imagen: "assets/img/torta-strawberry-kiss.webp",
-      posicion: "center 88%"
+      posicion: "center 66%"
     },
     {
       id: "torta-caramel-crunch",
       categoria: "tortas",
       nombre: "Caramel Crunch",
       nombreCompleto: "Torta Caramel Crunch",
-      descripcion: "🤎 Un delicioso bizcocho de vainilla, relleno y cubierto con una suave capa de dulce de leche, coronado con maní crocante que aporta el toque perfecto de textura y sabor. 🤎✨ ¡Una combinación irresistible para los amantes de lo dulce!",
+      descripcion: "🤎 Bizcocho de vainilla con relleno de dulce de leche, cobertura de dulce de leche y coronado con maní. ¡Una combinación irresistible para los amantes de lo dulce! ✨",
       tamanos: [
-        { id: "1lb", nombre: "1 Lb", precio: 105000 },
-        { id: "media", nombre: "½ Lb", precio: 75000 },
-        { id: "10cm", nombre: "10 cm", precio: 40000 }
+        { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 45000, encargo: true },
+        { id: "porcion", nombre: "Porción", precio: 17000 }
       ],
       imagen: "assets/img/torta-caramel-crunch.webp",
-      posicion: "center 62%"
+      posicion: "center 60%"
     },
     {
       id: "torta-berry-love",
       categoria: "tortas",
       nombre: "Berry Love",
       nombreCompleto: "Torta Berry Love",
-      descripcion: "💜 Delicioso bizcocho de vainilla, relleno de fresas frescas con crema y cubierto con suave buttercream. Decorado con fotografías personalizadas para darle un toque único y especial a tu celebración.✨",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 120000 }],
+      descripcion: "💜 Bizcocho de vainilla con cobertura de buttercream. En la mini torta de 10 cm eliges el relleno: fresas con crema, Oreo o dulce de leche. La porción va con relleno de Oreo. ✨",
+      tamanos: [
+        { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 45000, encargo: true },
+        { id: "porcion", nombre: "Porción", detalle: "Relleno de Oreo", precio: 17000 }
+      ],
+      // El relleno solo se elige en la mini torta de 10 cm
       eleccion: {
         titulo: "Relleno",
+        detalle: "Elige uno",
+        soloTamanos: ["10cm"],
         opciones: [
-          { id: "fresas", nombre: "Fresas con crema", precio: 120000 },
-          { id: "dulce", nombre: "Dulce de leche", precio: 110000 },
-          { id: "oreo", nombre: "Oreo", precio: 110000 }
+          { id: "fresas", nombre: "Fresas con crema" },
+          { id: "oreo", nombre: "Oreo" },
+          { id: "dulce", nombre: "Dulce de leche" }
         ]
       },
-      aviso: "Esta torta va decorada con tus fotos: envíanoslas por WhatsApp al confirmar el pedido.",
       notaPlaceholder: "Ej: nombre, motivo de la celebración…",
       imagen: "assets/img/torta-berry-love.webp",
-      fotoNota: "Ejemplo: va con tus fotos",
-      posicion: "center 56%"
+      fotoNota: "Foto: relleno de fresas con crema",
+      posicion: "center 60%",
+      galeria: [{ imagen: "assets/img/torta-berry-love-corte.webp", posicion: "center 50%" }]
     }
   ];
 })();

@@ -75,16 +75,18 @@ Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy
 
 ## Tortas
 
-Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el pie). Muestra los productos con `categoria: "tortas"`: tortas de 1 Lb (no son por encargo: se piden como cualquier producto). Precios según el relleno:
+Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el pie). Muestra los productos con `categoria: "tortas"`. Solo se venden pequeñas y por porción:
 
-- Choco Moon (relleno de chocolate): $130.000.
-- Strawberry Kiss (relleno de dulce de leche): 1 Lb $105.000.
-- Caramel Crunch (relleno de dulce de leche): 1 Lb $105.000.
-- Berry Love (decorada con las fotos del cliente), solo 1 Lb: el cliente elige el relleno, Fresas con crema $120.000, Dulce de leche $110.000 u Oreo $110.000.
-- Tamaños más pequeños, según el relleno: ½ Lb (fresas con crema $80.000, dulce de leche u Oreo $75.000) y 10 cm (fresas con crema $45.000, dulce de leche u Oreo $40.000). Hoy los tienen Strawberry Kiss y Caramel Crunch (dulce de leche): ½ Lb $75.000 y 10 cm $40.000. Choco Moon (chocolate): ½ Lb $90.000 y 10 cm $50.000.
-- Si un relleno cambia de precio según el tamaño, la opción puede llevar `precios: { idTamaño: precio }`. El detalle avisa que las fotos se envían por WhatsApp. En su foto de ejemplo, la tarjeta con la cara y el nombre de la persona va difuminada.
+| Torta | Mini torta 10 cm (2 a 4 porciones) | Porción |
+|---|---|---|
+| Choco Moon (chocolate, ganache y cobertura de chocolate) | $50.000 | $18.000 |
+| Caramel Crunch (vainilla, dulce de leche y maní) | $45.000 | $17.000 |
+| Berry Love (vainilla y buttercream) | $45.000, relleno a elegir: fresas con crema, Oreo o dulce de leche | $17.000, relleno de Oreo |
 
-La torta de 1 Lb sin relleno vale $90.000, pero no se ofrece en la página. Las fotos están en `assets/img/torta-*.webp` (originales en `assets/img/originales/`).
+- La mini torta de 10 cm es por encargo (`encargo: true` en ese tamaño, con `diasEncargo` días de anticipación, hoy 2): si está en el carrito, la fecha del pedido es obligatoria. La porción no.
+- En Berry Love el relleno solo se elige en la mini torta: `eleccion.soloTamanos: ["10cm"]`. En la porción no se muestra la elección y el pedido no lleva relleno elegido (va con Oreo).
+- La foto de Berry Love tiene la nota "Foto: relleno de fresas con crema" y una segunda foto en la galería.
+- Las opciones de `eleccion` también aceptan `precio` o `precios: { idTamaño: precio }` si algún día un relleno cambia el precio.
 
 ## Así va tu vaso
 
