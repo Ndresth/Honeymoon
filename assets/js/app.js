@@ -153,8 +153,19 @@
     return `${items.slice(0, -1).join(", ")} ${conj} ${ult}`;
   };
   // Precio del producto: el de la opción elegida si trae `precio` (ej. el relleno de una torta); si no, el del tamaño
-  const precioBase = (t, o) => (o && o.precio != null ? o.precio : t.precio);
-  const opcionesConPrecio = (p) => !!(p.eleccion && p.eleccion.opciones.some((o) => o.precio != null));
+  // (con `precios`, el de la opción en ese tamaño)
+  const precioBase = (t, o) => (o && o.precios && o.precios[t.id] != null ? o.precios[t.id] : o && o.precio != null ? o.precio : t.precio);
+  const opcionesConPrecio = (p) => !!(p.eleccion && p.eleccion.opciones.some((o) => o.precio != null || o.precios));
+  const desdeTamano = (p, t) => (opcionesConPrecio(p) ? Math.min(...p.eleccion.opciones.map((o) => precioBase(t, o))) : t.precio);
+  // Opciones agrupadas por precio en un tamaño: [{ nombres: "Dulce de leche u Oreo", precio }]
+  const preciosOpciones = (p, t) => {
+    const grupos = [];
+    p.eleccion.opciones.forEach((o) => {
+      const v = precioBase(t, o), g = grupos.find((x) => x.v === v);
+      if (g) g.n.push(o.nombre); else grupos.push({ v, n: [o.nombre] });
+    });
+    return grupos.map((g) => ({ nombres: listaY(g.n, "o"), precio: g.v }));
+  };
   const precioDesde = (p) => Math.min(...p.tamanos.flatMap((t) => (p.eleccion ? p.eleccion.opciones.map((o) => precioBase(t, o)) : [t.precio])));
   /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
   function ahoraBogota() {
@@ -431,7 +442,10 @@
     const conPrecio = opcionesConPrecio(p);
     const detalle = `${varios || conPrecio ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
     // Precios: una fila por tamaño; si el precio depende de la opción (relleno), una fila por opción
-    const filas = conPrecio
+    const filas = conPrecio && varios
+      ? p.tamanos.map((t) => `<li class="is-grupo"><span>${esc(t.nombre)}</span>${preciosOpciones(p, t).map((g) => `
+          <span class="hm-precio-linea"><small>${esc(g.nombres)}</small><strong>${money(g.precio)}</strong></span>`).join("")}</li>`)
+      : conPrecio
       ? p.tamanos.flatMap((t) => p.eleccion.opciones.map((o) => `<li><span>${esc(t.nombre)} <small>${esc(p.eleccion.titulo)}: ${esc(o.nombre)}</small></span><strong>${money(precioBase(t, o))}</strong></li>`))
       : p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`);
     const extra = conPrecio ? "" : p.eleccion
@@ -506,7 +520,7 @@
             <label class="hm-option flex-column text-center gap-0 h-100" for="t-${t.id}">
               <span>${esc(t.nombre)}</span>
               ${t.detalle ? `<small class="hm-option-detail">${esc(t.detalle)}</small>` : ""}
-              <span class="hm-option-price">${money(t.precio)}</span>
+              <span class="hm-option-price">${opcionesConPrecio(p) ? "desde " : ""}${money(desdeTamano(p, t))}</span>
             </label>
           </div>`).join("")}
       </div>` : `<input type="hidden" name="tamano" value="${p.tamanos[0].id}">
@@ -519,8 +533,8 @@
         ${el.opciones.map((o, i) => `
           <div class="col-${el.opciones.length === 2 ? 6 : 4} hm-opt-wrap">
             <input type="radio" class="btn-check" name="opcion" id="o-${o.id}" value="${o.id}" ${i === 0 ? "checked" : ""}>
-            ${o.precio != null
-              ? `<label class="hm-option flex-column justify-content-center text-center gap-0 h-100" for="o-${o.id}"><span>${esc(o.nombre)}</span><span class="hm-option-price">${money(o.precio)}</span></label>`
+            ${o.precio != null || o.precios
+              ? `<label class="hm-option flex-column justify-content-center text-center gap-0 h-100" for="o-${o.id}"><span>${esc(o.nombre)}</span><span class="hm-option-price" data-precio-opcion="${o.id}">${money(precioBase(getTamano(p, tamanoInicial(p, pre)), o))}</span></label>`
               : `<label class="hm-option justify-content-center text-center h-100" for="o-${o.id}">${esc(o.nombre)}</label>`}
           </div>`).join("")}
       </div>` : "";
@@ -671,9 +685,18 @@
       `Se prepara por encargo: pídelo con al menos ${CFG.diasEncargo} días de anticipación. En el carrito eliges la fecha.`;
   }
 
+  // El precio de cada relleno cambia con el tamaño elegido
+  function pintarPreciosOpciones() {
+    const t = getTamano(actual, new FormData(form).get("tamano"));
+    $$("[data-precio-opcion]", form).forEach((el) => {
+      const o = actual.eleccion.opciones.find((x) => x.id === el.dataset.precioOpcion);
+      el.textContent = money(precioBase(t, o));
+    });
+  }
+
   form.addEventListener("change", (e) => {
     if (e.target.name === "opcion" || e.target.name === "tamano") pintarMedia();
-    if (e.target.name === "tamano") pintarVaso();
+    if (e.target.name === "tamano") { pintarVaso(); pintarPreciosOpciones(); }
     actualizarTotalProducto();
   });
   form.addEventListener("keydown", (e) => {

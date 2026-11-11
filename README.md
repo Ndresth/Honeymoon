@@ -78,9 +78,11 @@ Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy
 Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el pie). Muestra los productos con `categoria: "tortas"`: tortas de 1 Lb (no son por encargo: se piden como cualquier producto). Precios según el relleno:
 
 - Choco Moon (relleno de chocolate): $130.000.
-- Strawberry Kiss (relleno de dulce de leche): $105.000.
-- Caramel Crunch (relleno de dulce de leche): $105.000.
-- Berry Love (decorada con las fotos del cliente): el cliente elige el relleno, Fresas con crema $120.000, Dulce de leche $110.000 u Oreo $110.000. El detalle avisa que las fotos se envían por WhatsApp. En su foto de ejemplo, la tarjeta con la cara y el nombre de la persona va difuminada.
+- Strawberry Kiss (relleno de dulce de leche): 1 Lb $105.000.
+- Caramel Crunch (relleno de dulce de leche): 1 Lb $105.000.
+- Berry Love (decorada con las fotos del cliente), solo 1 Lb: el cliente elige el relleno, Fresas con crema $120.000, Dulce de leche $110.000 u Oreo $110.000.
+- Tamaños más pequeños, según el relleno: ½ Lb (fresas con crema $80.000, dulce de leche u Oreo $75.000) y 10 cm (fresas con crema $45.000, dulce de leche u Oreo $40.000). Hoy los tienen Strawberry Kiss y Caramel Crunch (dulce de leche): ½ Lb $75.000 y 10 cm $40.000. Choco Moon (chocolate): ½ Lb $90.000 y 10 cm $50.000.
+- Si un relleno cambia de precio según el tamaño, la opción puede llevar `precios: { idTamaño: precio }`. El detalle avisa que las fotos se envían por WhatsApp. En su foto de ejemplo, la tarjeta con la cara y el nombre de la persona va difuminada.
 
 La torta de 1 Lb sin relleno vale $90.000, pero no se ofrece en la página. Las fotos están en `assets/img/torta-*.webp` (originales en `assets/img/originales/`).
 

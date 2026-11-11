@@ -14,6 +14,8 @@
                la foto del producto). La tarjeta del menú muestra la foto del producto.
                Si una opción trae `precio`, ese es el precio del producto con esa opción
                (ej. el relleno de una torta): la tarjeta lista cada opción con su precio.
+               Con varios tamaños, `precios: { idTamaño: precio }` da el precio de la opción
+               en cada tamaño (ej. Berry Love: 1 Lb, ½ Lb y 10 cm).
    - categoria: "tortas" → el producto sale en esa sección de la página (sin categoría, en el menú).
    - aviso: texto que se muestra en el detalle (ej. cómo enviar las fotos de la torta).
    - galeria (producto, tamaño u opción, junto a `imagen`): [{ imagen, posicion? }] → fotos extra;
@@ -115,14 +117,21 @@ window.HM_ADICIONES = {
 
     /* ===== Tortas de 1 Lb (sección "Tortas") =====
        Precio según el relleno: chocolate $130.000 · fresas con crema $120.000 · Oreo $110.000 ·
-       dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página). */
+       dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página).
+       ½ Lb: fresas con crema $80.000 · dulce de leche u Oreo $75.000.
+       10 cm: fresas con crema $45.000 · dulce de leche u Oreo $40.000.
+       Chocolate (Choco Moon): ½ Lb $90.000 · 10 cm $50.000. */
     {
       id: "torta-choco-moon",
       categoria: "tortas",
       nombre: "Choco Moon",
       nombreCompleto: "Torta Choco Moon",
       descripcion: "🍫 Para los verdaderos amantes del chocolate. Esponjoso bizcocho de chocolate, con un delicioso relleno de ganache de chocolate y una irresistible cobertura de chocolate que hace de cada bocado una experiencia llena de sabor. 🤎✨",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 130000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 130000 },
+        { id: "media", nombre: "½ Lb", precio: 90000 },
+        { id: "10cm", nombre: "10 cm", precio: 50000 }
+      ],
       imagen: "assets/img/torta-choco-moon.webp",
       posicion: "center 70%"
     },
@@ -132,7 +141,11 @@ window.HM_ADICIONES = {
       nombre: "Strawberry Kiss",
       nombreCompleto: "Torta Strawberry Kiss",
       descripcion: "🍓 Una combinación irresistible en cada porción. Suave bizcocho de vainilla con un delicioso relleno de dulce de leche, cubierto con cremosa buttercream, fresas frescas y un toque de Oreo triturada. ¡El equilibrio perfecto entre dulzura y textura! 🤍✨",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 105000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 105000 },
+        { id: "media", nombre: "½ Lb", precio: 75000 },
+        { id: "10cm", nombre: "10 cm", precio: 40000 }
+      ],
       imagen: "assets/img/torta-strawberry-kiss.webp",
       posicion: "center 88%"
     },
@@ -142,7 +155,11 @@ window.HM_ADICIONES = {
       nombre: "Caramel Crunch",
       nombreCompleto: "Torta Caramel Crunch",
       descripcion: "🤎 Un delicioso bizcocho de vainilla, relleno y cubierto con una suave capa de dulce de leche, coronado con maní crocante que aporta el toque perfecto de textura y sabor. 🤎✨ ¡Una combinación irresistible para los amantes de lo dulce!",
-      tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 105000 }],
+      tamanos: [
+        { id: "1lb", nombre: "1 Lb", precio: 105000 },
+        { id: "media", nombre: "½ Lb", precio: 75000 },
+        { id: "10cm", nombre: "10 cm", precio: 40000 }
+      ],
       imagen: "assets/img/torta-caramel-crunch.webp",
       posicion: "center 62%"
     },
