@@ -80,8 +80,8 @@ Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el p
 | Torta | Mini torta 10 cm (2 a 4 porciones) | Porción |
 |---|---|---|
 | Choco Moon (chocolate, ganache y cobertura de chocolate) | $50.000 | $18.000 |
-| Caramel Crunch (vainilla, dulce de leche y maní) | $45.000 | $17.000 |
-| Berry Love (vainilla y buttercream) | $45.000, relleno a elegir: fresas con crema, Oreo o dulce de leche | $17.000, relleno de Oreo |
+| Caramel Crunch (vainilla, relleno de dulce de leche + maní, cobertura de dulce de leche y maní) | $45.000 | $17.000 |
+| Berry Love (vainilla y cobertura de chantillí) | $45.000, relleno a elegir: fresas con crema, Oreo o dulce de leche | $17.000, relleno de Oreo |
 
 - La mini torta de 10 cm es por encargo (`encargo: true` en ese tamaño, con `diasEncargo` días de anticipación, hoy 2): si está en el carrito, la fecha del pedido es obligatoria. La porción no.
 - En Berry Love el relleno solo se elige en la mini torta: `eleccion.soloTamanos: ["10cm"]`. En la porción no se muestra la elección y el pedido no lleva relleno elegido (va con Oreo).

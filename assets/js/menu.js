@@ -138,7 +138,7 @@ window.HM_ADICIONES = {
       categoria: "tortas",
       nombre: "Caramel Crunch",
       nombreCompleto: "Torta Caramel Crunch",
-      descripcion: "🤎 Bizcocho de vainilla con relleno de dulce de leche, cobertura de dulce de leche y coronado con maní. ¡Una combinación irresistible para los amantes de lo dulce! ✨",
+      descripcion: "🤎 Bizcocho de vainilla con relleno de dulce de leche + maní, cobertura de dulce de leche y coronado con maní. ¡Una combinación irresistible para los amantes de lo dulce! ✨",
       tamanos: [
         { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 45000, encargo: true },
         { id: "porcion", nombre: "Porción", precio: 17000 }
@@ -151,7 +151,7 @@ window.HM_ADICIONES = {
       categoria: "tortas",
       nombre: "Berry Love",
       nombreCompleto: "Torta Berry Love",
-      descripcion: "💜 Bizcocho de vainilla con cobertura de buttercream. En la mini torta de 10 cm eliges el relleno: fresas con crema, Oreo o dulce de leche. La porción va con relleno de Oreo. ✨",
+      descripcion: "💜 Bizcocho de vainilla con cobertura de chantillí. En la mini torta de 10 cm eliges el relleno: fresas con crema, Oreo o dulce de leche. La porción va con relleno de Oreo. ✨",
       tamanos: [
         { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 45000, encargo: true },
         { id: "porcion", nombre: "Porción", detalle: "Relleno de Oreo", precio: 17000 }
