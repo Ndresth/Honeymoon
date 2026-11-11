@@ -445,11 +445,9 @@
     const conPrecio = opcionesConPrecio(p);
     const detalle = `${varios || conPrecio ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
     // Precios: una fila por tamaño; si el precio depende de la opción (relleno), una fila por opción
-    const filas = conPrecio && varios
-      ? p.tamanos.map((t) => `<li class="is-grupo"><span>${esc(t.nombre)}</span>${preciosOpciones(p, t).map((g) => `
-          <span class="hm-precio-linea"><small>${esc(g.nombres)}</small><strong>${money(g.precio)}</strong></span>`).join("")}</li>`)
-      : conPrecio
-      ? p.tamanos.flatMap((t) => p.eleccion.opciones.map((o) => `<li><span>${esc(t.nombre)} <small>${esc(p.eleccion.titulo)}: ${esc(o.nombre)}</small></span><strong>${money(precioBase(t, o))}</strong></li>`))
+    const filas = conPrecio
+      ? p.tamanos.map((t) => `<li class="is-grupo"><span>${esc(t.nombre)}${t.detalle ? ` <small class="d-inline">${esc(t.detalle)}</small>` : ""}</span>${preciosOpciones(p, t).map((g) => `
+          <span class="hm-precio-linea"><small>${esc(p.eleccion.titulo)}: ${esc(g.nombres)}</small><strong>${money(g.precio)}</strong></span>`).join("")}</li>`)
       : p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`);
     const extra = conPrecio ? "" : p.eleccion
       ? `<p class="hm-card-extra"><strong>${esc(p.eleccion.titulo)} ${p.eleccion.soloTamanos ? `a elegir (${esc(p.tamanos.filter((t) => p.eleccion.soloTamanos.includes(t.id)).map((t) => t.nombre).join(", "))})` : "incluido"}:</strong> ${esc(listaY(p.eleccion.opciones.map((o) => o.nombre), "o"))}</p>`
@@ -536,7 +534,7 @@
         ${el.opciones.map((o, i) => `
           <div class="col-${el.opciones.length === 2 ? 6 : 4} hm-opt-wrap">
             <input type="radio" class="btn-check" name="opcion" id="o-${o.id}" value="${o.id}" ${i === 0 ? "checked" : ""}>
-            ${o.precio != null || o.precios
+            ${opcionesConPrecio(p)
               ? `<label class="hm-option flex-column justify-content-center text-center gap-0 h-100" for="o-${o.id}"><span>${esc(o.nombre)}</span><span class="hm-option-price" data-precio-opcion="${o.id}">${money(precioBase(getTamano(p, tamanoInicial(p, pre)), o))}</span></label>`
               : `<label class="hm-option justify-content-center text-center h-100" for="o-${o.id}">${esc(o.nombre)}</label>`}
           </div>`).join("")}

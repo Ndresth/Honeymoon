@@ -91,7 +91,7 @@ window.HM_ADICIONES = {
             id: "oreo", nombre: "Oreo", imagen: "assets/img/pave-oreo.webp", fotoNota: "Foto: con topping de Oreo", posicion: "center 55%",
             galeria: [{ imagen: "assets/img/pave-oreo-arriba.webp", posicion: "center 55%" }] // vista desde arriba
           },
-          { id: "milo", nombre: "Untable de Milo", imagen: "assets/img/pave-milo.webp", fotoNota: "Foto: con topping de Untable de Milo", posicion: "center 62%" },
+          { id: "milo", nombre: "Untable de Milo", precio: 20000, imagen: "assets/img/pave-milo.webp", fotoNota: "Foto: con topping de Untable de Milo", posicion: "center 62%" },
           { id: "klim", nombre: "Leche Klim", imagen: "assets/img/pave-klim.webp", fotoNota: "Foto: con topping de leche Klim" }
         ]
       },
