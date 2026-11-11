@@ -152,7 +152,10 @@
     const conj = y === "o" && /^h?o/i.test(ult) ? "u" : y === "y" && /^h?i(?![aeou])/i.test(ult) ? "e" : y;
     return `${items.slice(0, -1).join(", ")} ${conj} ${ult}`;
   };
-  const precioDesde = (p) => Math.min(...p.tamanos.map((t) => t.precio));
+  // Precio del producto: el de la opción elegida si trae `precio` (ej. el relleno de una torta); si no, el del tamaño
+  const precioBase = (t, o) => (o && o.precio != null ? o.precio : t.precio);
+  const opcionesConPrecio = (p) => !!(p.eleccion && p.eleccion.opciones.some((o) => o.precio != null));
+  const precioDesde = (p) => Math.min(...p.tamanos.flatMap((t) => (p.eleccion ? p.eleccion.opciones.map((o) => precioBase(t, o)) : [t.precio])));
   /* Fechas y horas en Colombia; fechas en formato AAAA-MM-DD */
   function ahoraBogota() {
     const partes = new Intl.DateTimeFormat("en-US", {
@@ -254,7 +257,7 @@
   function precioUnitario(it) {
     const p = getProducto(it.id);
     const t = getTamano(p, it.tamano);
-    return t.precio + it.adiciones.reduce((s, id) => s + ((getAdicion(id) || {}).precio || 0), 0);
+    return precioBase(t, getOpcion(p, it.opcion)) + it.adiciones.reduce((s, id) => s + ((getAdicion(id) || {}).precio || 0), 0);
   }
 
   const subtotal = () => carrito.reduce((s, it) => s + precioUnitario(it) * it.cantidad, 0);
@@ -425,8 +428,13 @@
     const encargo = !ok && p.temporada ? p.temporada.texto
       : p.encargo ? textoEncargo()
       : p.tamanos.some((t) => t.encargo) ? `${p.tamanos.filter((t) => t.encargo).map((t) => t.nombre).join(", ")} por encargo` : "";
-    const detalle = `${varios ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
-    const extra = p.eleccion
+    const conPrecio = opcionesConPrecio(p);
+    const detalle = `${varios || conPrecio ? "desde " : ""}${money(precioDesde(p))}${encargo ? ", " + encargo : ""}`;
+    // Precios: una fila por tamaño; si el precio depende de la opción (relleno), una fila por opción
+    const filas = conPrecio
+      ? p.tamanos.flatMap((t) => p.eleccion.opciones.map((o) => `<li><span>${esc(t.nombre)} <small>${esc(p.eleccion.titulo)}: ${esc(o.nombre)}</small></span><strong>${money(precioBase(t, o))}</strong></li>`))
+      : p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`);
+    const extra = conPrecio ? "" : p.eleccion
       ? `<p class="hm-card-extra"><strong>${esc(p.eleccion.titulo)} incluido:</strong> ${esc(listaY(p.eleccion.opciones.map((o) => o.nombre), "o"))}</p>`
       : grupo
         ? `<div class="hm-card-toppings">
@@ -449,7 +457,7 @@
             <h3 class="hm-card-title"><span>${esc(p.nombre)}</span></h3>
             <p class="hm-card-desc">${esc(p.descripcion)}</p>
             <ul class="hm-card-sizes">
-              ${p.tamanos.map((t) => `<li><span>${esc(t.nombre)}${t.detalle ? ` <small>${esc(t.detalle)}</small>` : ""}</span><strong>${money(t.precio)}</strong></li>`).join("")}
+              ${filas.join("")}
             </ul>
             ${extra}
             ${encargo ? `<p class="hm-card-note"><i class="bi bi-calendar-heart"></i>${esc(encargo)}</p>` : ""}
@@ -459,8 +467,12 @@
       </div>`;
   }
 
+  // Sin categoría van en el menú; con categoría (ej. "tortas"), en su sección
   function renderProductos() {
-    $("#productos").innerHTML = MENU.map((p) => tarjeta(p)).join("");
+    $("#productos").innerHTML = MENU.filter((p) => !p.categoria).map((p) => tarjeta(p)).join("");
+    $$("[data-categoria]").forEach((el) => {
+      el.innerHTML = MENU.filter((p) => p.categoria === el.dataset.categoria).map((p) => tarjeta(p)).join("");
+    });
   }
 
   /* =====================================================
@@ -498,7 +510,7 @@
             </label>
           </div>`).join("")}
       </div>` : `<input type="hidden" name="tamano" value="${p.tamanos[0].id}">
-      <div class="hm-group-title">${esc(nombreTamano(p.tamanos[0]))} <small>${money(p.tamanos[0].precio)}</small></div>`;
+      <div class="hm-group-title">${esc(nombreTamano(p.tamanos[0]))} <small>${opcionesConPrecio(p) ? "desde " : ""}${money(precioDesde(p))}</small></div>`;
 
     const el = p.eleccion;
     $("#productoEleccion").innerHTML = el ? `
@@ -507,7 +519,9 @@
         ${el.opciones.map((o, i) => `
           <div class="col-${el.opciones.length === 2 ? 6 : 4} hm-opt-wrap">
             <input type="radio" class="btn-check" name="opcion" id="o-${o.id}" value="${o.id}" ${i === 0 ? "checked" : ""}>
-            <label class="hm-option justify-content-center text-center h-100" for="o-${o.id}">${esc(o.nombre)}</label>
+            ${o.precio != null
+              ? `<label class="hm-option flex-column justify-content-center text-center gap-0 h-100" for="o-${o.id}"><span>${esc(o.nombre)}</span><span class="hm-option-price">${money(o.precio)}</span></label>`
+              : `<label class="hm-option justify-content-center text-center h-100" for="o-${o.id}">${esc(o.nombre)}</label>`}
           </div>`).join("")}
       </div>` : "";
 
@@ -556,6 +570,8 @@
     pintarVaso();
     $("#productoNota").value = "";
     $("#productoNota").placeholder = p.notaPlaceholder || "Ej: alguna indicación para tu pedido…";
+    $("#productoAviso").classList.toggle("d-none", !p.aviso);
+    $("#productoAviso span").textContent = p.aviso || "";
     actualizarTotalProducto();
     productoModal.show();
   }

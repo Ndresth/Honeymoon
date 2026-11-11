@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Honeymoon · Repostería en Barranquilla</title>
-  <meta name="description" content="Repostería casera en Barranquilla y Soledad: fresas con crema, paveé, galletas y mini donas. Arma tu pedido y envíalo por WhatsApp.">
+  <meta name="description" content="Repostería casera en Barranquilla y Soledad: fresas con crema, paveé, galletas, mini donas y tortas por encargo. Arma tu pedido y envíalo por WhatsApp.">
   <meta name="theme-color" content="#c48ebf">
   <meta property="og:title" content="Honeymoon · Repostería en Barranquilla">
-  <meta property="og:description" content="Fresas con crema, paveé, galletas y mini donas hechos en casa. Pide por WhatsApp con domicilio en Barranquilla y Soledad.">
+  <meta property="og:description" content="Fresas con crema, paveé, galletas, mini donas y tortas hechos en casa. Pide por WhatsApp con domicilio en Barranquilla y Soledad.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_CO">
   <meta property="og:url" content="https://honeymoonreposteria.com/">
@@ -96,6 +96,7 @@
       <div class="collapse navbar-collapse order-lg-2" id="navLinks">
         <ul class="navbar-nav mx-auto gap-lg-1 pt-3 pt-lg-0">
           <li class="nav-item"><a class="nav-link" href="#menu">Menú</a></li>
+          <li class="nav-item"><a class="nav-link" href="#tortas">Tortas</a></li>
           <li class="nav-item"><a class="nav-link" href="#como-pedir">Cómo pedir</a></li>
           <li class="nav-item"><a class="nav-link" href="#info">Domicilios</a></li>
           <li class="nav-item"><a class="nav-link" href="juego.html">Juegos</a></li>
@@ -112,7 +113,7 @@
           <div class="col-lg-6 order-2 order-lg-1 text-center text-lg-start">
             <span class="hm-eyebrow"><i class="bi bi-geo-alt-fill"></i> Domicilios en Barranquilla y Soledad</span>
             <h1>Repostería hecha en casa que <span class="hm-highlight">enamora</span></h1>
-            <p class="lead mx-auto mx-lg-0">Fresas con crema, paveé, galletas y mini donas. Arma tu pedido, envíalo por WhatsApp y te lo llevamos a tu barrio.</p>
+            <p class="lead mx-auto mx-lg-0">Fresas con crema, paveé, galletas, mini donas y tortas. Arma tu pedido, envíalo por WhatsApp y te lo llevamos a tu barrio.</p>
             <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start mt-4">
               <a href="#menu" class="btn btn-hm btn-hm-primary btn-lg"><i class="bi bi-heart-fill me-2"></i>Ver el menú</a>
               <a href="#" class="btn btn-hm btn-hm-paper btn-lg" data-wa-general><i class="bi bi-whatsapp me-2"></i>Escríbenos</a>
@@ -140,8 +141,8 @@
     <!-- Cinta -->
     <div class="hm-ribbon" aria-hidden="true">
       <div class="hm-ribbon-track">
-        <span>Fresas con crema</span><span>Paveé</span><span>Galletas</span><span>Mini donas</span><span>Domicilios en Barranquilla y Soledad</span>
-        <span>Fresas con crema</span><span>Paveé</span><span>Galletas</span><span>Mini donas</span><span>Domicilios en Barranquilla y Soledad</span>
+        <span>Fresas con crema</span><span>Paveé</span><span>Galletas</span><span>Mini donas</span><span>Tortas</span><span>Domicilios en Barranquilla y Soledad</span>
+        <span>Fresas con crema</span><span>Paveé</span><span>Galletas</span><span>Mini donas</span><span>Tortas</span><span>Domicilios en Barranquilla y Soledad</span>
       </div>
     </div>
 
@@ -155,6 +156,16 @@
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 justify-content-center" id="productos"></div>
+
+        <!-- Tortas (productos con categoria: "tortas" en menu.js) -->
+        <section class="hm-subseccion" id="tortas" aria-labelledby="tortasTitle">
+          <div class="text-center mb-2">
+            <span class="hm-kicker">para celebrar</span>
+            <h2 class="hm-section-title" id="tortasTitle" tabindex="-1">Tortas</h2>
+            <p class="hm-section-sub">Tortas de 1 libra para celebrar con los que más quieres.</p>
+          </div>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4 justify-content-center" data-categoria="tortas"></div>
+        </section>
 
         <!-- Invitación al juego -->
         <div class="hm-juego-promo">
@@ -256,6 +267,7 @@
         <div class="col-md-6 text-md-end">
           <div class="d-flex flex-wrap gap-3 justify-content-md-end mb-2">
             <a href="#menu">Menú</a>
+            <a href="#tortas">Tortas</a>
             <a href="#como-pedir">Cómo pedir</a>
             <a href="#info">Domicilios</a>
             <a href="#" data-wa-general><i class="bi bi-whatsapp"></i> WhatsApp</a>
@@ -293,6 +305,7 @@
               <div id="productoTamanos"></div>
               <div class="hm-notice d-none mt-3" id="productoEncargo"><i class="bi bi-calendar-heart"></i><span></span></div>
               <div id="productoEleccion"></div>
+              <div class="hm-notice d-none mt-3" id="productoAviso"><i class="bi bi-camera" aria-hidden="true"></i><span></span></div>
               <div id="productoArmar"></div>
               <div id="productoAdiciones"></div>
               <label class="hm-group-title" for="productoNota">Notas <small>Opcional</small></label>
