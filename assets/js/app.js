@@ -473,7 +473,6 @@
     $$("[data-categoria]").forEach((el) => {
       el.innerHTML = MENU.filter((p) => p.categoria === el.dataset.categoria).map((p) => tarjeta(p)).join("");
     });
-    $$("[data-dias-encargo]").forEach((el) => (el.textContent = CFG.diasEncargo));
   }
 
   /* =====================================================

@@ -113,7 +113,7 @@ window.HM_ADICIONES = {
       posicion: "center 80%"
     },
 
-    /* ===== Tortas de 1 Lb, por encargo (sección "Tortas") =====
+    /* ===== Tortas de 1 Lb (sección "Tortas") =====
        Precio según el relleno: chocolate $130.000 · fresas con crema $120.000 · Oreo $110.000 ·
        dulce de leche $105.000 (sin relleno, $90.000: no se ofrece en la página). */
     {
@@ -123,19 +123,17 @@ window.HM_ADICIONES = {
       nombreCompleto: "Torta Choco Moon",
       descripcion: "🍫 Para los verdaderos amantes del chocolate. Esponjoso bizcocho de chocolate, con un delicioso relleno de ganache de chocolate y una irresistible cobertura de chocolate que hace de cada bocado una experiencia llena de sabor. 🤎✨",
       tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 130000 }],
-      encargo: true,
       imagen: "assets/img/torta-choco-moon.webp",
       posicion: "center 70%"
     },
     {
-      id: "torta-fresas-oreo",
+      id: "torta-strawberry-kiss",
       categoria: "tortas",
-      nombre: "Fresas & Oreo", // nombre provisional: falta el nombre definitivo de esta torta
-      nombreCompleto: "Torta Fresas & Oreo",
+      nombre: "Strawberry Kiss",
+      nombreCompleto: "Torta Strawberry Kiss",
       descripcion: "🍓 Una combinación irresistible en cada porción. Suave bizcocho de vainilla con un delicioso relleno de dulce de leche, cubierto con cremosa buttercream, fresas frescas y un toque de Oreo triturada. ¡El equilibrio perfecto entre dulzura y textura! 🤍✨",
       tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 105000 }],
-      encargo: true,
-      imagen: "assets/img/torta-fresas-oreo.webp",
+      imagen: "assets/img/torta-strawberry-kiss.webp",
       posicion: "center 88%"
     },
     {
@@ -145,7 +143,6 @@ window.HM_ADICIONES = {
       nombreCompleto: "Torta Caramel Crunch",
       descripcion: "🤎 Un delicioso bizcocho de vainilla, relleno y cubierto con una suave capa de dulce de leche, coronado con maní crocante que aporta el toque perfecto de textura y sabor. 🤎✨ ¡Una combinación irresistible para los amantes de lo dulce!",
       tamanos: [{ id: "1lb", nombre: "1 Lb", precio: 105000 }],
-      encargo: true,
       imagen: "assets/img/torta-caramel-crunch.webp",
       posicion: "center 62%"
     },
@@ -164,7 +161,6 @@ window.HM_ADICIONES = {
           { id: "oreo", nombre: "Oreo", precio: 110000 }
         ]
       },
-      encargo: true,
       aviso: "Esta torta va decorada con tus fotos: envíanoslas por WhatsApp al confirmar el pedido.",
       notaPlaceholder: "Ej: nombre, motivo de la celebración…",
       imagen: "assets/img/torta-berry-love.webp",
