@@ -53,6 +53,7 @@ En `assets/js/menu.js`:
   - `adiciones`: nombre del grupo de toppings que acepta (el cliente suma porciones con + y −; el modal bloquea lo que no cumple los límites y explica por qué).
   - `destacado: true`: tarjeta ancha, con la foto al lado en computador (hoy, Fresas con crema).
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Oreo, Untable de Milo o Leche Klim). Si la opción trae `imagen` (y opcional `fotoNota` y `posicion`), la foto del detalle cambia al elegirla; si no, se usa la foto del producto.
+  - Paveé: con Oreo o Leche Klim $16.000; con Untable de Milo $20.000 (`precio` en esa opción).
   - Si una opción de `eleccion` trae `precio`, ese es el precio del producto con esa opción (ej. el relleno de Berry Love): la tarjeta lista cada opción con su precio, el detalle lo muestra en cada botón y el total cambia al elegir.
   - `categoria: "tortas"`: el producto sale en la sección Tortas en vez del menú. `aviso`: texto que se muestra en el detalle (ej. cómo enviar las fotos).
   - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`. Las fotos de producto son verticales (3:4, fondo lila) y van en WebP de 1200 px de ancho para que carguen rápido; las originales quedan en `assets/img/originales/`.
