@@ -47,9 +47,9 @@ window.HM_CONFIG = {
   ],
 
   // Recoger en el local: false = en el checkout sale "Próximamente" y solo hay domicilio.
-  // Pon true cuando haya punto de recogida (y ajusta puntoRecogida).
-  recoger: false,
-  puntoRecogida: "Barranquilla · dirección por confirmar",
+  // Recoger: la dirección no se publica; la ubicación se envía por WhatsApp al confirmar el pedido.
+  recoger: true,
+  puntoRecogida: "Te enviamos la ubicación por WhatsApp cuando confirmemos tu pedido.",
 
   metodosPago: ["Efectivo", "Nequi", "Daviplata", "Transferencia Bancolombia"],
 
