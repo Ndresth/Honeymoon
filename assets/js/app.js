@@ -950,7 +950,7 @@
       L.push(`*Barrio:* ${datos.barrio}`);
       L.push(`*Ciudad:* ${zonaSel().nombre}`);
     } else {
-      L.push(`*Entrega:* Recoger en el local`);
+      L.push(`*Entrega:* Recoger (por favor envíenme la ubicación)`);
     }
     L.push(`*Fecha:* ${datos.fecha ? fechaLarga(datos.fecha) : "Hoy, lo antes posible"}`);
     L.push("");

@@ -70,7 +70,7 @@ En `assets/js/menu.js`:
 
 La tarjeta de cada producto muestra, como el menú impreso, los tamaños con su precio y los toppings.
 
-Recoger en el local está apagado (`recoger: false` en `config.js`): en el checkout sale como **Próximamente** y solo se puede pedir a domicilio. Cuando haya local, pon `recoger: true` y la dirección en `puntoRecogida`.
+Recoger está habilitado (`recoger: true` en `config.js`), sin publicar la dirección: al elegir "Recoger" el pedido no pide dirección, barrio ni ciudad, muestra el texto de `puntoRecogida` ("Te enviamos la ubicación por WhatsApp…"), el total no lleva domicilio y el mensaje dice "*Entrega:* Recoger (por favor envíenme la ubicación)". Con `recoger: false` la opción sale como **Próximamente**.
 
 Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy martes a domingo de 1:30 a 7:15 p. m. y lunes de descanso, `1: null`; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
 
