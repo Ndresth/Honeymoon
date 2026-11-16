@@ -4,7 +4,7 @@
 
    Campos de cada producto:
    - tamanos: lista de tamaños con precio (si hay uno solo, no se muestra selector).
-              Un tamaño puede llevar `detalle` (ej. "Pequeña"), `encargo: true` e `imagen`
+              Un tamaño puede llevar `detalle` (ej. "Mediana"), `encargo: true` e `imagen`
               (foto de ese tamaño: en el detalle, la foto cambia al elegirlo).
    - adiciones: nombre del grupo de HM_ADICIONES que acepta (toppings con precio y cantidad;
                 cada topping tiene `max` y, opcional, `limite`, `icono` y `foto`)
@@ -64,7 +64,7 @@ window.HM_ADICIONES = {
       nombre: "Fresas con crema",
       descripcion: "🍓Capas de nuestra crema suave y cremosa, fresas frescas, glaseado de fresa, dulce de leche, leche condensada y galleta Oreo. ¡Una combinación dulce e irresistible que puedes personalizar con tu topping favorito!",
       tamanos: [
-        { id: "9oz", nombre: "9 onz", detalle: "Pequeña", precio: 14000, imagen: "assets/img/fresas-9onz.webp", posicion: "center 70%" },
+        { id: "9oz", nombre: "9 onz", detalle: "Mediana", precio: 14000, imagen: "assets/img/fresas-9onz.webp", posicion: "center 70%" },
         { id: "12oz", nombre: "12 onz", detalle: "Grande", precio: 18000, imagen: "assets/img/fresas-12onz.webp", posicion: "center 70%" }
       ],
       adiciones: "fresas",

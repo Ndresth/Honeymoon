@@ -49,7 +49,7 @@ En `assets/js/menu.js`:
   - Campos opcionales de cada topping: `corto` (nombre en la tarjeta), `detalle` (texto bajo el nombre en el detalle) e `independiente`.
   - Se pueden pedir los 4 toppings a la vez (una porción de cada uno).
 - `HM_MENU`: productos del menú (Fresas con crema, Paveé, Galletas y Mini donas) y de la sección Tortas (ver abajo). Campos principales:
-  - `tamanos`: con precio y, opcional, `detalle` ("Pequeña", "7 mini donitas") y `encargo: true`.
+  - `tamanos`: con precio y, opcional, `detalle` ("Mediana", "7 mini donitas") y `encargo: true`.
   - `adiciones`: nombre del grupo de toppings que acepta (el cliente suma porciones con + y −; el modal bloquea lo que no cumple los límites y explica por qué).
   - `destacado: true`: tarjeta ancha, con la foto al lado en computador (hoy, Fresas con crema).
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Oreo, Untable de Milo o Leche Klim). Si la opción trae `imagen` (y opcional `fotoNota` y `posicion`), la foto del detalle cambia al elegirla; si no, se usa la foto del producto.
