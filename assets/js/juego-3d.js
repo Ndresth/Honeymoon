@@ -339,18 +339,7 @@ function fresas(cont) {
   /* Toppings 3D */
   function topping(tipo) {
     const g = new THREE.Group();
-    if (tipo === "queso") {
-      for (let i = 0; i < 14; i++) {
-        const tira = new THREE.Mesh(new THREE.BoxGeometry(.17, .035, .035), toon(i % 3 ? 0xfffdf4 : 0xf3e6c4));
-        const r = Math.random() * .16, a = Math.random() * 7;
-        tira.position.set(Math.cos(a) * r, .03 + (.16 - r) * .5 + Math.random() * .04, Math.sin(a) * r);
-        tira.rotation.set(Math.random() * 3, Math.random() * 3, Math.random() * 3);
-        g.add(tira);
-      }
-      const monton = conBorde(new THREE.Mesh(new THREE.SphereGeometry(.17, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), toon(0xfffaf0)), .016);
-      monton.scale.y = .55;
-      g.add(monton);
-    } else if (tipo === "chocoramo") {
+    if (tipo === "chocoramo") {
       const choco = toon(0x4a2414), bizcocho = toon(0xf2c46d);
       const c = new THREE.Mesh(new THREE.BoxGeometry(.38, .24, .3), [bizcocho, choco, choco, choco, choco, choco]);
       const b = new THREE.Mesh(c.geometry, new THREE.MeshBasicMaterial({ color: K, side: THREE.BackSide }));

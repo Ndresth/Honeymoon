@@ -13,13 +13,13 @@
                Si la opción trae `imagen`, la foto del detalle cambia al elegirla (si no, se usa
                la foto del producto). La tarjeta del menú muestra la foto del producto.
                Si una opción trae `precio`, ese es el precio del producto con esa opción
-               (ej. el relleno de una torta): la tarjeta lista cada opción con su precio.
+               (ej. el Untable de Milo del paveé): la tarjeta lista cada opción con su precio.
                Con varios tamaños, `precios: { idTamaño: precio }` da el precio de la opción
-               en cada tamaño (ej. Berry Love: 1 Lb, ½ Lb y 10 cm).
-   - eleccion.soloTamanos: ["idTamaño"] → la opción solo se elige en esos tamaños
-     (ej. el relleno de Berry Love, solo en la mini torta de 10 cm).
-   - categoria: "tortas" → el producto sale en esa sección de la página (sin categoría, en el menú).
-   - aviso: texto que se muestra en el detalle (ej. cómo enviar las fotos de la torta).
+               en cada tamaño.
+   - eleccion.soloTamanos: ["idTamaño"] → la opción solo se elige en esos tamaños.
+   - categoria: "id" → el producto sale en el contenedor [data-categoria="id"] de la página
+     (sin categoría, en el menú; hoy todos van en el menú).
+   - aviso: texto que se muestra en el detalle.
    - galeria (producto, tamaño u opción, junto a `imagen`): [{ imagen, posicion? }] → fotos extra;
              en el detalle salen miniaturas para pasar de una foto a otra.
    - armar: { titulo, receta, base } → muestra "Así va tu vaso": un vaso dibujado que se llena
@@ -46,7 +46,6 @@ window.HM_ADICIONES = {
   fresas: {
     texto: "✨ ¡Llévalo al siguiente nivel! Añade tus toppings favoritos y crea una combinación deliciosa, crujiente y llena de sabor.💜",
     items: [
-      { id: "f-queso", nombre: "Queso", icono: "queso", precio: 2000, max: 2, limite: { desde: 2, otros: 1 } },
       { id: "f-chocoramo", nombre: "Chocoramo", icono: "chocoramo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
       { id: "f-piazza", nombre: "Piazza", icono: "piazza", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } },
       { id: "f-oreo", nombre: "Oreo", icono: "oreo", precio: 2000, max: 2, limite: { desde: 2, otros: 0 } }, // ya viene en la base
@@ -115,63 +114,6 @@ window.HM_ADICIONES = {
       tamanos: [{ id: "vaso", nombre: "Vaso 12 onz", detalle: "7 mini donitas", precio: 15000 }],
       imagen: "assets/img/mini-donas.webp", // foto real del vaso de 12 onz con tapa de domo
       posicion: "center 80%"
-    },
-
-    /* ===== Tortas (sección "Tortas") =====
-       Solo pequeñas y por porción. La mini torta de 10 cm es por encargo (diasEncargo, hoy 2 días);
-       la porción no. */
-    {
-      id: "torta-choco-moon",
-      categoria: "tortas",
-      nombre: "Choco Moon",
-      nombreCompleto: "Torta Choco Moon",
-      descripcion: "🍫 Torta de chocolate con relleno de ganache de chocolate y cobertura de chocolate. ¡Para los verdaderos amantes del chocolate! 🤎✨",
-      tamanos: [
-        { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 50000, encargo: true },
-        { id: "porcion", nombre: "Porción", precio: 18000 }
-      ],
-      imagen: "assets/img/torta-choco-moon.webp",
-      posicion: "center 66%"
-    },
-    {
-      id: "torta-caramel-crunch",
-      categoria: "tortas",
-      nombre: "Caramel Crunch",
-      nombreCompleto: "Torta Caramel Crunch",
-      descripcion: "🤎 Bizcocho de vainilla con relleno de dulce de leche + maní, cobertura de dulce de leche y coronado con maní. ¡Una combinación irresistible para los amantes de lo dulce! ✨",
-      tamanos: [
-        { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 45000, encargo: true },
-        { id: "porcion", nombre: "Porción", precio: 17000 }
-      ],
-      imagen: "assets/img/torta-caramel-crunch.webp",
-      posicion: "center 60%"
-    },
-    {
-      id: "torta-berry-love",
-      categoria: "tortas",
-      nombre: "Berry Love",
-      nombreCompleto: "Torta Berry Love",
-      descripcion: "💜 Bizcocho de vainilla con cobertura de chantillí. En la mini torta de 10 cm eliges el relleno: fresas con crema, Oreo o dulce de leche. La porción va con relleno de Oreo. ✨",
-      tamanos: [
-        { id: "10cm", nombre: "Mini torta 10 cm", detalle: "2 a 4 porciones", precio: 45000, encargo: true },
-        { id: "porcion", nombre: "Porción", detalle: "Relleno de Oreo", precio: 17000 }
-      ],
-      // El relleno solo se elige en la mini torta de 10 cm
-      eleccion: {
-        titulo: "Relleno",
-        detalle: "Elige uno",
-        soloTamanos: ["10cm"],
-        opciones: [
-          { id: "fresas", nombre: "Fresas con crema" },
-          { id: "oreo", nombre: "Oreo" },
-          { id: "dulce", nombre: "Dulce de leche" }
-        ]
-      },
-      notaPlaceholder: "Ej: nombre, motivo de la celebración…",
-      imagen: "assets/img/torta-berry-love.webp",
-      fotoNota: "Foto: relleno de fresas con crema",
-      posicion: "center 60%",
-      galeria: [{ imagen: "assets/img/torta-berry-love-corte.webp", posicion: "center 50%" }]
     }
   ];
 })();

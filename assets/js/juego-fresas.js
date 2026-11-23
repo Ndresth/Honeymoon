@@ -250,7 +250,7 @@
   }
 
   // Portada: vaso lleno con toppings
-  const portada = () => window.HM_VASO.svg({ grande: true, capas: RECETA, toppings: { queso: 1, oreo: 1 }, orden: ["queso-0", "oreo-0"] }, { receta: RECETA });
+  const portada = () => window.HM_VASO.svg({ grande: true, capas: RECETA, toppings: { chocoramo: 1, oreo: 1 }, orden: ["chocoramo-0", "oreo-0"] }, { receta: RECETA });
 
   window.HM_JUEGO.registrar({
     id: "fresas",
