@@ -164,13 +164,6 @@
 
   /* ---------- Íconos de toppings (para la tarjeta y el modal) ---------- */
   const ICONOS = {
-    // Queso blanco rallado en montoncito
-    queso: `<g transform="translate(0 -5)">
-      <path d="M12 46 C14 34 24 26 32 26 C40 26 50 34 52 46 Z" fill="#fffdf4" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
-      ${[[20, 40, -30], [27, 34, 20], [35, 31, -10], [42, 37, 35], [30, 42, 70], [38, 43, -40], [24, 46, 10], [44, 45, 0]]
-        .map(([x, y, r]) => `<rect x="${x - 4}" y="${y - 1.4}" width="8" height="2.8" rx="1.4" fill="#f3e6c4" transform="rotate(${r} ${x} ${y})"/>`).join("")}
-      <path d="M8 47 H56" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>
-      ${[[16, 52, 20], [47, 51, -25], [29, 53, 60]].map(([x, y, r]) => `<rect x="${x - 3.5}" y="${y - 1.2}" width="7" height="2.4" rx="1.2" fill="#fffdf4" stroke="${K}" stroke-width="1" transform="rotate(${r} ${x} ${y})"/>`).join("")}</g>`,
     // Ponquecito cubierto de chocolate, con el corte que muestra el bizcocho
     chocoramo: `
       <path d="M10 24 L44 18 L54 26 L54 42 L20 48 L10 40 Z" fill="#4a2414" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>

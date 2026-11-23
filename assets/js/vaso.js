@@ -3,7 +3,7 @@
    Lo usan "Arma tu vaso" (detalle del producto) y el juego "Hony en la cocina".
 
    HM_VASO.montar(elemento, { receta }) → { pintar(estado, { llenar }) }
-   estado: { grande: true|false, capas: ["crema", "fresas", ...], toppings: { queso: 2, oreo: 1 } }
+   estado: { grande: true|false, capas: ["crema", "fresas", ...], toppings: { chocoramo: 1, oreo: 1 } }
    - Las capas nuevas se llenan, los toppings nuevos caen y, si cambia el tamaño, el vaso crece.
    - receta: capas del vaso lleno (para saber el grosor de cada una).
    Requiere illustrations.js (HM_ARTE_TOPPING) para dibujar los toppings.

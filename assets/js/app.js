@@ -27,7 +27,7 @@
   const maxDe = (a) => a.max || 1;
   // Porciones de los demás toppings (los independientes, como la cobertura, no cuentan)
   const sumaOtros = (c, id) => Object.entries(c).reduce((s, [k, v]) => s + (k === id || (getAdicion(k) || {}).independiente ? 0 : v), 0);
-  // Toppings cuyo límite está activo (ej. 2 de Oreo: nada más; 2 de Queso: solo 1 topping más)
+  // Toppings cuyo límite está activo (ej. 2 de Oreo: nada más)
   const limitesActivos = (grupo, c) => grupo.items.filter((a) => a.limite && (c[a.id] || 0) >= a.limite.desde);
   const limiteRoto = (grupo, c) => limitesActivos(grupo, c).find((a) => sumaOtros(c, a.id) > a.limite.otros);
   const toppingsMas = (n) => (n === 1 ? "1 topping más" : `${n} toppings más`);
@@ -76,7 +76,7 @@
     }
     return r;
   }
-  // "Queso, Oreo x2"
+  // "Chocoramo, Oreo x2"
   function nombresToppings(p, ids) {
     const grupo = grupoDe(p);
     if (!grupo) return [];
@@ -155,7 +155,7 @@
     const conj = y === "o" && /^h?o/i.test(ult) ? "u" : y === "y" && /^h?i(?![aeou])/i.test(ult) ? "e" : y;
     return `${items.slice(0, -1).join(", ")} ${conj} ${ult}`;
   };
-  // Precio del producto: el de la opción elegida si trae `precio` (ej. el relleno de una torta); si no, el del tamaño
+  // Precio del producto: el de la opción elegida si trae `precio` (ej. el Untable de Milo del paveé); si no, el del tamaño
   // (con `precios`, el de la opción en ese tamaño)
   const precioBase = (t, o) => (o && o.precios && o.precios[t.id] != null ? o.precios[t.id] : o && o.precio != null ? o.precio : t.precio);
   const opcionesConPrecio = (p) => !!(p.eleccion && p.eleccion.opciones.some((o) => o.precio != null || o.precios));
@@ -482,7 +482,7 @@
       </div>`;
   }
 
-  // Sin categoría van en el menú; con categoría (ej. "tortas"), en su sección
+  // Sin categoría van en el menú; con categoría, en su contenedor [data-categoria]
   function renderProductos() {
     $("#productos").innerHTML = MENU.filter((p) => !p.categoria).map((p) => tarjeta(p)).join("");
     $$("[data-categoria]").forEach((el) => {
@@ -1179,7 +1179,7 @@
     if ($("#checkoutModal").classList.contains("show")) actualizarCheckout();
   });
 
-  // Enlace que abre un producto ya armado: #pedir=fresas-con-crema&tamano=12oz&t=f-queso,f-oreo
+  // Enlace que abre un producto ya armado: #pedir=fresas-con-crema&tamano=12oz&t=f-chocoramo,f-oreo
   function abrirDesdeEnlace() {
     if (!/^#pedir=/.test(location.hash) || document.documentElement.classList.contains("hm-modo-pronto")) return;
     const q = new URLSearchParams(location.hash.slice(1));

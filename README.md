@@ -42,20 +42,19 @@ En `assets/js/config.js`, la lista `redes` alimenta los botones de "Síguenos" (
 
 En `assets/js/menu.js`:
 
-- `HM_ADICIONES`: grupos de toppings. Cada grupo tiene `texto` (la frase que sale arriba de los toppings) e `items`. Cada topping lleva `precio` por porción, `max` (porciones máximas por vaso), opcional `limite: { desde, otros }` (desde esa cantidad de ese topping, como máximo `otros` porciones de los demás; `otros: 0` = va solo), `icono` (dibujo de `illustrations.js`: `queso`, `chocoramo`, `piazza`, `oreo`) y `foto` (si se agrega una foto, reemplaza al ícono). Hoy `fresas`, a $2.000 la porción:
-  - Queso: hasta 2; con 2, solo 1 topping más.
+- `HM_ADICIONES`: grupos de toppings. Cada grupo tiene `texto` (la frase que sale arriba de los toppings) e `items`. Cada topping lleva `precio` por porción, `max` (porciones máximas por vaso), opcional `limite: { desde, otros }` (desde esa cantidad de ese topping, como máximo `otros` porciones de los demás; `otros: 0` = va solo), `icono` (dibujo de `illustrations.js`: `chocoramo`, `piazza`, `oreo`) y `foto` (si se agrega una foto, reemplaza al ícono). Hoy `fresas`, a $2.000 la porción:
   - Chocoramo, Piazza y Oreo: hasta 2; con 2, van solos (la base ya trae galleta Oreo).
   - Cobertura de chocolate en el vaso: $3.000, máximo 1. Es `independiente: true`: no cuenta para los límites de los demás (se puede pedir con cualquier combinación). En "Así va tu vaso" se dibuja chorreando por las paredes del vaso; en el juego no aparece.
   - Campos opcionales de cada topping: `corto` (nombre en la tarjeta), `detalle` (texto bajo el nombre en el detalle) e `independiente`.
-  - Se pueden pedir los 4 toppings a la vez (una porción de cada uno).
-- `HM_MENU`: productos del menú (Fresas con crema, Paveé, Galletas y Mini donas) y de la sección Tortas (ver abajo). Campos principales:
+  - Se pueden pedir Chocoramo, Piazza y Oreo a la vez (una porción de cada uno), y la cobertura con cualquier combinación.
+- `HM_MENU`: productos del menú (Fresas con crema, Paveé, Galletas y Mini donas). Campos principales:
   - `tamanos`: con precio y, opcional, `detalle` ("Mediana", "7 mini donitas") y `encargo: true`.
   - `adiciones`: nombre del grupo de toppings que acepta (el cliente suma porciones con + y −; el modal bloquea lo que no cumple los límites y explica por qué).
   - `destacado: true`: tarjeta ancha, con la foto al lado en computador (hoy, Fresas con crema).
   - `eleccion`: una opción incluida en el precio que el cliente debe elegir, como el topping del paveé (Oreo, Untable de Milo o Leche Klim). Si la opción trae `imagen` (y opcional `fotoNota` y `posicion`), la foto del detalle cambia al elegirla; si no, se usa la foto del producto.
   - Paveé: con Oreo o Leche Klim $16.000; con Untable de Milo $20.000 (`precio` en esa opción).
-  - Si una opción de `eleccion` trae `precio`, ese es el precio del producto con esa opción (ej. el relleno de Berry Love): la tarjeta lista cada opción con su precio, el detalle lo muestra en cada botón y el total cambia al elegir.
-  - `categoria: "tortas"`: el producto sale en la sección Tortas en vez del menú. `aviso`: texto que se muestra en el detalle (ej. cómo enviar las fotos).
+  - Si una opción de `eleccion` trae `precio`, ese es el precio del producto con esa opción (ej. el Untable de Milo del paveé): la tarjeta lista cada opción con su precio, el detalle lo muestra en cada botón y el total cambia al elegir.
+  - `categoria`: el producto sale en el contenedor `[data-categoria]` con ese id en vez del menú (hoy no se usa). `aviso`: texto que se muestra en el detalle.
   - `ilustracion` (dibujo SVG de `illustrations.js`: `pave`, `bolsita`, `donas`) o `imagen` (foto). Para fotos reales, guarda la imagen en `assets/img/` y usa `imagen: "assets/img/mi-foto.webp"`. Las fotos de producto son verticales (3:4, fondo lila) y van en WebP de 1200 px de ancho para que carguen rápido; las originales quedan en `assets/img/originales/`.
   - Un tamaño puede tener su propia `imagen`: en el detalle la foto cambia al elegirlo (Fresas con crema: 9 onz y 12 onz).
   - `posicion` (opcional, producto o tamaño): encuadre de la foto, ej. `"center 70%"`, para que el producto no se corte en los marcos más bajos (en celular las fotos van cuadradas).
@@ -74,26 +73,11 @@ Recoger está habilitado (`recoger: true` en `config.js`), sin publicar la direc
 
 Las ciudades de domicilio (`zonas`: hoy Barranquilla y Soledad), el horario (hoy martes a domingo de 1:30 a 7:15 p. m. y lunes de descanso, `1: null`; las horas van en decimal, 13.5 = 1:30 p. m.), los métodos de pago y `diasEncargo` (anticipación mínima para productos por encargo, por defecto 2) están en `config.js`. El valor del domicilio no se publica: el cliente elige su ciudad, escribe su barrio y se le confirma por WhatsApp.
 
-## Tortas
-
-Sección propia dentro del menú (`#tortas`, con enlace en la navegación y el pie). Muestra los productos con `categoria: "tortas"`. Solo se venden pequeñas y por porción:
-
-| Torta | Mini torta 10 cm (2 a 4 porciones) | Porción |
-|---|---|---|
-| Choco Moon (chocolate, ganache y cobertura de chocolate) | $50.000 | $18.000 |
-| Caramel Crunch (vainilla, relleno de dulce de leche + maní, cobertura de dulce de leche y maní) | $45.000 | $17.000 |
-| Berry Love (vainilla y cobertura de chantillí) | $45.000, relleno a elegir: fresas con crema, Oreo o dulce de leche | $17.000, relleno de Oreo |
-
-- La mini torta de 10 cm es por encargo (`encargo: true` en ese tamaño, con `diasEncargo` días de anticipación, hoy 2): si está en el carrito, la fecha del pedido es obligatoria. La porción no.
-- En Berry Love el relleno solo se elige en la mini torta: `eleccion.soloTamanos: ["10cm"]`. En la porción no se muestra la elección y el pedido no lleva relleno elegido (va con Oreo).
-- La foto de Berry Love tiene la nota "Foto: relleno de fresas con crema" y una segunda foto en la galería.
-- Las opciones de `eleccion` también aceptan `precio` o `precios: { idTamaño: precio }` si algún día un relleno cambia el precio.
-
 ## Así va tu vaso
 
 Un producto con `armar` (hoy Fresas con crema) muestra en el detalle un vaso dibujado (`vaso.js`) que se llena capa por capa al abrir (`armar.receta`), crece al pasar de 9 a 12 onz y recibe cada topping que el cliente agrega (se dibuja con el `icono` del topping). En celulares altos se queda fijo arriba mientras se eligen los toppings. Al agregar al carrito, Hony salta en el aviso.
 
-Un enlace como `./#pedir=fresas-con-crema&tamano=12oz&t=f-queso,f-oreo` abre ese producto ya armado (el tamaño y los toppings se validan con los límites del menú). Lo usa el juego.
+Un enlace como `./#pedir=fresas-con-crema&tamano=12oz&t=f-chocoramo,f-oreo` abre ese producto ya armado (el tamaño y los toppings se validan con los límites del menú). Lo usa el juego.
 
 ## Juegos de Hony
 
